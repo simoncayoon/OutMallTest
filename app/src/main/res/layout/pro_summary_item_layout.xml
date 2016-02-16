@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="@dimen/pro_summary_content_padding">
+    
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/niv_pro_summary_image"
+        android:layout_width="@dimen/pro_summary_image_size"
+        android:layout_height="@dimen/pro_summary_image_size" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBaseline="@+id/niv_pro_summary_image"
+        android:layout_toRightOf="@+id/niv_pro_summary_image"
+        android:paddingLeft="@dimen/pro_summary_text_padding_left">
+
+        <TextView
+            android:id="@+id/tv_pro_summary_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:textColor="@color/general_main_title_color"
+            android:textSize="@dimen/pro_summary_title_size"/>
+
+        <TextView
+            android:id="@+id/tv_pro_summary_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_pro_summary_title"
+            android:maxLines="2"
+            android:textColor="@color/home_page_general_red"
+            android:textSize="@dimen/pro_summary_content_size"/>
+
+        <RelativeLayout
+            android:id="@+id/pro_summary_shop_cart_zone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_pro_summary_content"
+            android:layout_marginBottom="@dimen/pro_summary_shop_cart_margin"
+            android:layout_marginTop="@dimen/pro_summary_shop_cart_margin">
+
+            <TextView
+                android:id="@+id/tv_symbol_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="￥"
+                android:textColor="@color/home_page_general_red"
+                android:textSize="@dimen/pro_summary_content_size"/>
+
+            <TextView
+                android:id="@+id/tv_pro_price_discount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/tv_symbol_money"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@+id/tv_symbol_money"
+                android:textColor="@color/home_page_general_red"
+                android:textSize="@dimen/pro_price_text_size"/>
+            
+            <com.beetron.outmall.customview.ViewWithBadge
+                android:id="@+id/tv_shop_cart_add"
+                android:layout_width="@dimen/ib_shop_cart_size"
+                android:layout_height="@dimen/ib_shop_cart_size"
+                android:layout_alignParentRight="true"
+                android:background="@mipmap/list_ic_shopping"
+                android:gravity="right"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/pro_summary_bottom_zone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/pro_summary_shop_cart_zone"
+            android:layout_marginBottom="@dimen/pro_summary_shop_cart_margin"
+            android:layout_marginTop="@dimen/pro_summary_shop_cart_margin"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tv_pro_price_mall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/general_tab_text_color"
+                android:textSize="@dimen/pro_summary_content_size"/>
+
+            <TextView
+                android:id="@+id/tv_pro_sales_volume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/pro_summary_shop_cart_margin"
+                android:textColor="@color/general_tab_text_color"
+                android:textSize="@dimen/pro_summary_content_size"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

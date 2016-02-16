@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">OutMall</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="framework_navi_home_page">首页</string>
+    <string name="framework_navi_time_limit">限时购</string>
+    <string name="framework_navi_shope_cart">购物车</string>
+    <string name="framework_navi_mine">我的</string>
+    <string name="home_page_filter_default">默认</string>
+    <string name="home_page_filter_sales">销量</string>
+    <string name="home_page_filter_price">价格</string>
+</resources>

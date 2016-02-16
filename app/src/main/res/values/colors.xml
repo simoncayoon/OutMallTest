@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ffd943</color>
+    <color name="colorPrimaryDark">#ffd943</color>
+    <color name="activity_bg">#FFFFFF</color>
+    <color name="bottom_navi_bg_color">#f8f8f8</color>
+    <color name="bottom_navi_top_line_color">#adadad</color>
+    <color name="general_tab_text_color">#999999</color>
+    <color name="tab_selected_color">#ffd943</color>
+    <color name="dot_gray_color">#33333333</color>
+    <color name="general_boundary_color">#dddddd</color>
+    <color name="general_main_title_color">#333333</color>
+    <color name="home_page_menu_bg_color">#dddddd</color>
+    <color name="home_page_general_red">#fe3425</color>
+    <color name="home_page_left_menu_bg">#f9f9f9</color>
+</resources>
