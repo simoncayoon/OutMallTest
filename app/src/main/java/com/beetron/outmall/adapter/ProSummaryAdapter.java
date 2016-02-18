@@ -90,9 +90,14 @@ public class ProSummaryAdapter extends BaseAdapter {
         viewHolder.proImg.setImageUrl(proItem.getImg(), NetController.getInstance(mContext).getImageLoader());
         viewHolder.title.setText(proItem.getTitle());
         viewHolder.summary.setText(proItem.getJianshu());
-        viewHolder.discount.setText(proItem.getPrice2());
+        viewHolder.discount.setText(String.valueOf(proItem.getPrice2()));
         viewHolder.shopCart.setOnClickListener(new AddShopCart(position));
-        viewHolder.shopCart.setBadge(BadgeView.POSITION_TOP_RIGHT, proItem.getCount(), 6, 0);
+        try {
+            viewHolder.shopCart.setBadge(BadgeView.POSITION_TOP_RIGHT,
+                    DBHelper.getInstance(mContext).getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_SID, proItem.getSid()), 6, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         viewHolder.price.setText( "￥" + proItem.getPrice1());
         viewHolder.saleVolume.setText("已销售" + proItem.getXl() + "笔");
         return convertView;
@@ -117,7 +122,6 @@ public class ProSummaryAdapter extends BaseAdapter {
         }
         @Override
         public void onClick(View v) {
-
 
             ProSummary clickItem = proSummaryList.get(position);
             if (DBHelper.getInstance(mContext).addShopCart(clickItem) != -1L){

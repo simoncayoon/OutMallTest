@@ -41,12 +41,16 @@
             android:layout_height="1px"
             android:background="@color/general_boundary_color"/>
 
-        <com.shizhefei.view.viewpager.SViewPager
-            android:id="@+id/home_filter_viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/tabmain_indicator"
-            android:background="@color/activity_bg"/>
+        <com.handmark.pulltorefresh.library.PullToRefreshListView
+            android:id="@+id/product_pull_refresh_list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:cacheColorHint="#00000000"
+            android:fadingEdge="none"
+            android:fastScrollEnabled="false"
+            android:footerDividersEnabled="false"
+            android:headerDividersEnabled="false"
+            android:smoothScrollbar="true" />
 
 
     </LinearLayout>

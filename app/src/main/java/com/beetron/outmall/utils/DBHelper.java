@@ -14,10 +14,8 @@ import de.greenrobot.dao.query.QueryBuilder;
  */
 public class DBHelper {
 
-    public static final String FLAG_DISTRICT = "flag_district";
-    public static final String FLAG_TOWN = "flag_town";
-    public static final String FLAG_ADM_COUNTRY = "flag_adm_country";
-    public static final String FLAG_GROUP = "flag_group";
+    public static final String FLAG_PROSUMMARY_BY_SID = "FLAG_PROSUMMARY_BY_SID";
+    public static final String FLAG_PROSUMMARY_BY_FID = "FLAG_PROSUMMARY_BY_FID";
     private static final String TAG = DBHelper.class.getSimpleName();
     private static DBHelper instance = null;
     private static Context mContext = null;
@@ -41,11 +39,22 @@ public class DBHelper {
     }
 
     public Long addShopCart(ProSummary proSummary){
+        QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
         return proSummaryDao.insert(proSummary);
     }
 
     public int getShopCartCount(){
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
+        return qb.list().size();
+    }
+
+    public int getShopCartCounById(String flag, String proId){
+        QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
+        if (flag.equals(FLAG_PROSUMMARY_BY_SID)) {
+            qb.where(ProSummaryDao.Properties.Sid.eq(proId));
+        } else if(flag.equals(FLAG_PROSUMMARY_BY_FID)){
+            qb.where(ProSummaryDao.Properties.Fid.eq(proId));
+        }
         return qb.list().size();
     }
 }

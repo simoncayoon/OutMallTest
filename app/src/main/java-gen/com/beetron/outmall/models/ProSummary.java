@@ -14,9 +14,9 @@ public class ProSummary {
     private String title;
     private String jianshu;
     private String img;
-    private String price1;
-    private String price2;
-    private String xl;
+    private Double price1;
+    private Double price2;
+    private Integer xl;
 
     // KEEP FIELDS - put your custom fields here
     private int count = 0;
@@ -25,7 +25,7 @@ public class ProSummary {
     public ProSummary() {
     }
 
-    public ProSummary(String sid, String fid, String title, String jianshu, String img, String price1, String price2, String xl) {
+    public ProSummary(String sid, String fid, String title, String jianshu, String img, Double price1, Double price2, Integer xl) {
         this.sid = sid;
         this.fid = fid;
         this.title = title;
@@ -76,27 +76,27 @@ public class ProSummary {
         this.img = img;
     }
 
-    public String getPrice1() {
+    public Double getPrice1() {
         return price1;
     }
 
-    public void setPrice1(String price1) {
+    public void setPrice1(Double price1) {
         this.price1 = price1;
     }
 
-    public String getPrice2() {
+    public Double getPrice2() {
         return price2;
     }
 
-    public void setPrice2(String price2) {
+    public void setPrice2(Double price2) {
         this.price2 = price2;
     }
 
-    public String getXl() {
+    public Integer getXl() {
         return xl;
     }
 
-    public void setXl(String xl) {
+    public void setXl(Integer xl) {
         this.xl = xl;
     }
 
@@ -109,7 +109,6 @@ public class ProSummary {
     public void setCount(int count) {
         this.count = count;
     }
-
     // KEEP METHODS END
 
 }

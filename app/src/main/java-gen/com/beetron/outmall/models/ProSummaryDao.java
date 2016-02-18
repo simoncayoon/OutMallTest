@@ -36,9 +36,9 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
                 "\"TITLE\" TEXT," + // 2: title
                 "\"JIANSHU\" TEXT," + // 3: jianshu
                 "\"IMG\" TEXT," + // 4: img
-                "\"PRICE1\" TEXT," + // 5: price1
-                "\"PRICE2\" TEXT," + // 6: price2
-                "\"XL\" TEXT);"); // 7: xl
+                "\"PRICE1\" REAL," + // 5: price1
+                "\"PRICE2\" REAL," + // 6: price2
+                "\"XL\" INTEGER);"); // 7: xl
     }
 
     /** Drops the underlying database table. */
@@ -77,19 +77,19 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
             stmt.bindString(5, img);
         }
 
-        String price1 = entity.getPrice1();
+        Double price1 = entity.getPrice1();
         if (price1 != null) {
-            stmt.bindString(6, price1);
+            stmt.bindDouble(6, price1);
         }
 
-        String price2 = entity.getPrice2();
+        Double price2 = entity.getPrice2();
         if (price2 != null) {
-            stmt.bindString(7, price2);
+            stmt.bindDouble(7, price2);
         }
 
-        String xl = entity.getXl();
+        Integer xl = entity.getXl();
         if (xl != null) {
-            stmt.bindString(8, xl);
+            stmt.bindLong(8, xl);
         }
     }
 
@@ -108,9 +108,9 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // title
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // jianshu
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // img
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // price1
-            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // price2
-            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7) // xl
+            cursor.isNull(offset + 5) ? null : cursor.getDouble(offset + 5), // price1
+            cursor.isNull(offset + 6) ? null : cursor.getDouble(offset + 6), // price2
+            cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7) // xl
         );
         return entity;
     }
@@ -123,9 +123,9 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
         entity.setTitle(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setJianshu(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setImg(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setPrice1(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setPrice2(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
-        entity.setXl(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setPrice1(cursor.isNull(offset + 5) ? null : cursor.getDouble(offset + 5));
+        entity.setPrice2(cursor.isNull(offset + 6) ? null : cursor.getDouble(offset + 6));
+        entity.setXl(cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7));
      }
      
     /** @inheritdoc */
@@ -157,9 +157,9 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
         public final static Property Title = new Property(2, String.class, "title", false, "TITLE");
         public final static Property Jianshu = new Property(3, String.class, "jianshu", false, "JIANSHU");
         public final static Property Img = new Property(4, String.class, "img", false, "IMG");
-        public final static Property Price1 = new Property(5, String.class, "price1", false, "PRICE1");
-        public final static Property Price2 = new Property(6, String.class, "price2", false, "PRICE2");
-        public final static Property Xl = new Property(7, String.class, "xl", false, "XL");
+        public final static Property Price1 = new Property(5, Double.class, "price1", false, "PRICE1");
+        public final static Property Price2 = new Property(6, Double.class, "price2", false, "PRICE2");
+        public final static Property Xl = new Property(7, Integer.class, "xl", false, "XL");
     }
     
 }

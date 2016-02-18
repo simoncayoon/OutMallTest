@@ -69,7 +69,6 @@ public class ProCategory {
 
         this.isSelected = isSelected;
     }
-
-// KEEP METHODS END
+    // KEEP METHODS END
 
 }

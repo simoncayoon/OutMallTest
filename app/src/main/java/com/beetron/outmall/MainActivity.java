@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity
         viewPager.setCanScroll(false);
         // 设置viewpager保留界面不重新加载的页面数量
         viewPager.setOffscreenPageLimit(4);
+        setShopCart();
     }
 
 
@@ -122,16 +123,15 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void notifyCountChange(String fid) {
-        setShopCart(2);
+        setShopCart();
         HomeFragment firstFragment = (HomeFragment)mIndicatorViewPager.getAdapter().getPagerAdapter().
                 instantiateItem(mIndicatorViewPager.getViewPager(), 0);
         firstFragment.updateMenuItem(fid);
     }
 
-    private void setShopCart(int shopVolume) {
+    private void setShopCart() {
         DebugFlags.logD(TAG, "触发了数据更新！");
         try {
-
             ViewWithBadge shapCartTabView = (ViewWithBadge)(mIndicatorViewPager.getIndicatorView().
                     getItemView(2).findViewById(R.id.tab_text_view));//获取到购物车的视图
             shapCartTabView.setBadge(BadgeView.POSITION_TOP_RIGHT,
