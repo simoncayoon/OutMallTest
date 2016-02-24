@@ -3,4 +3,51 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ListView
+        android:id="@+id/shop_cart_detail_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:cacheColorHint="#00000000"
+        android:fadingEdge="none"
+        android:fastScrollEnabled="false"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
+        android:smoothScrollbar="true">
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/shop_cart_detail_bottom_height"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/cb_shop_cart_select_all"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:layout_weight="1"
+            android:text="@string/shop_cart_select_all"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="@dimen/shop_cart_select_all_text_size"/>
+
+        <TextView
+            android:id="@+id/tv_shop_cart_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/general_main_title_color"
+            android:textSize="@dimen/shop_cart_detail_amount_text_size"/>
+
+        <Button
+            android:id="@+id/btn_to_account_shop_cart"
+            android:layout_width="@dimen/shop_cart_account_btn_width"
+            android:layout_height="@dimen/shop_cart_account_btn_height"
+            android:layout_margin="@dimen/btn_to_account_margin"
+            android:background="@color/home_page_general_red"
+            android:text="@string/to_settle_accounts"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_to_account_text_size"/>
+    </LinearLayout>
+
 </LinearLayout>

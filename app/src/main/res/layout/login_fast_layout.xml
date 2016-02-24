@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.beetron.outmall.customview.NavigationView
+        android:id="@+id/general_navi_id"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/general_navi_height">
+
+    </com.beetron.outmall.customview.NavigationView>
+
+    <!-- 手机号-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/regist_edit_margin"
+        android:layout_marginRight="@dimen/regist_edit_margin"
+        android:layout_marginTop="50dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_phone_input"
+            android:layout_width="0dip"
+            android:layout_height="@dimen/edit_text_general_height"
+            android:layout_weight="1"
+            android:background="@android:color/white"
+            android:drawableLeft="@mipmap/phone_num_ic"
+            android:drawablePadding="@dimen/regist_drawable_padding"
+            android:gravity="center_vertical"
+            android:hint="@string/hint_text_input_phone_num"
+            android:paddingLeft="@dimen/regist_drawable_padding"
+            android:singleLine="true"
+            android:textColorHint="@color/hint_color"/>
+
+        <Button
+            android:id="@+id/btn_regist_get_verify_code"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/edit_text_general_height"
+            android:layout_marginLeft="8dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/get_verify_text"
+            android:textColor="@color/general_main_title_color"/>
+    </LinearLayout>
+
+    <!-- 验证码-->
+    <EditText
+        android:id="@+id/et_verify_code_input"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/edit_text_general_height"
+        android:layout_marginLeft="@dimen/regist_edit_margin"
+        android:layout_marginRight="@dimen/regist_edit_margin"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/white"
+        android:drawableLeft="@mipmap/captcha_ic"
+        android:drawablePadding="@dimen/regist_drawable_padding"
+        android:gravity="center_vertical"
+        android:hint="@string/hint_text_input_verify_code"
+        android:paddingLeft="@dimen/regist_drawable_padding"
+        android:singleLine="true"
+        android:textColorHint="@color/hint_color"/>
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/edit_text_general_height"
+        android:layout_marginLeft="@dimen/regist_edit_margin"
+        android:layout_marginRight="@dimen/regist_edit_margin"
+        android:layout_marginTop="30dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="@string/text_login_and_verify" />
+</LinearLayout>

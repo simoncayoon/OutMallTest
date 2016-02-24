@@ -14,6 +14,16 @@ public class PostEntity {
     private int l;//每页显示条数
     private String gid;//商品ID
     private String isLogin;//（1是已登录，0是未登录）
+    private String uid;
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+
+        this.uid = uid;
+    }
 
     public String getToken() {
         return token;

@@ -47,4 +47,32 @@ public class NetInterface {
      * 获取对应分类下来的商品列表
      */
     public static final String METHON_GET_PRO_BY_CATEGORY = "?m=Home&c=App&a=good_list";
+
+    /**
+     * 获取商品详细信息
+     */
+    public static final String METHON_GET_PRO_BY_SID = "?m=home&c=app&a=goods";
+
+    /**
+     * 获取注册验证码
+     */
+    public static final String METHON_VERIFY_CODE_REGIST = "?m=home&c=app&a=reg_code";
+
+    /**
+     * 登录
+     */
+    public static final String METHON_LOGIN = "?m=home&c=app&a=login_do";
+
+    /**
+     * 注册
+     */
+    public static final String METHON_REGIST = "?m=home&c=app&a=user_reg";
+
+    /**
+     * 添加购物车
+     */
+    public static final String METHON_ADD_SHOPCART_BY_ID = "?m=home&c=app&a=add_to_car";
+
+
+    public static final String METHON_GET_SHOPCART = "?m=home&c=app&a=cart";
 }

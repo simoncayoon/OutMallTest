@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.beetron.outmall">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".OutMallApp"
@@ -22,7 +22,27 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ProductDetail" />
+        <activity
+            android:name=".ProductDetail"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RegisteActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LoginFastActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PwdBackActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".OrderFixActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddrManager"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -29,12 +30,14 @@ import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.adapter.CategoryMenuAdapter;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
+import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.DisplayMetrics;
 import com.beetron.outmall.utils.NetController;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.shizhefei.fragment.LazyFragment;
 import com.shizhefei.view.indicator.Indicator;
@@ -75,14 +78,16 @@ public class HomeFragment extends BaseFragment {
     private LayoutInflater inflater;
 
     private CategoryMenuAdapter menuAdapter;
+    private ProSummaryAdapter proAdapter;
 
     /**
      * 左侧菜单按钮
      */
     private ListView llProCategory;
-    private boolean refresh = true;
+    private boolean isAppend = false;
     private int index = 1;
     private List<ProSummary> proList;
+    private PageEntity pageEntity;
     /**
      * 幻灯片适配
      */
@@ -199,6 +204,11 @@ public class HomeFragment extends BaseFragment {
                             currentFid = categories.get(0).getId();//初始化当前的分类ID
                             refreshProByFid(currentFid);//初始化产品列表内容
                             categories.get(0).setIsSelected(true);//初始化菜单按钮效果
+                            for (int i = 0; i < categories.size(); i++ ){//初始化购物车种类
+                                ProCategory menuItem = categories.get(i);
+                                categories.get(i).setCount(DBHelper.getInstance(getActivity()).getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID,
+                                        menuItem.getId()));
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -248,19 +258,14 @@ public class HomeFragment extends BaseFragment {
         initImageScanView();
 
         initFilterView();
+
+        initLvRefresh();
     }
 
     private void initFilterView() {
         filterTitle = new String[]{"默认", "销量", "价格"};
 //        SViewPager viewPager = (SViewPager) findViewById(R.id.home_filter_viewpager);
         filterIndicator = (Indicator) findViewById(R.id.home_filter_tab_indicator);
-        llProList = (PullToRefreshListView) findViewById(R.id.product_pull_refresh_list);
-        llProList.getRefreshableView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                startActivity(new Intent(getActivity(), ProductDetail.class));
-            }
-        });
         filterIndicator.setAdapter(new Indicator.IndicatorAdapter() {
             @Override
             public int getCount() {
@@ -296,28 +301,75 @@ public class HomeFragment extends BaseFragment {
             public void onItemSelected(View selectItemView, int select, int preSelect) {
                 DebugFlags.logD(TAG, "点击了项目" + select + "    xxx     " + preSelect);
                 if (select == 1) {
-                    if(selectItemView.getTag(R.id.step1) == null){
+                    if (selectItemView.getTag(R.id.step1) == null) {
                         selectItemView.setTag(R.id.step1, true);
-                    }else if((Boolean)selectItemView.getTag(R.id.step1)){
+                    } else if ((Boolean) selectItemView.getTag(R.id.step1)) {
                         selectItemView.setTag(R.id.step2, true);
                         selectItemView.setTag(R.id.step1, false);
 
-                    } else if((Boolean)selectItemView.getTag(R.id.step2)){
+                    } else if ((Boolean) selectItemView.getTag(R.id.step2)) {
                         selectItemView.setTag(R.id.step1, true);
                         selectItemView.setTag(R.id.step2, false);
                     }
                 } else if (select == 2) {
-                    if(selectItemView.getTag(R.id.step1) == null){
+                    if (selectItemView.getTag(R.id.step1) == null) {
                         selectItemView.setTag(R.id.step1, true);
-                    }else if((Boolean)selectItemView.getTag(R.id.step1)){
+                    } else if ((Boolean) selectItemView.getTag(R.id.step1)) {
                         selectItemView.setTag(R.id.step2, true);
                         selectItemView.setTag(R.id.step1, false);
 
-                    } else if((Boolean)selectItemView.getTag(R.id.step2)){
+                    } else if ((Boolean) selectItemView.getTag(R.id.step2)) {
                         selectItemView.setTag(R.id.step1, true);
                         selectItemView.setTag(R.id.step2, false);
                     }
+                } else if (select == 0) {
+                    filterIndicator.getItemView(1).setTag(R.id.step1, true);
+                    filterIndicator.getItemView(2).setTag(R.id.step1, true);
                 }
+                try {
+                    index = 1;
+                    isAppend = false;
+                    refreshProByFid(currentFid);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    void initLvRefresh(){
+        llProList = (PullToRefreshListView) findViewById(R.id.product_pull_refresh_list);
+        llProList.getRefreshableView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent toDetailIntent = new Intent(getActivity(), ProductDetail.class);
+                toDetailIntent.putExtra(ProductDetail.KEY_PRODUCT_ID, proList.get(position).getSid());
+                startActivity(toDetailIntent);
+            }
+        });
+        llProList.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
+            @Override
+            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+                DebugFlags.logD(TAG, "onPullDownToRefresh");
+                isAppend = false;
+                index = 1;
+                try {
+                    refreshProByFid(currentFid);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+                DebugFlags.logD(TAG, "onPullUpToRefresh");
+                if(index > pageEntity.getPage() ){
+                    Toast.makeText(getActivity(), "已经到最后一页了", Toast.LENGTH_SHORT).show();
+                    refreshView.onRefreshComplete();
+                    return;
+                }
+                index ++;
+                isAppend = true;
                 try {
                     refreshProByFid(currentFid);
                 } catch (Exception e) {
@@ -325,6 +377,7 @@ public class HomeFragment extends BaseFragment {
                 }
             }
         });
+        llProList.setMode(PullToRefreshBase.Mode.BOTH);
     }
 
     private void initImageScanView() {
@@ -360,11 +413,17 @@ public class HomeFragment extends BaseFragment {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         initData(jsonObject, "");
+                        if(llProList.isRefreshing()){
+                            llProList.onRefreshComplete();//停止刷新
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
+                if(llProList.isRefreshing()){
+                    llProList.onRefreshComplete();//停止刷新
+                }
             }
         });
         NetController.getInstance(getActivity()).addToRequestQueue(getCategoryReq, TAG);
@@ -375,28 +434,30 @@ public class HomeFragment extends BaseFragment {
         Gson gson = new Gson();
 
         try {
-            PageEntity pageEntity = gson.fromJson(responData.getString("result"),
+            pageEntity = gson.fromJson(responData.getString("result"),
                     new TypeToken<PageEntity<ProSummary>>() {
                     }.getType());
             List<ProSummary> dataRefresh = pageEntity.getList();
 
-            try {
-                if ((Boolean)filterIndicator.getItemView(filterIndicator.getCurrentItem()).getTag(R.id.step1)) {
-                    Collections.sort(dataRefresh, new SortByFilter(checkFlag(), true));//根据条件排序
-                } else if((Boolean)filterIndicator.getItemView(filterIndicator.getCurrentItem()).getTag(R.id.step2)){
-                    Collections.sort(dataRefresh, new SortByFilter(checkFlag(), false));//根据条件排序
+            if (filterIndicator.getCurrentItem() > 0) {
+                try {
+                    if ((Boolean)filterIndicator.getItemView(filterIndicator.getCurrentItem()).getTag(R.id.step1)) {
+                        Collections.sort(dataRefresh, new SortByFilter(checkFlag(), true));//根据条件排序
+                    } else if((Boolean)filterIndicator.getItemView(filterIndicator.getCurrentItem()).getTag(R.id.step2)){
+                        Collections.sort(dataRefresh, new SortByFilter(checkFlag(), false));//根据条件排序
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
 
-            if (refresh) {
+            if (!isAppend) {
                 proList = dataRefresh;
             } else {
                 proList.addAll(dataRefresh);
             }
-            updateMenuItem(currentFid);
-            llProList.getRefreshableView().setAdapter(new ProSummaryAdapter(getActivity(), proList));
+            proAdapter = new ProSummaryAdapter(getActivity(), proList);
+            llProList.getRefreshableView().setAdapter(proAdapter);
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
         } catch (JSONException e) {

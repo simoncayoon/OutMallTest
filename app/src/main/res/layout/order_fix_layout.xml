@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/general_activity_bg"
+    android:orientation="vertical">
+
+    <com.beetron.outmall.customview.ReboundScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                layout="@layout/order_detail_to_addr_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/order_fix_layout_boundary_size" />
+
+            <com.shizhefei.view.indicator.ScrollIndicatorView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/order_fix_layout_boundary_size">
+
+            </com.shizhefei.view.indicator.ScrollIndicatorView>
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/order_fix_layout_boundary_size"
+                android:background="@android:color/white">
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/order_fix_content_padding"
+                    android:layout_marginRight="@dimen/order_fix_content_padding"
+                    android:layout_marginTop="@dimen/order_fix_content_padding"
+                    android:button="@null"
+                    android:drawableRight="@mipmap/ic_select"
+                    android:gravity="left|center_vertical"
+                    android:text="在线支付"
+                    android:textColor="@color/order_fix_text_color"
+                    android:textSize="@dimen/order_fix_text_size" />
+
+                <RadioButton
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/order_fix_content_padding"
+                    android:layout_marginLeft="@dimen/order_fix_content_padding"
+                    android:layout_marginRight="@dimen/order_fix_content_padding"
+                    android:layout_marginTop="20dp"
+                    android:button="@null"
+                    android:drawableRight="@mipmap/ic_select"
+                    android:gravity="left|center_vertical"
+                    android:text="在线支付"
+                    android:textColor="@color/order_fix_text_color"
+                    android:textSize="@dimen/order_fix_text_size" />
+            </RadioGroup>
+
+            <include
+                layout="@layout/order_fix_price_zone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/order_fix_layout_boundary_size" />
+
+        </LinearLayout>
+
+    </com.beetron.outmall.customview.ReboundScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/order_fix_layout_boundary_size"
+        android:background="@android:color/white"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="@dimen/order_fix_text_size" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="@dimen/order_fix_text_size" />
+
+        <Button
+            android:id="@+id/btn_to_account_shop_cart"
+            android:layout_width="@dimen/shop_cart_account_btn_width"
+            android:layout_height="@dimen/shop_cart_account_btn_height"
+            android:layout_margin="@dimen/btn_to_account_margin"
+            android:background="@color/home_page_general_red"
+            android:text="@string/to_settle_accounts"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/btn_to_account_text_size" />
+
+    </LinearLayout>
+</LinearLayout>

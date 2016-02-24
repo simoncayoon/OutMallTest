@@ -10,6 +10,7 @@ public class ResultEntity<T> {
 
     private boolean isSuccess;
     private T result;
+    private String error;
 
     public void setIsSuccess(boolean isSuccess) {
         this.isSuccess = isSuccess;
@@ -25,5 +26,14 @@ public class ResultEntity<T> {
 
     public void setResult(T result) {
         this.result = result;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+
+        this.error = error;
     }
 }

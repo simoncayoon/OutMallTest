@@ -1,6 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/general_activity_bg"
     android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/about_me_head_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/about_me_head_height"
+        android:background="@mipmap/user_image_bg"
+        android:clickable="true"
+        android:paddingLeft="@dimen/about_me_content_padding"
+        android:paddingRight="@dimen/about_me_content_padding">
+
+        <ImageView
+            android:id="@+id/iv_about_me_head_img"
+            android:layout_width="@dimen/about_me_head_portrait_size"
+            android:layout_height="@dimen/about_me_head_portrait_size"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/default_avatar" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/about_me_content_padding"
+            android:layout_toRightOf="@+id/iv_about_me_head_img"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_about_me_title_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:text="test"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/about_me_head_name_size" />
+
+            <TextView
+                android:id="@+id/tv_about_me_signature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_about_me_title_name"
+                android:layout_marginTop="10dp"
+                android:text="test"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/about_me_head_signatur_size" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@mipmap/user_white_arrow" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_to_order_scan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/about_me_content_padding"
+        android:paddingRight="@dimen/about_me_content_padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@mipmap/user_orders"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/about_me_order_scan_title"
+                android:textColor="@color/order_fix_text_color"
+                android:textSize="14sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="10dp"
+                android:drawableRight="@mipmap/address_ic_arrow"
+                android:gravity="center_vertical|right"
+                android:text="@string/about_me_order_scan_title"
+                android:textColor="@color/general_tab_text_color"
+                android:textSize="11sp"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/general_boundary_color"/>
+        
+        <com.shizhefei.view.indicator.FixedIndicatorView
+            android:id="@+id/about_me_order_scan_tab"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/general_boundary_color"/>
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/test_regist"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/edit_text_general_height"
+        android:layout_marginLeft="@dimen/regist_edit_margin"
+        android:layout_marginRight="@dimen/regist_edit_margin"
+        android:layout_marginTop="30dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="@string/text_regist" />
 
 </LinearLayout>

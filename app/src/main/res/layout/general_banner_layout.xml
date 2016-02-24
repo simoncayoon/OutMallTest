@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?><!-- 顶部Banner广告-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/product_list_top_banner_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/svp_scan_image_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/general_activity_bg" />
+
+    <com.shizhefei.view.indicator.FixedIndicatorView
+        android:id="@+id/svp_scan_image_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_marginBottom="10dp" />
+</FrameLayout>
