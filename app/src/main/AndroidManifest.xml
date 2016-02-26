@@ -39,9 +39,16 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".OrderFixActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".AddrManager"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddrEdit"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".OrderDetailActivity"
             android:screenOrientation="portrait" />
     </application>
 

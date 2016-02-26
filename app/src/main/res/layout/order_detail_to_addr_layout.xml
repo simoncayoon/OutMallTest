@@ -16,7 +16,30 @@
     <RelativeLayout
         android:layout_width="0dip"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/addr_info_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:text="@string/order_fix_addr_name_empty"
+            android:textColor="@color/general_main_title_color"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/addr_info_item_detail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/addr_info_item_title"
+            android:layout_marginTop="10dp"
+            android:singleLine="true"
+            android:text="@string/order_fix_addr_detail_empty"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="14sp"/>
 
     </RelativeLayout>
 

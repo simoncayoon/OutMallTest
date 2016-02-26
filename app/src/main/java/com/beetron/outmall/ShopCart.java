@@ -2,11 +2,18 @@ package com.beetron.outmall;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -15,6 +22,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.beetron.outmall.adapter.ShopCartAdapter;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
+import com.beetron.outmall.models.OrderInfoModel;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.models.ShopCartModel;
@@ -34,7 +42,7 @@ import java.util.List;
  * Date: 2016/2/3.
  * Time: 15:32.
  */
-public class ShopCart extends BaseFragment {
+public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountChange {
 
     private static final String TAG = ShopCart.class.getSimpleName();
     private ListView lvShopcart;
@@ -42,7 +50,10 @@ public class ShopCart extends BaseFragment {
     private TextView tvAmount;
     private Button btnAccount;
     private List<ShopCartModel> dataShopCart;
+
     private ShopCartResult shopcartResult;
+    private ShopCartAdapter shopCartAdapter;
+    private Double currentAmount = 0.00;
 
     @Override
     protected void onCreateView(Bundle savedInstanceState) {
@@ -58,12 +69,16 @@ public class ShopCart extends BaseFragment {
     }
 
     private void initData() {
-
-        lvShopcart.setAdapter(new ShopCartAdapter(getActivity(), dataShopCart));
-
+        try {
+            updateAmount(0.00);//初始化总价
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        shopCartAdapter = new ShopCartAdapter(ShopCart.this, dataShopCart);
+        lvShopcart.setAdapter(shopCartAdapter);
     }
 
-    private void reqShopcart() throws Exception{
+    private void reqShopcart() throws Exception {
         String url = NetInterface.HOST + NetInterface.METHON_GET_SHOPCART;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
@@ -79,7 +94,8 @@ public class ShopCart extends BaseFragment {
                         DebugFlags.logD(TAG, jsonObject.toString());
                         Gson gson = new Gson();
                         ResultEntity<ShopCartResult> resultEntity = gson.fromJson(jsonObject.toString(),
-                                new TypeToken<ResultEntity<ShopCartResult>>(){}.getType());
+                                new TypeToken<ResultEntity<ShopCartResult>>() {
+                                }.getType());
                         shopcartResult = resultEntity.getResult();
                         dataShopCart = shopcartResult.getList();
                         initData();
@@ -96,15 +112,126 @@ public class ShopCart extends BaseFragment {
 
     private void initView() {
         lvShopcart = (ListView) findViewById(R.id.shop_cart_detail_list);
+        lvShopcart.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (dataShopCart.get(position).isSelect()) {//减操作
+                    currentAmount -= Double.valueOf(dataShopCart.get(position).getGs().getPrice2()) *
+                            Integer.valueOf(dataShopCart.get(position).getNum());
+                } else {//加操作
+                    currentAmount += Double.valueOf(dataShopCart.get(position).getGs().getPrice2()) *
+                            Integer.valueOf(dataShopCart.get(position).getNum());
+                }
+                try {
+                    updateAmount(currentAmount);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                dataShopCart.get(position).setIsSelect(dataShopCart.get(position).isSelect() ? false : true);
+                shopCartAdapter.notifyDataSetChanged();
+            }
+        });
         checkSelectAll = (CheckBox) findViewById(R.id.cb_shop_cart_select_all);
+        checkSelectAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Double amount = 0.00;
+                    for (int index = 0; index < dataShopCart.size(); index++) {
+                        dataShopCart.get(index).setIsSelect(true);
+                        amount += Integer.valueOf(dataShopCart.get(index).getNum()) *
+                                Double.valueOf(dataShopCart.get(index).getGs().getPrice2());
+                    }
+                    try {
+                        updateAmount(amount);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    for (int index = 0; index < dataShopCart.size(); index++) {
+                        dataShopCart.get(index).setIsSelect(false);
+                    }
+                    try {
+                        updateAmount(0.00);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                shopCartAdapter.notifyDataSetChanged();
+            }
+        });
         tvAmount = (TextView) findViewById(R.id.tv_shop_cart_amount);
         btnAccount = (Button) findViewById(R.id.btn_to_account_shop_cart);
 
         btnAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), OrderFixActivity.class));
+
+                Intent intent = new Intent(getActivity(), OrderFixActivity.class);
+                try {
+                    OrderInfoModel intentData = OrderInfoModel.getInstance();
+                    intentData.setProDetail(dataShopCart);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void proChange(final String flag, final int position) throws Exception {
+        String url = "";
+        if (flag.equals(ShopCartAdapter.ProCountChange.FLAG_ADD)) {
+            url = NetInterface.HOST + NetInterface.METHON_ADD_SHOPCART;
+        } else if (flag.equals(ShopCartAdapter.ProCountChange.FLAG_MINUS)) {
+            url = NetInterface.HOST + NetInterface.METHON_MINUS_SHOPCART;
+        }
+        PostEntity postEntity = new PostEntity();
+        postEntity.setToken(Constants.TOKEN_VALUE);
+        postEntity.setUid(Constants.POST_UID_TEST);
+        postEntity.setIsLogin("1");
+        postEntity.setGid(dataShopCart.get(position).getSid());
+        String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
+        }.getType());
+        JSONObject postJson = new JSONObject(postString);
+        JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        DebugFlags.logD(TAG, jsonObject.toString());
+                        Gson gson = new Gson();
+                        ResultEntity<String> resultEntity = gson.fromJson(jsonObject.toString(),
+                                new TypeToken<ResultEntity<String>>() {
+                                }.getType());
+                        if (resultEntity.isSuccess()) {
+
+                            dataShopCart.get(position).setNum(resultEntity.getResult());
+                            shopCartAdapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(getActivity(), resultEntity.getError(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+
+            }
+        });
+        NetController.getInstance(getActivity()).addToRequestQueue(getCategoryReq, TAG);
+    }
+
+    void updateAmount(Double amount) throws Exception {
+        currentAmount = amount;
+        SpannableString spannableString = new SpannableString("总价：￥" + currentAmount);
+        spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.home_page_general_red)),
+                3, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);//设置颜色
+        spannableString.setSpan(new AbsoluteSizeSpan(11, true), 3, 4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);//设置“￥”字体
+        spannableString.setSpan(new AbsoluteSizeSpan(22, true), 4, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);//设置价格字体
+        tvAmount.setText(spannableString);
+    }
+
+    public List<ShopCartModel> getDataShopCart() {
+        return dataShopCart;
     }
 }

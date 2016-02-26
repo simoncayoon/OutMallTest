@@ -2,4 +2,5 @@
 <resources>
     <item name="step1" type="id">0x123</item>
     <item name="step2" type="id">0x1122</item>
+    <item name="order_scanner_id" type="id">0x2563</item>
 </resources>

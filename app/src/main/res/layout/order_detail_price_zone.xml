@@ -5,6 +5,35 @@
     android:background="@android:color/white"
     android:orientation="vertical">
 
+    <!-- 实付款-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/order_fix_content_padding"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/order_detail_payment_type"
+            android:textColor="@color/order_fix_text_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <TextView
+            android:id="@+id/tv_order_payment_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/order_fix_text_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="@dimen/order_fix_content_padding"
+        android:layout_marginRight="@dimen/order_fix_content_padding"
+        android:background="@color/general_boundary_color"/>
+
     <!-- 商品总价-->
     <LinearLayout
         android:layout_width="match_parent"
@@ -93,26 +122,26 @@
         android:layout_marginRight="@dimen/order_fix_content_padding"
         android:background="@color/general_boundary_color"/>
 
-    <!-- 实付款-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/order_fix_content_padding"
-        android:orientation="horizontal">
+        android:gravity="right|center_vertical"
+        android:orientation="vertical"
+        android:padding="@dimen/order_fix_content_padding">
+
         <TextView
-            android:layout_width="0dip"
+            android:id="@+id/order_detail_pay_actually"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/order_actually_pay_string"
-            android:textColor="@color/order_fix_text_color"
+            android:textColor="@color/home_page_general_red"
             android:textSize="@dimen/order_fix_text_size"/>
 
         <TextView
-            android:id="@+id/tv_order_pay_actually"
+            android:id="@+id/order_detail_order_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/order_fix_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="13sp"/>
     </LinearLayout>
 
     <View
@@ -122,14 +151,26 @@
         android:layout_marginRight="@dimen/order_fix_content_padding"
         android:background="@color/general_boundary_color"/>
 
-    <EditText
-        android:id="@+id/order_fix_leave_message"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/et_order_leave_msg"
-        android:background="@null"
-        android:hint="@string/hint_text_leave_msg_prompt"
-        android:padding="@dimen/order_fix_content_padding"
-        android:textColorHint="@color/hint_color"
-        android:textSize="@dimen/order_fix_text_size"/>
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="@dimen/order_fix_content_padding">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/order_detail_leave_msg_title"
+            android:textColor="@color/general_main_title_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <TextView
+            android:id="@+id/order_detail_leave_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="13sp"/>
+    </LinearLayout>
 
 </LinearLayout>

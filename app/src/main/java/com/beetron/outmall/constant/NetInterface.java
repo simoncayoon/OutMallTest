@@ -73,6 +73,43 @@ public class NetInterface {
      */
     public static final String METHON_ADD_SHOPCART_BY_ID = "?m=home&c=app&a=add_to_car";
 
-
+    /**
+     * 获取购物车信息
+     */
     public static final String METHON_GET_SHOPCART = "?m=home&c=app&a=cart";
+
+    /**
+     * 购物车加
+     */
+    public static final String METHON_ADD_SHOPCART = "?m=home&c=app&a=cart_jia";
+
+    /**
+     * 购物车减
+     */
+    public static final String METHON_MINUS_SHOPCART = "?m=home&c=app&a=cart_jian";
+
+    /**
+     * 获取地址列表
+     */
+    public static final String METHON_GET_ADDR_LIST = "?m=home&c=app&a=address_list";
+
+    /**
+     * 新增用户地址
+     */
+    public static final String METHON_ADDR_ADD = "?m=home&c=app&a=address_add";
+
+    /**
+     * 删除地址
+     */
+    public static final String METHON_ADDR_DELETE = "?m=home&c=app&a=address_del";
+
+    /**
+     * 订单填写条件获取
+     */
+    public static final String METHON_ORDER_FIX = "?m=home&c=app&a=order_show";
+
+    /**
+     * 提交订单
+     */
+    public static final String METHON_ORDER_COMMIT = "?m=home&c=app&a=order_save";
 }

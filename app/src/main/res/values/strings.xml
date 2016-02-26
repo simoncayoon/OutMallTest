@@ -57,4 +57,17 @@
     <string name="order_have_accept">已接单</string>
     <string name="order_delivery">配送中</string>
     <string name="order_have_done">已完成</string>
+    <string name="order_fix_addr_name_empty">收货人：无</string>
+    <string name="order_fix_addr_detail_empty">收货地址：无</string>
+    <string name="addr_edit_text_my_addr">我的地址：</string>
+    <string name="prompt_addr_name_empty">请填写姓名</string>
+    <string name="prompt_addr_phone_empty">请填写手机号码</string>
+    <string name="prompt_addr_addr_empty">请填写地址</string>
+    <string name="pay_online">在线支付</string>
+    <string name="pay_delivery">货到付款</string>
+    <string name="prompt_order_commit_faild">结算出错啦！</string>
+    <string name="order_detail_payment_type">支付方式：</string>
+    <string name="order_detail_leave_msg_title">我的留言：</string>
+    <string name="order_detail_order_cancel">取消订单</string>
+    <string name="pay_immediately">立即支付</string>
 </resources>

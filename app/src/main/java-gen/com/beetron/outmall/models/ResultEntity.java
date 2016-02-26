@@ -8,7 +8,7 @@ package com.beetron.outmall.models;
  */
 public class ResultEntity<T> {
 
-    private boolean isSuccess;
+    private Boolean isSuccess;
     private T result;
     private String error;
 

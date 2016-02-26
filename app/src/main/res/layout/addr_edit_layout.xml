@@ -67,6 +67,7 @@
                 android:layout_weight="1"
                 android:background="@null"
                 android:hint="@string/prompt_addr_edit_phone_input"
+                android:inputType="phone"
                 android:textColorHint="@color/hint_color"
                 android:textSize="@dimen/addr_edit_text_size"/>
 
@@ -113,39 +114,39 @@
             android:layout_marginRight="@dimen/addr_edit_content_padding"
             android:background="@color/general_boundary_color"/>
 
-        <!-- 学校编辑-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/addr_edit_content_padding"
-            android:orientation="horizontal">
+        <!--&lt;!&ndash; 学校编辑&ndash;&gt;-->
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="@dimen/addr_edit_content_padding"-->
+            <!--android:orientation="horizontal">-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/addr_edit_text_my_schoolr"
-                android:textColor="@color/addr_edit_text_title_color"
-                android:textSize="@dimen/addr_edit_text_size"/>
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="@string/addr_edit_text_my_schoolr"-->
+                <!--android:textColor="@color/addr_edit_text_title_color"-->
+                <!--android:textSize="@dimen/addr_edit_text_size"/>-->
 
-            <EditText
-                android:id="@+id/et_addr_edit_school"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/addr_edit_content_padding"
-                android:layout_weight="1"
-                android:background="@null"
-                android:hint="@string/prompt_addr_edit_school_input"
-                android:textColorHint="@color/hint_color"
-                android:textSize="@dimen/addr_edit_text_size"/>
+            <!--<EditText-->
+                <!--android:id="@+id/et_addr_edit_school"-->
+                <!--android:layout_width="0dip"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="@dimen/addr_edit_content_padding"-->
+                <!--android:layout_weight="1"-->
+                <!--android:background="@null"-->
+                <!--android:hint="@string/prompt_addr_edit_school_input"-->
+                <!--android:textColorHint="@color/hint_color"-->
+                <!--android:textSize="@dimen/addr_edit_text_size"/>-->
 
-        </LinearLayout>
+        <!--</LinearLayout>-->
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginLeft="@dimen/addr_edit_content_padding"
-            android:layout_marginRight="@dimen/addr_edit_content_padding"
-            android:background="@color/general_boundary_color"/>
+        <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="1px"-->
+            <!--android:layout_marginLeft="@dimen/addr_edit_content_padding"-->
+            <!--android:layout_marginRight="@dimen/addr_edit_content_padding"-->
+            <!--android:background="@color/general_boundary_color"/>-->
 
         <!-- 地址编辑-->
         <LinearLayout
@@ -157,7 +158,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/addr_edit_text_my_schoolr"
+                android:text="@string/addr_edit_text_my_addr"
                 android:textColor="@color/addr_edit_text_title_color"
                 android:textSize="@dimen/addr_edit_text_size"/>
 
@@ -180,6 +181,15 @@
             android:layout_marginLeft="@dimen/addr_edit_content_padding"
             android:layout_marginRight="@dimen/addr_edit_content_padding"
             android:background="@color/general_boundary_color"/>
+
+        <Button
+            android:id="@+id/test_save"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="保存"
+            />
     </LinearLayout>
+
+
 
 </com.beetron.outmall.customview.ReboundScrollView>

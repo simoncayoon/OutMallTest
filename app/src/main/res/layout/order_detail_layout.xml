@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/general_activity_bg"
+    android:orientation="vertical">
+
+    <com.beetron.outmall.customview.ReboundScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/order_detail_order_num"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:padding="@dimen/order_fix_content_padding"
+                android:textColor="@color/general_tab_text_color"
+                android:textSize="14sp"/>
+
+            <include
+                layout="@layout/order_detail_to_addr_layout"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_marginTop="@dimen/order_fix_layout_boundary_size" />
+
+            <ListView
+                android:id="@+id/order_detail_pro_scan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <include
+                layout="@layout/order_detail_price_zone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/order_fix_layout_boundary_size" />
+
+        </LinearLayout>
+
+    </com.beetron.outmall.customview.ReboundScrollView>
+
+    <LinearLayout
+        android:id="@+id/order_detail_btn_zone"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/product_detail_botton_btn_hight"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/order_detail_order_cancel"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/tab_selected_color"
+            android:text="@string/order_detail_order_cancel"
+            android:textColor="@color/general_main_title_color" />
+
+        <Button
+            android:id="@+id/order_detail_order_pay"
+            android:layout_width="0dip"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/home_page_general_red"
+            android:text="@string/pay_immediately"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+</LinearLayout>
