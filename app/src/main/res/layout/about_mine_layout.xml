@@ -14,12 +14,12 @@
         android:paddingLeft="@dimen/about_me_content_padding"
         android:paddingRight="@dimen/about_me_content_padding">
 
-        <ImageView
+        <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/iv_about_me_head_img"
             android:layout_width="@dimen/about_me_head_portrait_size"
             android:layout_height="@dimen/about_me_head_portrait_size"
             android:layout_centerVertical="true"
-            android:src="@mipmap/default_avatar" />
+            android:background="@mipmap/default_avatar" />
 
         <LinearLayout
             android:layout_width="wrap_content"

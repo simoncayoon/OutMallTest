@@ -57,4 +57,5 @@
     <dimen name="about_me_head_name_size">18sp</dimen>
     <dimen name="about_me_head_signatur_size">13sp</dimen>
     <dimen name="about_me_content_padding">15dp</dimen>
+    <dimen name="user_info_portait_size">56dp</dimen>
 </resources>

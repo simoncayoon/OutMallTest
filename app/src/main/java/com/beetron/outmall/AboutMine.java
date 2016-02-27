@@ -8,16 +8,35 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.NetworkImageView;
+import com.beetron.outmall.constant.Constants;
+import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.ViewWithBadge;
+import com.beetron.outmall.models.MemberModel;
+import com.beetron.outmall.models.PostEntity;
+import com.beetron.outmall.models.ResultEntity;
+import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.DisplayMetrics;
+import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TempDataManager;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.shizhefei.view.indicator.FixedIndicatorView;
 import com.shizhefei.view.indicator.Indicator;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by DKY with IntelliJ IDEA.
@@ -30,10 +49,12 @@ public class AboutMine extends BaseFragment {
     private static final String TAG = AboutMine.class.getSimpleName();
     Button testRegist;
     private RelativeLayout headView;
-    private ImageView headImg;
+    private NetworkImageView headImg;
     private TextView headName, headSign;
     private LinearLayout llOrderTab;
     private FixedIndicatorView scanTab;
+
+    private MemberModel memberModel;
 
     @Override
     protected void onCreateView(Bundle savedInstanceState) {
@@ -48,6 +69,82 @@ public class AboutMine extends BaseFragment {
         });
 
         initView();
+
+        try {
+            getUserData();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getUserData() throws Exception {
+        String url = NetInterface.HOST + NetInterface.METHON_GET_USER_INFO;
+        PostEntity postEntity = new PostEntity();
+        postEntity.setToken(Constants.TOKEN_VALUE);
+        postEntity.setUid(Constants.POST_UID_TEST);
+        postEntity.setIsLogin("1");
+        String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
+        }.getType());
+        JSONObject postJson = new JSONObject(postString);
+        JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        DebugFlags.logD(TAG, jsonObject.toString());
+
+                        try {
+                            if (jsonObject.getString("isSuccess").equals("1")) {
+                                JSONArray resultArray = (jsonObject.getJSONObject("result")).getJSONArray("user_info");
+                                if (resultArray.length() > 0) {
+                                    String resultUserInfo = resultArray.getString(0);//默认获取第一
+                                    Gson gson = new Gson();
+                                    memberModel = gson.fromJson(resultUserInfo, new TypeToken<MemberModel>() {
+                                    }.getType());
+                                    setUserInfo();
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        GsonBuilder gsonBuilder = new GsonBuilder();
+                        BooleanSerializer serializer = new BooleanSerializer();
+                        gsonBuilder.registerTypeAdapter(Boolean.class, serializer);
+                        Gson gson = gsonBuilder.create();
+
+                        ResultEntity<JSONObject> resultEntity = gson.fromJson(jsonObject.toString(),
+                                new TypeToken<ResultEntity<JSONObject>>() {
+                                }.getType());
+                        if (resultEntity.isSuccess()) {
+                            try {
+                                JSONObject userDetail = resultEntity.getResult().getJSONArray("user_info").getJSONObject(0);
+                                memberModel = gson.fromJson(userDetail.toString(), new TypeToken<MemberModel>() {
+                                }.getType());
+                                setUserInfo();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+
+            }
+        });
+        NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
+    }
+
+    private void setUserInfo() {
+        headImg.setImageUrl(memberModel.getHeadimg(), NetController.getInstance(getApplicationContext()).getImageLoader());
+        if (memberModel == null) {
+            headName.setText("昵称");
+        } else {
+            headName.setText(memberModel.getNickname());
+        }
+        headSign.setText(TempDataManager.getInstance(getActivity()).getUserSig());
+
     }
 
     private void initView() {
@@ -56,14 +153,19 @@ public class AboutMine extends BaseFragment {
             @Override
             public void onClick(View v) {
                 DebugFlags.logD(TAG, "去个人中心!");
+                startActivity(new Intent(getActivity(), UserInfo.class));
             }
         });
+        headImg = (NetworkImageView) findViewById(R.id.iv_about_me_head_img);
+        headName = (TextView) findViewById(R.id.tv_about_me_title_name);
+        headSign = (TextView) findViewById(R.id.tv_about_me_signature);
 
         llOrderTab = (LinearLayout) findViewById(R.id.ll_to_order_scan);
         llOrderTab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DebugFlags.logD(TAG, "去订单详情！");
+                startActivity(new Intent(getActivity(), OrderMineScan.class));
             }
         });
 

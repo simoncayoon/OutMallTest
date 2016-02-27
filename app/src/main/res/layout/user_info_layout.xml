@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/general_activity_bg"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/ll_portrait_layout"
+        android:layout_width="match_parent"
+        android:layout_height="77dp"
+        android:layout_marginTop="@dimen/order_fix_content_padding"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_weight="1"
+            android:text="@string/user_info_title_portrait"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/user_info_protrait_img"
+            android:layout_width="@dimen/user_info_portait_size"
+            android:layout_height="@dimen/user_info_portait_size"
+            />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_marginRight="@dimen/order_fix_content_padding"
+            android:src="@mipmap/address_ic_arrow"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/general_boundary_color"/>
+
+    <!-- 昵称-->
+    <LinearLayout
+        android:id="@+id/ll_nick_name_layout"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginTop="@dimen/order_fix_content_padding"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_weight="1"
+            android:text="@string/user_info_title_nick"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <TextView
+            android:id="@+id/user_info_nick_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/general_main_title_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_marginRight="@dimen/order_fix_content_padding"
+            android:src="@mipmap/address_ic_arrow"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="@dimen/order_fix_content_padding"
+        android:layout_marginRight="@dimen/order_fix_content_padding"
+        android:background="@color/general_boundary_color"/>
+
+    <!-- 签名-->
+    <LinearLayout
+        android:id="@+id/ll_signature_layout"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_weight="1"
+            android:text="@string/user_info_title_signature"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <TextView
+            android:id="@+id/user_info_signature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/general_main_title_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_marginRight="@dimen/order_fix_content_padding"
+            android:src="@mipmap/address_ic_arrow"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="@dimen/order_fix_content_padding"
+        android:layout_marginRight="@dimen/order_fix_content_padding"
+        android:background="@color/general_boundary_color"/>
+
+    <!-- 性别-->
+    <LinearLayout
+        android:id="@+id/ll_gender_layout"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_weight="1"
+            android:text="@string/user_info_title_gender"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <TextView
+            android:id="@+id/user_info_gender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/general_main_title_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_marginRight="@dimen/order_fix_content_padding"
+            android:src="@mipmap/address_ic_arrow"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="@dimen/order_fix_content_padding"
+        android:layout_marginRight="@dimen/order_fix_content_padding"
+        android:background="@color/general_boundary_color"/>
+
+    <!-- 学校-->
+    <LinearLayout
+        android:id="@+id/ll_school_layout"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_weight="1"
+            android:text="@string/user_info_school"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <TextView
+            android:id="@+id/user_info_school"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/general_main_title_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_marginRight="@dimen/order_fix_content_padding"
+            android:src="@mipmap/address_ic_arrow"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/general_boundary_color"/>
+</LinearLayout>

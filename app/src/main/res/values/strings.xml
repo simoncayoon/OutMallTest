@@ -70,4 +70,9 @@
     <string name="order_detail_leave_msg_title">我的留言：</string>
     <string name="order_detail_order_cancel">取消订单</string>
     <string name="pay_immediately">立即支付</string>
+    <string name="user_info_title_portrait">头像</string>
+    <string name="user_info_title_nick">昵称</string>
+    <string name="user_info_title_signature">签名</string>
+    <string name="user_info_title_gender">性别</string>
+    <string name="user_info_school">学校</string>
 </resources>

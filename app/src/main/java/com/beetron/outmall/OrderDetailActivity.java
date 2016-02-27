@@ -6,15 +6,33 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
+import com.beetron.outmall.constant.Constants;
+import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.models.AddrInfoModel;
+import com.beetron.outmall.models.OrderFixInfo;
 import com.beetron.outmall.models.OrderInfoModel;
 import com.beetron.outmall.models.OrderPostModel;
+import com.beetron.outmall.models.PostEntity;
+import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.models.ShopCartModel;
+import com.beetron.outmall.utils.BooleanSerializer;
+import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by DKY with IntelliJ IDEA.
@@ -26,12 +44,14 @@ public class OrderDetailActivity extends Activity {
 
     public static final String INTENT_KEY_ORDER_DATA = "INTENT_KEY_ORDER_DATA";
     public static final String INTENT_KEY_ADDR_INFO = "INTENT_KEY_ADDR_INFO";
+    private static final String TAG = OrderDetailActivity.class.getSimpleName();
 
     private TextView orderNum;
     private TextView addrTitle, addrDetail;
     private TextView payType, proAmount, serviceFee, freeFee;
     private TextView actualPay, orderDate, leaveMsg;
     private ListView lvProScan;
+    private Button btnCancel, btnPayment;
 
     private OrderPostModel orderInfo;
     private AddrInfoModel addrInfo;
@@ -65,6 +85,21 @@ public class OrderDetailActivity extends Activity {
         leaveMsg.setText(orderInfo.getRemark());
 
         lvProScan.setAdapter(new OrderProAdapter());
+
+        btnCancel = (Button) findViewById(R.id.order_detail_order_cancel);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+        btnPayment = (Button) findViewById(R.id.order_detail_order_pay);
+        btnPayment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private void initView() {
@@ -96,6 +131,44 @@ public class OrderDetailActivity extends Activity {
         }
         addrTitle.setText("收货人：" + addrInfo.getName() + "(" + gender + ") | " + addrInfo.getMobile());
         addrDetail.setText("收货地址：" + addrInfo.getAddress());
+    }
+
+    void orderCancel() throws Exception{
+        String url = NetInterface.HOST + NetInterface.METHON_ORDER_CANCEL;
+        PostEntity postEntity = new PostEntity();
+        postEntity.setToken(Constants.TOKEN_VALUE);
+        postEntity.setIsLogin("1");
+        String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
+        }.getType());
+        JSONObject postJson = new JSONObject(postString);
+//        postJson.put("orderid", orderInfo.getOrder)
+        JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        DebugFlags.logD(TAG, jsonObject.toString());
+//                        GsonBuilder gsonBuilder = new GsonBuilder();
+//                        BooleanSerializer serializer = new BooleanSerializer();
+//                        gsonBuilder.registerTypeAdapter(Boolean.class, serializer);
+//                        Gson gson = gsonBuilder.create();
+//                        ResultEntity<OrderFixInfo> resultEntity = gson.fromJson(jsonObject.toString(),
+//                                new TypeToken<ResultEntity<OrderFixInfo>>() {
+//                                }.getType());
+//                        if (resultEntity.isSuccess()) {
+//                            try {
+//                                initBottonData(resultEntity.getResult());
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+
+            }
+        });
+        NetController.getInstance(this).addToRequestQueue(getCategoryReq, TAG);
     }
 
     private class OrderProAdapter extends BaseAdapter {

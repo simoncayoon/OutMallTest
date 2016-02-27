@@ -112,4 +112,14 @@ public class NetInterface {
      * 提交订单
      */
     public static final String METHON_ORDER_COMMIT = "?m=home&c=app&a=order_save";
+
+    /**
+     * 取消订单
+     */
+    public static final String METHON_ORDER_CANCEL = "?m=home&c=app&a=order_cancel";
+
+    /**
+     * 获取用户信息
+     */
+    public static final String METHON_GET_USER_INFO = "?m=home&c=app&a=uer_info";
 }
