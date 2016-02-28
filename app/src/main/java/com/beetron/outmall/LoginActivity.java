@@ -16,13 +16,16 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
+import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.PostUser;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -33,11 +36,13 @@ import org.json.JSONObject;
  */
 public class LoginActivity extends Activity {
 
+    public static final String FLAG_NAVI_ROOT = "FLAG_NAVI_ROOT";
     private static final String TAG = LoginActivity.class.getSimpleName();
     private EditText etPhoneNum, etPwd;
     private TextView toRegist, toLoginFast, toTakeBack;
 
     private Button btnLogin;
+    private CusNaviView cusNaviView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +53,8 @@ public class LoginActivity extends Activity {
     }
 
     private void initView() {
+
+        initNavi();
         etPhoneNum = (EditText) findViewById(R.id.et_phone_input);
         etPwd = (EditText) findViewById(R.id.et_pwd_input);
 
@@ -91,6 +98,26 @@ public class LoginActivity extends Activity {
         });
     }
 
+    private void initNavi() {
+        cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
+        cusNaviView.setNaviTitle(getResources().getString(R.string.navi_title_login));
+        cusNaviView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
+
+        ((Button) cusNaviView.getLeftBtn()).setText(getIntent().getStringExtra(FLAG_NAVI_ROOT));//设置返回标题
+
+        cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
+            @Override
+            public void leftBtnListener() {
+                finish();
+            }
+
+            @Override
+            public void rightBtnListener() {
+
+            }
+        });
+    }
+
     private boolean checkInput() {
         if(TextUtils.isEmpty(etPhoneNum.getText().toString())){
             Toast.makeText(this, getResources().getString(R.string.prompt_phone_num_empty), Toast.LENGTH_SHORT).show();
@@ -119,6 +146,18 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         DebugFlags.logD(TAG, jsonObject.toString());
+                        try {
+                            if (jsonObject.getString("isSuccess").equals("1")){
+                                JSONObject jsonResult = jsonObject.getJSONObject("resukt");
+                                TempDataManager.getInstance(getApplicationContext()).setLoginResult(jsonResult.getJSONObject("user").getString("uid"),
+                                        jsonResult.getJSONObject("user").getString("uname"),
+                                        jsonResult.getJSONObject("user").getString("tel") );
+                                finish();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
 
                     }
                 }, new Response.ErrorListener() {
@@ -129,6 +168,4 @@ public class LoginActivity extends Activity {
         });
         NetController.getInstance(this).addToRequestQueue(getCategoryReq, TAG);
     }
-
-
 }

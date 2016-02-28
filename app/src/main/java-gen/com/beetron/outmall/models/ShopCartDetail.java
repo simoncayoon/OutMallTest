@@ -9,7 +9,7 @@ import android.os.Parcelable;
  * Date: 2016/2/25.
  * Time: 15:26.
  */
-public class ShopCartDetail implements Parcelable{
+public class ShopCartDetail implements Parcelable {
     public static final Parcelable.Creator<ShopCartDetail> CREATOR = new Parcelable.Creator<ShopCartDetail>() {
         public ShopCartDetail createFromParcel(Parcel in) {
             return new ShopCartDetail(in);
@@ -19,24 +19,28 @@ public class ShopCartDetail implements Parcelable{
             return new ShopCartDetail[size];
         }
     };
+
+    private String fid;
     private String title;
     private String img;
     private String jianshu;
-    private String price1;
-    private String price2;
+    private Double price1;
+    private Double price2;
     private String cuxiao;
     private String xiangou;
+    private Double tejia;
+    private String cxlx;
 
-    public ShopCartDetail(){
+    public ShopCartDetail() {
 
     }
 
-    private ShopCartDetail(Parcel in){
+    private ShopCartDetail(Parcel in) {
         this.title = in.readString();
         this.img = in.readString();
         this.jianshu = in.readString();
-        this.price1 = in.readString();
-        this.price2 = in.readString();
+        this.price1 = in.readDouble();
+        this.price2 = in.readDouble();
         this.cuxiao = in.readString();
         this.xiangou = in.readString();
     }
@@ -66,19 +70,19 @@ public class ShopCartDetail implements Parcelable{
         this.jianshu = jianshu;
     }
 
-    public String getPrice1() {
+    public Double getPrice1() {
         return price1;
     }
 
-    public void setPrice1(String price1) {
+    public void setPrice1(Double price1) {
         this.price1 = price1;
     }
 
-    public String getPrice2() {
+    public Double getPrice2() {
         return price2;
     }
 
-    public void setPrice2(String price2) {
+    public void setPrice2(Double price2) {
         this.price2 = price2;
     }
 
@@ -98,6 +102,31 @@ public class ShopCartDetail implements Parcelable{
         this.xiangou = xiangou;
     }
 
+    public String getFid() {
+        return fid;
+    }
+
+    public void setFid(String fid) {
+
+        this.fid = fid;
+    }
+
+    public Double getTejia() {
+        return tejia;
+    }
+
+    public void setTejia(Double tejia) {
+        this.tejia = tejia;
+    }
+
+    public String getCxlx() {
+        return cxlx;
+    }
+
+    public void setCxlx(String cxlx) {
+        this.cxlx = cxlx;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -108,8 +137,8 @@ public class ShopCartDetail implements Parcelable{
         dest.writeString(this.title);
         dest.writeString(this.img);
         dest.writeString(this.jianshu);
-        dest.writeString(this.price1);
-        dest.writeString(this.price2);
+        dest.writeDouble(this.price1);
+        dest.writeDouble(this.price2);
         dest.writeString(this.cuxiao);
         dest.writeString(this.xiangou);
     }

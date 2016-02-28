@@ -1,41 +1,48 @@
 package com.beetron.outmall;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
 
 import com.beetron.outmall.adapter.ProSummaryAdapter;
 import com.beetron.outmall.customview.BadgeView;
+import com.beetron.outmall.customview.CusNaviView;
+import com.beetron.outmall.customview.CustomDialog;
 import com.beetron.outmall.customview.ViewWithBadge;
+import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.DisplayMetrics;
+import com.beetron.outmall.utils.TempDataManager;
 import com.shizhefei.view.indicator.Indicator;
 import com.shizhefei.view.indicator.IndicatorViewPager;
 import com.shizhefei.view.viewpager.SViewPager;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener , ProSummaryAdapter.ShopCartCountListener{
+        implements NavigationView.OnNavigationItemSelectedListener, ProSummaryAdapter.ShopCartCountListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-
+    DrawerLayout drawer;
     private IndicatorViewPager mIndicatorViewPager;
     private SViewPager viewPager;
+    private CusNaviView cusNaviView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +54,33 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initView() {
+        initNavi();
         initDrawable();
         initIndicator();
+    }
+
+    private void initNavi() {
+        cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
+        cusNaviView.setBtn(CusNaviView.PUT_LEFT, 28, 28);
+        cusNaviView.setNaviTitle("首页");
+        ((Button) cusNaviView.getLeftBtn()).setBackgroundResource(R.mipmap.nav_ic_menu);
+        cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
+            @Override
+            public void leftBtnListener() {
+                drawer.openDrawer(GravityCompat.START);
+            }
+
+            @Override
+            public void rightBtnListener() {
+                ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                        instantiateItem(mIndicatorViewPager.getViewPager(), 2);
+                try {
+                    shopCart.deleteShopCart();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -58,29 +90,61 @@ public class MainActivity extends AppCompatActivity
         viewPager = (SViewPager) findViewById(R.id.tabmain_viewPager);
         Indicator indicator = (Indicator) findViewById(R.id.tabmain_indicator);
         mIndicatorViewPager = new IndicatorViewPager(indicator, viewPager);
-        mIndicatorViewPager.setAdapter(new MyAdapter(getSupportFragmentManager()));
+        final MyAdapter indicAdapter = new MyAdapter(getSupportFragmentManager());
+        mIndicatorViewPager.setAdapter(indicAdapter);
         // 禁止viewpager的滑动事件
         viewPager.setCanScroll(false);
         // 设置viewpager保留界面不重新加载的页面数量
         viewPager.setOffscreenPageLimit(4);
+        mIndicatorViewPager.setCurrentItem(0, false);
+        indicator.setOnItemSelectListener(new Indicator.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(View selectItemView, int select, int preSelect) {
+                cusNaviView.setNaviTitle(indicAdapter.tabNames[select]);
+                mIndicatorViewPager.setCurrentItem(select, false);
+
+                if (select == 2){//添加购物车删除按钮
+                    cusNaviView.setBtn(CusNaviView.PUT_RIGHT, 23, 23);
+                    cusNaviView.getRightBtn().setBackgroundResource(R.mipmap.nav_ic_delete);
+                    checkIsLogin();
+                } else {
+                    cusNaviView.removeBtn(CusNaviView.PUT_RIGHT);
+                }
+            }
+        });
         setShopCart();
     }
 
+    void checkIsLogin(){
+        if (!TempDataManager.getInstance(this).isLogin()){
+            final CustomDialog.Builder builder = new CustomDialog.Builder(this);
+            builder.setTitle(R.string.prompt);
+            builder.setMessage(R.string.shop_cart_login_prompt);
+            builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    intent.putExtra(LoginActivity.FLAG_NAVI_ROOT, getResources().getString(R.string.framework_navi_shope_cart));
+                    startActivity(intent);
+                    dialog.dismiss();
+                }
+            });
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create().show();
+        }
+    }
 
 
     /**
      * 设置抽屉
      */
     private void initDrawable() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -122,28 +186,37 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void notifyCountChange(String fid) {
-        setShopCart();
-        HomeFragment firstFragment = (HomeFragment)mIndicatorViewPager.getAdapter().getPagerAdapter().
-                instantiateItem(mIndicatorViewPager.getViewPager(), 0);
-        firstFragment.updateMenuItem(fid);
-    }
+    public void notifyCountChange() {
+//        setShopCart();
 
-    private void setShopCart() {
         DebugFlags.logD(TAG, "触发了数据更新！");
         try {
-            ViewWithBadge shapCartTabView = (ViewWithBadge)(mIndicatorViewPager.getIndicatorView().
+            ViewWithBadge shapCartTabView = (ViewWithBadge) (mIndicatorViewPager.getIndicatorView().
                     getItemView(2).findViewById(R.id.tab_text_view));//获取到购物车的视图
             shapCartTabView.setBadge(BadgeView.POSITION_TOP_RIGHT,
                     DBHelper.getInstance(MainActivity.this).getShopCartCount(), 6, 0);
+
+            HomeFragment firstFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                    instantiateItem(mIndicatorViewPager.getViewPager(), 0);
+
+            List<ProSummary> shopCart = DBHelper.getInstance(getApplicationContext()).getShopCartList();
+            for (ProSummary item : shopCart){
+                firstFragment.updateMenuItem(item.getFid());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+    }
+
+    private void setShopCart() {
+
     }
 
     private class MyAdapter extends IndicatorViewPager.IndicatorFragmentPagerAdapter {
         Resources rsc = getResources();
-        private String[] tabNames = {rsc.getString(R.string.framework_navi_home_page), rsc.getString(R.string.framework_navi_time_limit), rsc.getString(R.string.framework_navi_shope_cart),
+        public final String[] tabNames = {rsc.getString(R.string.framework_navi_home_page), rsc.getString(R.string.framework_navi_time_limit), rsc.getString(R.string.framework_navi_shope_cart),
                 rsc.getString(R.string.framework_navi_mine)};
         private int[] tabIcons = new int[]{R.drawable.tab_home_page_icon_selector, R.drawable.tab_sub_icon_selector, R.drawable.tab_shope_cart_selector,
                 R.drawable.tab_mine_seletor};

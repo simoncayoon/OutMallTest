@@ -6,6 +6,10 @@ import com.beetron.outmall.OutMallApp;
 import com.beetron.outmall.models.DaoSession;
 import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.models.ProSummaryDao;
+import com.beetron.outmall.models.ShopCartModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.greenrobot.dao.query.QueryBuilder;
 
@@ -38,23 +42,60 @@ public class DBHelper {
         return instance;
     }
 
-    public Long addShopCart(ProSummary proSummary){
+    public Long addShopCart(ProSummary proSummary) {
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
         return proSummaryDao.insert(proSummary);
     }
 
-    public int getShopCartCount(){
+    public int getShopCartCount() {
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
-        return qb.list().size();
+        int count = 0;
+        for (ProSummary proSummary : qb.list()){
+            count += proSummary.getCount();
+        }
+        return count;
     }
 
-    public int getShopCartCounById(String flag, String proId){
+    public int getShopCartCounById(String flag, String proId) {
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
         if (flag.equals(FLAG_PROSUMMARY_BY_SID)) {
             qb.where(ProSummaryDao.Properties.Sid.eq(proId));
-        } else if(flag.equals(FLAG_PROSUMMARY_BY_FID)){
+        } else if (flag.equals(FLAG_PROSUMMARY_BY_FID)) {
             qb.where(ProSummaryDao.Properties.Fid.eq(proId));
         }
-        return qb.list().size();
+
+        int count = 0;
+        for (ProSummary proSummary : qb.list()){
+            count += proSummary.getCount();
+        }
+        return count;
+    }
+
+    public synchronized void saveShopLocal(List<ShopCartModel> dataShopCart) {
+        List<ProSummary> dataList = new ArrayList<ProSummary>();
+        for (ShopCartModel shopCartModel : dataShopCart) {
+            ProSummary proSummary = new ProSummary();
+            proSummary.setFid(shopCartModel.getGs().getFid());
+            proSummary.setSid(shopCartModel.getSid());
+            proSummary.setXl(0);
+            proSummary.setPrice1(shopCartModel.getGs().getPrice1());
+            proSummary.setPrice2(shopCartModel.getGs().getPrice2());
+            proSummary.setTitle(shopCartModel.getGs().getTitle());
+            proSummary.setCount(shopCartModel.getNum());
+            proSummary.setImg(shopCartModel.getGs().getImg());
+            proSummary.setJianshu(shopCartModel.getGs().getJianshu());
+
+            dataList.add(proSummary);
+        }
+
+        QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
+
+        proSummaryDao.deleteAll();
+        proSummaryDao.insertInTx(dataList);
+    }
+
+    public List<ProSummary> getShopCartList() {
+        QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
+        return qb.list();
     }
 }

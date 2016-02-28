@@ -14,6 +14,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
+import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.models.PostUser;
 import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.utils.DebugFlags;
@@ -38,6 +39,7 @@ public class RegisteActivity extends Activity {
 
     private String registNum = "";
     private String verifyCode = "";
+    private CusNaviView cusNaviView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,8 @@ public class RegisteActivity extends Activity {
     }
 
     private void initView() {
+
+        initNavi();
         etPhoneNum = (EditText) findViewById(R.id.et_phone_input);
         etVerify = (EditText) findViewById(R.id.et_verify_code_input);
         etPwd = (EditText) findViewById(R.id.et_pwd_input);
@@ -88,6 +92,26 @@ public class RegisteActivity extends Activity {
             }
         });
 
+    }
+
+    private void initNavi() {
+        cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
+        cusNaviView.setNaviTitle(getResources().getString(R.string.navi_title_user_regist));
+        cusNaviView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
+
+        ((Button) cusNaviView.getLeftBtn()).setText(getResources().getString(R.string.navi_title_login));//设置返回标题
+
+        cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
+            @Override
+            public void leftBtnListener() {
+                finish();
+            }
+
+            @Override
+            public void rightBtnListener() {
+
+            }
+        });
     }
 
     /**

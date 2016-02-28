@@ -4,12 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.beetron.outmall.customview.NavigationView
+    <com.beetron.outmall.customview.CusNaviView
         android:id="@+id/general_navi_id"
         android:layout_width="match_parent"
         android:layout_height="@dimen/general_navi_height">
 
-    </com.beetron.outmall.customview.NavigationView>
+    </com.beetron.outmall.customview.CusNaviView>
 
     <!-- 手机号-->
     <LinearLayout

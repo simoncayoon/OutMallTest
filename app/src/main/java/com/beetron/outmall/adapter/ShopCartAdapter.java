@@ -93,7 +93,7 @@ public class ShopCartAdapter extends BaseAdapter {
         viewHolder.itemSalsePrice.setText(SpanTextUtil.setSpanSize(0, 1, "￥" + shopcartItem.getGs().getPrice2(), 10));
         viewHolder.itemPrimaryPrice.setText("￥" + shopcartItem.getGs().getPrice1());
         viewHolder.itemPrimaryPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-        viewHolder.itemVolume.setText(shopcartItem.getNum());
+        viewHolder.itemVolume.setText(String.valueOf(shopcartItem.getNum()));
         viewHolder.imgView.setImageUrl(shopcartItem.getGs().getImg(), NetController.getInstance(mContext.getActivity()).getImageLoader());
         viewHolder.itemCountAdd.setOnClickListener(new OnProCountChangeListener(ProCountChange.FLAG_ADD, position));
         viewHolder.itemCountMinus.setOnClickListener(new OnProCountChangeListener(ProCountChange.FLAG_MINUS, position));

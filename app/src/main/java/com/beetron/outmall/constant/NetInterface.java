@@ -122,4 +122,9 @@ public class NetInterface {
      * 获取用户信息
      */
     public static final String METHON_GET_USER_INFO = "?m=home&c=app&a=uer_info";
+
+    /**
+     * 删除内容
+     */
+    public static final String METHON_SHOP_CART_PRO_DELETE_BY_IDS = "?m=home&c=app&a=clear_chose_cart";
 }

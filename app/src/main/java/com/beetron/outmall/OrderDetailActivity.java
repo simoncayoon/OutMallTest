@@ -17,6 +17,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
+import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.models.AddrInfoModel;
 import com.beetron.outmall.models.OrderFixInfo;
 import com.beetron.outmall.models.OrderInfoModel;
@@ -56,6 +57,7 @@ public class OrderDetailActivity extends Activity {
     private OrderPostModel orderInfo;
     private AddrInfoModel addrInfo;
     private OrderInfoModel orderModel;
+    private CusNaviView cusNaviView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +105,9 @@ public class OrderDetailActivity extends Activity {
     }
 
     private void initView() {
+
+        initNavi();
+
         addrTitle = (TextView) findViewById(R.id.addr_info_item_title);
         addrDetail = (TextView) findViewById(R.id.addr_info_item_detail);
         orderNum = (TextView) findViewById(R.id.order_detail_order_num);
@@ -117,6 +122,25 @@ public class OrderDetailActivity extends Activity {
 
         lvProScan = (ListView) findViewById(R.id.order_detail_pro_scan);
 
+    }
+
+    private void initNavi() {
+        cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
+        cusNaviView.setNaviTitle(getResources().getString(R.string.navi_title_order_fix));
+        cusNaviView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
+        ((Button) cusNaviView.getLeftBtn()).setText(getResources().getString(R.string.navi_title_waiting_pay));//设置返回标题
+
+        cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
+            @Override
+            public void leftBtnListener() {
+                finish();
+            }
+
+            @Override
+            public void rightBtnListener() {
+
+            }
+        });
     }
 
     private void setAddrInfo() {

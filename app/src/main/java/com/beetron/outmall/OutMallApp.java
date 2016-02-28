@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.beetron.outmall.models.DaoMaster;
 import com.beetron.outmall.models.DaoSession;
+import com.beetron.outmall.utils.TempDataManager;
 
 /**
  * Created by DKY with IntelliJ IDEA.

@@ -23,7 +23,7 @@ public class ShopCartModel implements Parcelable {
     private String id;
     private String sid;
     private String uid;
-    private String num;
+    private Integer num;
     private ShopCartDetail gs;
     private boolean isSelect;
 
@@ -35,7 +35,7 @@ public class ShopCartModel implements Parcelable {
         this.id = in.readString();
         this.uid = in.readString();
         this.sid = in.readString();
-        this.num = in.readString();
+        this.num = in.readInt();
         this.isSelect = in.readByte() == 1 ? true : false;
         this.gs = in.readParcelable(ShopCartDetail.class.getClassLoader());
     }
@@ -74,11 +74,11 @@ public class ShopCartModel implements Parcelable {
         this.uid = uid;
     }
 
-    public String getNum() {
+    public Integer getNum() {
         return num;
     }
 
-    public void setNum(String num) {
+    public void setNum(Integer num) {
         this.num = num;
     }
 
@@ -100,7 +100,7 @@ public class ShopCartModel implements Parcelable {
         dest.writeString(id);
         dest.writeString(uid);
         dest.writeString(sid);
-        dest.writeString(num);
+        dest.writeInt(num);
         dest.writeByte(this.isSelect ? (byte) 1 : (byte) 0);
         dest.writeParcelable(gs, PARCELABLE_WRITE_RETURN_VALUE);
     }

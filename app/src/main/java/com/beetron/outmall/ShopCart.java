@@ -27,6 +27,7 @@ import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.models.ShopCartModel;
 import com.beetron.outmall.models.ShopCartResult;
+import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
 import com.google.gson.Gson;
@@ -34,6 +35,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,6 +52,7 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
     private TextView tvAmount;
     private Button btnAccount;
     private List<ShopCartModel> dataShopCart;
+    private List<Integer> indexCache;
 
     private ShopCartResult shopcartResult;
     private ShopCartAdapter shopCartAdapter;
@@ -62,13 +65,17 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
 
         initView();
         try {
-            reqShopcart();
+            updateAmount(0.00);//初始化总价
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void initData() {
+
+        //通知更新
+        ((MainActivity) getActivity()).notifyCountChange();
+
         try {
             updateAmount(0.00);//初始化总价
         } catch (Exception e) {
@@ -78,7 +85,7 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
         lvShopcart.setAdapter(shopCartAdapter);
     }
 
-    private void reqShopcart() throws Exception {
+    public void reqShopcart() throws Exception {
         String url = NetInterface.HOST + NetInterface.METHON_GET_SHOPCART;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
@@ -98,6 +105,8 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
                                 }.getType());
                         shopcartResult = resultEntity.getResult();
                         dataShopCart = shopcartResult.getList();
+
+                        DBHelper.getInstance(getApplicationContext()).saveShopLocal(dataShopCart);
                         initData();
                     }
                 }, new Response.ErrorListener() {
@@ -201,8 +210,8 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
                     public void onResponse(JSONObject jsonObject) {
                         DebugFlags.logD(TAG, jsonObject.toString());
                         Gson gson = new Gson();
-                        ResultEntity<String> resultEntity = gson.fromJson(jsonObject.toString(),
-                                new TypeToken<ResultEntity<String>>() {
+                        ResultEntity<Integer> resultEntity = gson.fromJson(jsonObject.toString(),
+                                new TypeToken<ResultEntity<Integer>>() {
                                 }.getType());
                         if (resultEntity.isSuccess()) {
 
@@ -233,5 +242,106 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
 
     public List<ShopCartModel> getDataShopCart() {
         return dataShopCart;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
+        try {
+            reqShopcart();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        }
+    }
+
+    public void deleteShopCart() throws Exception {
+
+        String url = NetInterface.HOST + NetInterface.METHON_SHOP_CART_PRO_DELETE_BY_IDS;
+        PostEntity postEntity = new PostEntity();
+        postEntity.setToken(Constants.TOKEN_VALUE);
+        postEntity.setUid(Constants.POST_UID_TEST);
+        postEntity.setIsLogin("1");
+        String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
+        }.getType());
+        JSONObject postJson = new JSONObject(postString);
+        if (generateDot().equals("")) {//没有选择内容
+            Toast.makeText(getActivity(), getResources().getString(R.string.prompt_at_least_one), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        postJson.put("sid", generateDot());
+        JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        DebugFlags.logD(TAG, jsonObject.toString());
+                        Gson gson = new Gson();
+                        ResultEntity<ShopCartResult> resultEntity = gson.fromJson(jsonObject.toString(),
+                                new TypeToken<ResultEntity<ShopCartResult>>() {
+                                }.getType());
+                        if (resultEntity.isSuccess()){
+                            DebugFlags.logD(TAG, "成功");
+                            //本地数据库删除
+                            for (int index : indexCache) {
+                                DBHelper.getInstance(getActivity()).
+                                dataShopCart.remove(index);
+                            }
+                            indexCache.clear();//清空当前选择的内容
+                            shopCartAdapter.notifyDataSetChanged();
+                        } else {
+                            DebugFlags.logD(TAG, "失败");
+                        }
+
+                        initData();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+
+            }
+        });
+        NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
+
+    }
+
+    /**
+     * 生成逗号分隔的字符串
+     *
+     * @return
+     */
+    String generateDot() {
+
+        indexCache = new ArrayList<Integer>();
+        String generateStr = "";
+        StringBuilder sb = new StringBuilder(generateStr);
+
+        List<ShopCartModel> selectedList = new ArrayList<ShopCartModel>();
+
+        for (int index = 0; index < dataShopCart.size(); index++) {//筛选选择的购物车项目
+            ShopCartModel shopCartItem = dataShopCart.get(index);
+            if (shopCartItem.isSelect()) {
+                indexCache.add(index);
+                selectedList.add(shopCartItem);
+            }
+        }
+
+        if (selectedList.size() == 0){
+            return "";
+        }
+
+        for (int index = 0; index < selectedList.size(); index++) {//添加逗号分隔符
+            ShopCartModel shopCartItem = selectedList.get(index);
+            if (shopCartItem.isSelect()) {
+                sb.append(selectedList.get(index).getSid());
+            }
+            if (index == selectedList.size() - 1) {
+                break;
+            }
+            sb.append(",");
+        }
+        DebugFlags.logD(TAG, "生成的逗号字符串 ：" + sb.toString());
+        return sb.toString();
     }
 }

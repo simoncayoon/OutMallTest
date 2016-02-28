@@ -17,15 +17,15 @@ public class ProSummary {
     private Double price1;
     private Double price2;
     private Integer xl;
+    private Integer count;
 
     // KEEP FIELDS - put your custom fields here
-    private int count = 0;
     // KEEP FIELDS END
 
     public ProSummary() {
     }
 
-    public ProSummary(String sid, String fid, String title, String jianshu, String img, Double price1, Double price2, Integer xl) {
+    public ProSummary(String sid, String fid, String title, String jianshu, String img, Double price1, Double price2, Integer xl, Integer count) {
         this.sid = sid;
         this.fid = fid;
         this.title = title;
@@ -34,6 +34,7 @@ public class ProSummary {
         this.price1 = price1;
         this.price2 = price2;
         this.xl = xl;
+        this.count = count;
     }
 
     public String getSid() {
@@ -100,13 +101,17 @@ public class ProSummary {
         this.xl = xl;
     }
 
-    // KEEP METHODS - put your custom methods here
-
-    public int getCount() {
+    public Integer getCount() {
         return count;
     }
 
     public void setCount(int count) {
+        this.count = count;
+    }
+
+    // KEEP METHODS - put your custom methods here
+
+    public void setCount(Integer count) {
         this.count = count;
     }
     // KEEP METHODS END

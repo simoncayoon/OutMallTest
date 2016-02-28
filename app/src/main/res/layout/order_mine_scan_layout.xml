@@ -4,14 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.shizhefei.view.indicator.ScrollIndicatorView
+    <com.shizhefei.view.indicator.FixedIndicatorView
+        android:id="@+id/indicate_order_status_bar"
         android:layout_width="match_parent"
         android:layout_height="56dp">
-    </com.shizhefei.view.indicator.ScrollIndicatorView>
+    </com.shizhefei.view.indicator.FixedIndicatorView>
 
-    <com.handmark.pulltorefresh.library.PullToRefreshListView
+    <com.shizhefei.view.viewpager.SViewPager
+        android:id="@+id/viewpager_order_data_with_status"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.handmark.pulltorefresh.library.PullToRefreshListView>
+    </com.shizhefei.view.viewpager.SViewPager>
 </LinearLayout>

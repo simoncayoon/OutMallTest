@@ -11,6 +11,9 @@ public class TempDataManager {
     public static final String TAG = TempDataManager.class.getSimpleName();
     public static final String SP_USER_SIGNATURE = "SP_USER_SIGNATURE";
     private static final String SP_UID = "SP_UID";
+    private static final String SP_IS_LOGIN = "SP_IS_LOGIN";
+    private static final String SP_USER_NAME = "SP_USER_NAME";
+    private static final String SP_USER_TEL = "SP_USER_TEL";
     private static TempDataManager instance = null;
     private Context mContext = null;
     private SharedPreferences sp = null;
@@ -54,5 +57,19 @@ public class TempDataManager {
 
     public void setUserSig(String backSring) {
         mEditor.putString(SP_USER_SIGNATURE, backSring);
+    }
+
+    public boolean isLogin() {
+        return sp.getString(SP_IS_LOGIN, "").equals("1") ? true : false;
+    }
+
+    public void setLoginResult(String uid, String uname, String utel) {
+        mEditor.putString(SP_UID, uid);
+        mEditor.putString(SP_USER_NAME, uname);
+        mEditor.putString(SP_USER_TEL, utel);
+        mEditor.putString(SP_IS_LOGIN, "1");
+        if (mEditor.commit()) {
+            DebugFlags.logD(TAG, "登录状态写入！");
+        }
     }
 }

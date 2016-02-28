@@ -8,6 +8,7 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -25,6 +26,8 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.BadgeView;
+import com.beetron.outmall.customview.CusNaviView;
+import com.beetron.outmall.customview.ViewWithBadge;
 import com.beetron.outmall.models.AddrInfoModel;
 import com.beetron.outmall.models.OrderFixInfo;
 import com.beetron.outmall.models.OrderInfoModel;
@@ -66,6 +69,7 @@ public class OrderFixActivity extends Activity {
     private ScrollIndicatorView proScanner;
     private RadioGroup paymentGroup;
     private Button btnCommitOrder;
+    private CusNaviView cusNaviView;
 
     private AddrInfoModel addrInfo;
     private OrderFixInfo orderFixInfo;
@@ -128,6 +132,8 @@ public class OrderFixActivity extends Activity {
     }
 
     private void initView() {
+
+        initNavi();
         llToAddrMng = (LinearLayout) findViewById(R.id.ll_order_fix_to_address);
 
         llToAddrMng.setOnClickListener(new View.OnClickListener() {
@@ -176,6 +182,25 @@ public class OrderFixActivity extends Activity {
                 }
             }
         });
+    }
+
+    private void initNavi() {
+        cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
+        cusNaviView.setNaviTitle(getResources().getString(R.string.navi_title_order_fix));
+        cusNaviView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
+        ((Button) cusNaviView.getLeftBtn()).setText(getResources().getString(R.string.navi_title_shop_cart));//设置返回标题
+
+       cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
+           @Override
+           public void leftBtnListener() {
+               finish();
+           }
+
+           @Override
+           public void rightBtnListener() {
+
+           }
+       });
     }
 
     @Override

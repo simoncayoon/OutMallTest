@@ -1,6 +1,7 @@
 package com.beetron.outmall.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,16 +14,19 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
+import com.beetron.outmall.LoginActivity;
 import com.beetron.outmall.R;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.BadgeView;
+import com.beetron.outmall.customview.CustomDialog;
 import com.beetron.outmall.customview.ViewWithBadge;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -45,7 +49,7 @@ public class ProSummaryAdapter extends BaseAdapter {
 
     private ShopCartCountListener callBack = new ShopCartCountListener() {
         @Override
-        public void notifyCountChange(String fid) {
+        public void notifyCountChange() {
 
         }
     };
@@ -141,7 +145,7 @@ public class ProSummaryAdapter extends BaseAdapter {
     }
 
     public interface ShopCartCountListener {
-        public void notifyCountChange(String fid);
+        public void notifyCountChange();
     }
 
     class ViewHolder {
@@ -161,19 +165,25 @@ public class ProSummaryAdapter extends BaseAdapter {
         @Override
         public void onClick(View v) {
 
-            ProSummary clickItem = proSummaryList.get(position);
-            if (DBHelper.getInstance(mContext).addShopCart(clickItem) != -1L) {
-                clickItem.setCount(clickItem.getCount() + 1);
-                notifyDataSetChanged();
-                //通知更新数据
-                countListener.notifyCountChange(clickItem.getFid());
-                try {
-                    addShopCart(position);
-                } catch (Exception e) {
-                    e.printStackTrace();
+            if (TempDataManager.getInstance(mContext.getApplicationContext()).isLogin()) {
+                ProSummary clickItem = proSummaryList.get(position);
+                if (DBHelper.getInstance(mContext).addShopCart(clickItem) != -1L) {
+                    clickItem.setCount(clickItem.getCount() + 1);
+                    notifyDataSetChanged();
+                    //通知更新数据
+                    countListener.notifyCountChange();
+                    try {
+                        addShopCart(position);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    DebugFlags.logD(TAG, "添加购物车数据库失败！");
                 }
             } else {
-                DebugFlags.logD(TAG, "添加购物车数据库失败！");
+                Intent intent = new Intent(mContext, LoginActivity.class);
+                intent.putExtra(LoginActivity.FLAG_NAVI_ROOT, mContext.getResources().getString(R.string.framework_navi_home_page));
+                mContext.startActivity(intent);
             }
         }
     }

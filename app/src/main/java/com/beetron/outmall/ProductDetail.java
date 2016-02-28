@@ -22,7 +22,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.BadgeView;
-import com.beetron.outmall.customview.NavigationView;
+import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.customview.ViewWithBadge;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ProDetail;
@@ -52,7 +52,7 @@ public class ProductDetail extends Activity {
 
     public static final String KEY_PRODUCT_ID = "KEY_PRODUCT_ID";
     private static final String TAG = ProductDetail.class.getSimpleName();
-    NavigationView navigationView;
+    CusNaviView navigationView;
     Html.ImageGetter imgGetter = new Html.ImageGetter() {
         public Drawable getDrawable(String source) {
             Drawable drawable = null;
@@ -235,17 +235,17 @@ public class ProductDetail extends Activity {
     }
 
     private void initNavi() {
-        navigationView = (NavigationView) findViewById(R.id.general_navi_id);
+        navigationView = (CusNaviView) findViewById(R.id.general_navi_id);
         navigationView.setNaviTitle(getResources().getString(R.string.product_detail));
-        navigationView.setBtn(NavigationView.PUT_BACK_ENABLE, NavigationView.NAVI_WRAP_CONTENT, 56);
+        navigationView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
         ((Button) navigationView.getLeftBtn()).setText(getResources().getString(R.string.framework_navi_home_page));//设置返回标题
 
-        navigationView.setBtnView(NavigationView.PUT_RIGHT, new ViewWithBadge(this), 25, 25);
+        navigationView.setBtnView(CusNaviView.PUT_RIGHT, new ViewWithBadge(this), 25, 25);
         navigationView.getRightBtn().setBackgroundResource(R.mipmap.nav_ic_shopping);
         ((ViewWithBadge) navigationView.getRightBtn()).setBadge(BadgeView.POSITION_TOP_RIGHT, inShopCart
                 , 6, 0);//初始化
         navigationView.setGravity(Gravity.CENTER);
-        navigationView.setNaviBtnListener(new NavigationView.NaviBtnListener() {
+        navigationView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
             @Override
             public void leftBtnListener() {
                 finish();

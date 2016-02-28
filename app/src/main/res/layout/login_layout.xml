@@ -4,12 +4,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.beetron.outmall.customview.NavigationView
+    <com.beetron.outmall.customview.CusNaviView
         android:id="@+id/general_navi_id"
         android:layout_width="match_parent"
         android:layout_height="@dimen/general_navi_height">
 
-    </com.beetron.outmall.customview.NavigationView>
+    </com.beetron.outmall.customview.CusNaviView>
 
     <EditText
         android:id="@+id/et_phone_input"
@@ -59,7 +59,7 @@
             android:layout_weight="1"
             android:background="@null"
             android:gravity="left|center_vertical"
-            android:text="@string/regist_immediately"
+            android:text="@string/pwd_forget"
             android:textColor="@color/general_tab_text_color"
             android:textSize="@dimen/login_bottom_text_size"/>
 

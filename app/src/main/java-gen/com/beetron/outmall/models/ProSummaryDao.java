@@ -38,7 +38,8 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
                 "\"IMG\" TEXT," + // 4: img
                 "\"PRICE1\" REAL," + // 5: price1
                 "\"PRICE2\" REAL," + // 6: price2
-                "\"XL\" INTEGER);"); // 7: xl
+                "\"XL\" INTEGER," + // 7: xl
+                "\"COUNT\" INTEGER);"); // 8: count
     }
 
     /** Drops the underlying database table. */
@@ -91,6 +92,11 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
         if (xl != null) {
             stmt.bindLong(8, xl);
         }
+
+        Integer count = entity.getCount();
+        if (count != null) {
+            stmt.bindLong(9, count);
+        }
     }
 
     /** @inheritdoc */
@@ -110,7 +116,8 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // img
             cursor.isNull(offset + 5) ? null : cursor.getDouble(offset + 5), // price1
             cursor.isNull(offset + 6) ? null : cursor.getDouble(offset + 6), // price2
-            cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7) // xl
+            cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7), // xl
+            cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8) // count
         );
         return entity;
     }
@@ -126,6 +133,7 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
         entity.setPrice1(cursor.isNull(offset + 5) ? null : cursor.getDouble(offset + 5));
         entity.setPrice2(cursor.isNull(offset + 6) ? null : cursor.getDouble(offset + 6));
         entity.setXl(cursor.isNull(offset + 7) ? null : cursor.getInt(offset + 7));
+        entity.setCount(cursor.isNull(offset + 8) ? null : cursor.getInt(offset + 8));
      }
      
     /** @inheritdoc */
@@ -160,6 +168,7 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
         public final static Property Price1 = new Property(5, Double.class, "price1", false, "PRICE1");
         public final static Property Price2 = new Property(6, Double.class, "price2", false, "PRICE2");
         public final static Property Xl = new Property(7, Integer.class, "xl", false, "XL");
+        public final static Property Count = new Property(8, Integer.class, "count", false, "COUNT");
     }
     
 }

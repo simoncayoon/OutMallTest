@@ -390,7 +390,7 @@ public class HomeFragment extends BaseFragment {
     public void updateMenuItem(String fid) {
         DebugFlags.logD(TAG, "更新菜单！");
         ProCategory menuItem = categories.get(fidCache.indexOf(fid));
-        menuItem.setCount(menuItem.getCount() + 1);
+        menuItem.setCount(DBHelper.getInstance(getApplicationContext()).getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID, fid));
         menuAdapter.notifyDataSetChanged();
     }
 
