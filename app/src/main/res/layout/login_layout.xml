@@ -23,6 +23,7 @@
         android:drawablePadding="@dimen/regist_drawable_padding"
         android:gravity="center_vertical"
         android:hint="@string/hint_text_input_phone_num"
+        android:inputType="phone"
         android:paddingLeft="@dimen/regist_drawable_padding"
         android:singleLine="true"
         android:textColorHint="@color/hint_color"/>

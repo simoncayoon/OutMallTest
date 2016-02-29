@@ -284,7 +284,7 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
                             DebugFlags.logD(TAG, "成功");
                             //本地数据库删除
                             for (int index : indexCache) {
-                                DBHelper.getInstance(getActivity()).
+                                DBHelper.getInstance(getActivity()).deleteShopById(dataShopCart.get(index).getSid());
                                 dataShopCart.remove(index);
                             }
                             indexCache.clear();//清空当前选择的内容

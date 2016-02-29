@@ -14,7 +14,7 @@ import com.beetron.outmall.models.ProSummary;
 /** 
  * DAO for table "PRO_SUMMARY".
 */
-public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
+public class ProSummaryDao extends AbstractDao<ProSummary, String> {
 
     public static final String TABLENAME = "PRO_SUMMARY";
 
@@ -31,7 +31,7 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"PRO_SUMMARY\" (" + //
-                "\"SID\" TEXT," + // 0: sid
+                "\"SID\" TEXT PRIMARY KEY NOT NULL ," + // 0: sid
                 "\"FID\" TEXT," + // 1: fid
                 "\"TITLE\" TEXT," + // 2: title
                 "\"JIANSHU\" TEXT," + // 3: jianshu
@@ -52,11 +52,7 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
     @Override
     protected void bindValues(SQLiteStatement stmt, ProSummary entity) {
         stmt.clearBindings();
-
-        String sid = entity.getSid();
-        if (sid != null) {
-            stmt.bindString(1, sid);
-        }
+        stmt.bindString(1, entity.getSid());
 
         String fid = entity.getFid();
         if (fid != null) {
@@ -101,15 +97,15 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
 
     /** @inheritdoc */
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public String readKey(Cursor cursor, int offset) {
+        return cursor.getString(offset + 0);
     }
 
     /** @inheritdoc */
     @Override
     public ProSummary readEntity(Cursor cursor, int offset) {
         ProSummary entity = new ProSummary( //
-            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // sid
+            cursor.getString(offset + 0), // sid
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // fid
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // title
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // jianshu
@@ -125,7 +121,7 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, ProSummary entity, int offset) {
-        entity.setSid(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
+        entity.setSid(cursor.getString(offset + 0));
         entity.setFid(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setTitle(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setJianshu(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
@@ -138,15 +134,18 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
      
     /** @inheritdoc */
     @Override
-    protected Void updateKeyAfterInsert(ProSummary entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected String updateKeyAfterInsert(ProSummary entity, long rowId) {
+        return entity.getSid();
     }
     
     /** @inheritdoc */
     @Override
-    public Void getKey(ProSummary entity) {
-        return null;
+    public String getKey(ProSummary entity) {
+        if(entity != null) {
+            return entity.getSid();
+        } else {
+            return null;
+        }
     }
     
     /** @inheritdoc */
@@ -160,7 +159,7 @@ public class ProSummaryDao extends AbstractDao<ProSummary, Void> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Sid = new Property(0, String.class, "sid", false, "SID");
+        public final static Property Sid = new Property(0, String.class, "sid", true, "SID");
         public final static Property Fid = new Property(1, String.class, "fid", false, "FID");
         public final static Property Title = new Property(2, String.class, "title", false, "TITLE");
         public final static Property Jianshu = new Property(3, String.class, "jianshu", false, "JIANSHU");

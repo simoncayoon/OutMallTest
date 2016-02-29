@@ -42,15 +42,47 @@ public class DBHelper {
         return instance;
     }
 
+    /**
+     * 逐个加入购物车，没有批量导入，所以修改商品的总数量
+     * @param proSummary
+     * @return
+     */
     public Long addShopCart(ProSummary proSummary) {
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
-        return proSummaryDao.insert(proSummary);
+        qb.where(ProSummaryDao.Properties.Sid.eq(proSummary.getSid()));
+
+        List<ProSummary> list = qb.list();
+        for (ProSummary item : list){
+            proSummary.setCount(item.getCount() + 1);//增加数量
+
+        }
+        return proSummaryDao.insertOrReplace(proSummary);
+    }
+
+    /**
+     * 逐个删除操作
+     * @param proSummary
+     */
+    public void deleteProByOne(ProSummary proSummary){
+        QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
+        qb.where(ProSummaryDao.Properties.Sid.eq(proSummary.getSid()));
+
+        List<ProSummary> list = qb.list();
+        for (ProSummary item : list){
+            proSummary.setCount(item.getCount() - 1);//增加数量
+
+        }
+        if (proSummary.getCount() > 0){//当前购物车还有值
+            proSummaryDao.insertOrReplace(proSummary);
+        } else if (proSummary.getCount() == 0){//减少到零，删除之
+             proSummaryDao.delete(proSummary);
+        }
     }
 
     public int getShopCartCount() {
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
         int count = 0;
-        for (ProSummary proSummary : qb.list()){
+        for (ProSummary proSummary : qb.list()) {
             count += proSummary.getCount();
         }
         return count;
@@ -65,7 +97,7 @@ public class DBHelper {
         }
 
         int count = 0;
-        for (ProSummary proSummary : qb.list()){
+        for (ProSummary proSummary : qb.list()) {
             count += proSummary.getCount();
         }
         return count;
@@ -73,6 +105,8 @@ public class DBHelper {
 
     public synchronized void saveShopLocal(List<ShopCartModel> dataShopCart) {
         List<ProSummary> dataList = new ArrayList<ProSummary>();
+        if (dataShopCart == null)
+            return;
         for (ShopCartModel shopCartModel : dataShopCart) {
             ProSummary proSummary = new ProSummary();
             proSummary.setFid(shopCartModel.getGs().getFid());
@@ -87,15 +121,23 @@ public class DBHelper {
 
             dataList.add(proSummary);
         }
-
-        QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
-
-        proSummaryDao.deleteAll();
-        proSummaryDao.insertInTx(dataList);
+        proSummaryDao.insertOrReplaceInTx(dataList);
     }
 
     public List<ProSummary> getShopCartList() {
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
         return qb.list();
+    }
+
+    /**
+     * 购物车整项删除
+     * @param sid
+     */
+    public void deleteShopById(String sid) {
+        try {
+            proSummaryDao.deleteByKey(sid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

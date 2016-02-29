@@ -9,6 +9,7 @@ package com.beetron.outmall.models;
  */
 public class ProSummary {
 
+    /** Not-null value. */
     private String sid;
     private String fid;
     private String title;
@@ -25,6 +26,10 @@ public class ProSummary {
     public ProSummary() {
     }
 
+    public ProSummary(String sid) {
+        this.sid = sid;
+    }
+
     public ProSummary(String sid, String fid, String title, String jianshu, String img, Double price1, Double price2, Integer xl, Integer count) {
         this.sid = sid;
         this.fid = fid;
@@ -37,10 +42,12 @@ public class ProSummary {
         this.count = count;
     }
 
+    /** Not-null value. */
     public String getSid() {
         return sid;
     }
 
+    /** Not-null value; ensure this value is available before it is saved to the database. */
     public void setSid(String sid) {
         this.sid = sid;
     }
@@ -105,15 +112,11 @@ public class ProSummary {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 
     // KEEP METHODS - put your custom methods here
-
-    public void setCount(Integer count) {
-        this.count = count;
-    }
     // KEEP METHODS END
 
 }

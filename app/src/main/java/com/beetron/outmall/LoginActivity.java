@@ -133,11 +133,11 @@ public class LoginActivity extends Activity {
      * 登录
      */
     private void login() throws Exception{
-        String url = NetInterface.HOST + NetInterface.METHON_VERIFY_CODE_REGIST;
+        String url = NetInterface.HOST + NetInterface.METHON_LOGIN;
         PostUser postEntity = new PostUser();
         postEntity.setToken(Constants.TOKEN_VALUE);
         postEntity.setUname(etPhoneNum.getText().toString());
-        postEntity.setUname(etPwd.getText().toString());
+        postEntity.setUpass(etPwd.getText().toString());
         String postString = new Gson().toJson(postEntity, new TypeToken<PostUser>() {
         }.getType());
         JSONObject postJson = new JSONObject(postString);
@@ -166,6 +166,6 @@ public class LoginActivity extends Activity {
 
             }
         });
-        NetController.getInstance(this).addToRequestQueue(getCategoryReq, TAG);
+        NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
     }
 }
