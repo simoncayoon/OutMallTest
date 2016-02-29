@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity
                 cusNaviView.setNaviTitle(indicAdapter.tabNames[select]);
                 mIndicatorViewPager.setCurrentItem(select, false);
 
-                if (select == 2){//添加购物车删除按钮
+                if (select == 2) {//添加购物车删除按钮
                     cusNaviView.setBtn(CusNaviView.PUT_RIGHT, 23, 23);
                     cusNaviView.getRightBtn().setBackgroundResource(R.mipmap.nav_ic_delete);
                     checkIsLogin();
@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-        setShopCart();
     }
 
     void checkIsLogin(){
@@ -186,8 +185,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void notifyCountChange() {
-//        setShopCart();
+    public void notifyCountChange() throws Exception{
 
         DebugFlags.logD(TAG, "触发了数据更新！");
         try {
@@ -210,8 +208,19 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void setShopCart() {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (RESULT_OK == resultCode){
+            try {
+                ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                        instantiateItem(mIndicatorViewPager.getViewPager(), 2);
 
+                shopCart.reqShopcart();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private class MyAdapter extends IndicatorViewPager.IndicatorFragmentPagerAdapter {

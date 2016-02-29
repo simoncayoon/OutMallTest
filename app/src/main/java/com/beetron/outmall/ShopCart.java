@@ -27,10 +27,12 @@ import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.models.ShopCartModel;
 import com.beetron.outmall.models.ShopCartResult;
+import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
@@ -74,7 +76,11 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
     private void initData() {
 
         //通知更新
-        ((MainActivity) getActivity()).notifyCountChange();
+        try {
+            ((MainActivity) getActivity()).notifyCountChange();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         try {
             updateAmount(0.00);//初始化总价
@@ -276,7 +282,10 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         DebugFlags.logD(TAG, jsonObject.toString());
-                        Gson gson = new Gson();
+                        GsonBuilder gsonBuilder = new GsonBuilder();
+                        BooleanSerializer serializer = new BooleanSerializer();
+                        gsonBuilder.registerTypeAdapter(Boolean.class, serializer);
+                        Gson gson = gsonBuilder.create();
                         ResultEntity<ShopCartResult> resultEntity = gson.fromJson(jsonObject.toString(),
                                 new TypeToken<ResultEntity<ShopCartResult>>() {
                                 }.getType());

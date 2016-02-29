@@ -7,6 +7,8 @@ import com.beetron.outmall.models.DaoSession;
 import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.models.ProSummaryDao;
 import com.beetron.outmall.models.ShopCartModel;
+import com.beetron.outmall.models.UserInfoModel;
+import com.beetron.outmall.models.UserInfoModelDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,7 @@ public class DBHelper {
     private static DaoSession daoSession;
 
     private ProSummaryDao proSummaryDao;
+    private UserInfoModelDao userInfoModelDao;
 
     private DBHelper() {
     }
@@ -38,12 +41,14 @@ public class DBHelper {
             }
             daoSession = OutMallApp.getInstance().getDaoSession();
             instance.proSummaryDao = daoSession.getProSummaryDao();
+            instance.userInfoModelDao = daoSession.getUserInfoModelDao();
         }
         return instance;
     }
 
     /**
      * 逐个加入购物车，没有批量导入，所以修改商品的总数量
+     *
      * @param proSummary
      * @return
      */
@@ -52,7 +57,7 @@ public class DBHelper {
         qb.where(ProSummaryDao.Properties.Sid.eq(proSummary.getSid()));
 
         List<ProSummary> list = qb.list();
-        for (ProSummary item : list){
+        for (ProSummary item : list) {
             proSummary.setCount(item.getCount() + 1);//增加数量
 
         }
@@ -61,21 +66,22 @@ public class DBHelper {
 
     /**
      * 逐个删除操作
+     *
      * @param proSummary
      */
-    public void deleteProByOne(ProSummary proSummary){
+    public void deleteProByOne(ProSummary proSummary) {
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
         qb.where(ProSummaryDao.Properties.Sid.eq(proSummary.getSid()));
 
         List<ProSummary> list = qb.list();
-        for (ProSummary item : list){
+        for (ProSummary item : list) {
             proSummary.setCount(item.getCount() - 1);//增加数量
 
         }
-        if (proSummary.getCount() > 0){//当前购物车还有值
+        if (proSummary.getCount() > 0) {//当前购物车还有值
             proSummaryDao.insertOrReplace(proSummary);
-        } else if (proSummary.getCount() == 0){//减少到零，删除之
-             proSummaryDao.delete(proSummary);
+        } else if (proSummary.getCount() == 0) {//减少到零，删除之
+            proSummaryDao.delete(proSummary);
         }
     }
 
@@ -131,6 +137,7 @@ public class DBHelper {
 
     /**
      * 购物车整项删除
+     *
      * @param sid
      */
     public void deleteShopById(String sid) {
@@ -139,5 +146,25 @@ public class DBHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 保存用户数据
+     * @param userInfoModel
+     */
+    public void saveUserInfo(UserInfoModel userInfoModel) {
+        synchronized (userInfoModelDao) {
+            userInfoModelDao.deleteAll();
+            userInfoModelDao.insertOrReplace(userInfoModel);
+        }
+    }
+
+    /**
+     * 获取本地用户数据
+     * @return
+     */
+    public UserInfoModel getUserInfo(){
+        QueryBuilder<UserInfoModel> qb = userInfoModelDao.queryBuilder();
+        return qb.list().get(0);
     }
 }

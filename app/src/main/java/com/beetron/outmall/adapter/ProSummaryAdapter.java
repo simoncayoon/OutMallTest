@@ -19,7 +19,6 @@ import com.beetron.outmall.R;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.BadgeView;
-import com.beetron.outmall.customview.CustomDialog;
 import com.beetron.outmall.customview.ViewWithBadge;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ProSummary;
@@ -118,12 +117,12 @@ public class ProSummaryAdapter extends BaseAdapter {
         return convertView;
     }
 
-    void addShopCart(int position) throws Exception {
+    void addShopCart(final int position) throws Exception {
         String url = NetInterface.HOST + NetInterface.METHON_ADD_SHOPCART_BY_ID;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
-        postEntity.setUid(Constants.POST_UID_TEST);
-        postEntity.setIsLogin("1");
+        postEntity.setUid(TempDataManager.getInstance(mContext.getApplicationContext()).getCurrentUid());
+        postEntity.setIsLogin(TempDataManager.getInstance(mContext.getApplicationContext()).getLoginState());
         postEntity.setGid(proSummaryList.get(position).getSid());
         String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
         }.getType());
@@ -133,6 +132,19 @@ public class ProSummaryAdapter extends BaseAdapter {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         DebugFlags.logD(TAG, jsonObject.toString());
+                        try {
+                            ProSummary clickItem = proSummaryList.get(position);
+                            if (DBHelper.getInstance(mContext).addShopCart(clickItem) != -1L) {
+                                clickItem.setCount(clickItem.getCount() + 1);
+                                notifyDataSetChanged();
+                                //通知更新数据
+                                countListener.notifyCountChange();
+                            } else {
+                                DebugFlags.logD(TAG, "添加购物车数据库失败！");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -145,7 +157,7 @@ public class ProSummaryAdapter extends BaseAdapter {
     }
 
     public interface ShopCartCountListener {
-        public void notifyCountChange();
+        public void notifyCountChange() throws Exception;
     }
 
     class ViewHolder {
@@ -166,19 +178,11 @@ public class ProSummaryAdapter extends BaseAdapter {
         public void onClick(View v) {
 
             if (TempDataManager.getInstance(mContext.getApplicationContext()).isLogin()) {
-                ProSummary clickItem = proSummaryList.get(position);
-                if (DBHelper.getInstance(mContext).addShopCart(clickItem) != -1L) {
-                    clickItem.setCount(clickItem.getCount() + 1);
-                    notifyDataSetChanged();
-                    //通知更新数据
-                    countListener.notifyCountChange();
-                    try {
-                        addShopCart(position);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    DebugFlags.logD(TAG, "添加购物车数据库失败！");
+
+                try {
+                    addShopCart(position);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             } else {
                 Intent intent = new Intent(mContext, LoginActivity.class);

@@ -5,12 +5,13 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
 import com.beetron.outmall.constant.Constants;
+import com.beetron.outmall.models.UserInfoModel;
 
 public class TempDataManager {
 
     public static final String TAG = TempDataManager.class.getSimpleName();
     public static final String SP_USER_SIGNATURE = "SP_USER_SIGNATURE";
-    private static final String SP_UID = "SP_UID";
+    private static final String SP_USER_INFO_UID = "SP_USER_INFO_UID";
     private static final String SP_IS_LOGIN = "SP_IS_LOGIN";
     private static final String SP_USER_NAME = "SP_USER_NAME";
     private static final String SP_USER_TEL = "SP_USER_TEL";
@@ -33,12 +34,13 @@ public class TempDataManager {
         return instance;
     }
 
-    String getCurrentUid(){
-        return sp.getString(SP_UID, "");
+    public String getCurrentUid(){
+        return sp.getString(SP_USER_INFO_UID, "");
     }
 
     public void setCurrentUid (String uid){
-        mEditor.putString(SP_UID, uid);
+        mEditor.putString(SP_USER_INFO_UID, uid);
+        mEditor.putString(SP_IS_LOGIN, "1");
         mEditor.commit();
     }
 
@@ -64,12 +66,16 @@ public class TempDataManager {
     }
 
     public void setLoginResult(String uid, String uname, String utel) {
-        mEditor.putString(SP_UID, uid);
+        mEditor.putString(SP_USER_INFO_UID, uid);
         mEditor.putString(SP_USER_NAME, uname);
         mEditor.putString(SP_USER_TEL, utel);
         mEditor.putString(SP_IS_LOGIN, "1");
         if (mEditor.commit()) {
             DebugFlags.logD(TAG, "登录状态写入！");
         }
+    }
+
+    public String getLoginState() {
+        return sp.getString(SP_IS_LOGIN, "");
     }
 }

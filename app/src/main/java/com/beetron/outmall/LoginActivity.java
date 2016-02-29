@@ -17,8 +17,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
-import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.PostUser;
+import com.beetron.outmall.models.UserInfoModel;
+import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
 import com.beetron.outmall.utils.TempDataManager;
@@ -119,10 +120,10 @@ public class LoginActivity extends Activity {
     }
 
     private boolean checkInput() {
-        if(TextUtils.isEmpty(etPhoneNum.getText().toString())){
+        if (TextUtils.isEmpty(etPhoneNum.getText().toString())) {
             Toast.makeText(this, getResources().getString(R.string.prompt_phone_num_empty), Toast.LENGTH_SHORT).show();
             return false;
-        }else if(TextUtils.isEmpty(etPwd.getText().toString())){
+        } else if (TextUtils.isEmpty(etPwd.getText().toString())) {
             Toast.makeText(this, getResources().getString(R.string.prompt_pwd_empty), Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -132,7 +133,7 @@ public class LoginActivity extends Activity {
     /**
      * 登录
      */
-    private void login() throws Exception{
+    private void login() throws Exception {
         String url = NetInterface.HOST + NetInterface.METHON_LOGIN;
         PostUser postEntity = new PostUser();
         postEntity.setToken(Constants.TOKEN_VALUE);
@@ -146,12 +147,18 @@ public class LoginActivity extends Activity {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         DebugFlags.logD(TAG, jsonObject.toString());
+
+                        Gson gson = new Gson();
                         try {
-                            if (jsonObject.getString("isSuccess").equals("1")){
-                                JSONObject jsonResult = jsonObject.getJSONObject("resukt");
-                                TempDataManager.getInstance(getApplicationContext()).setLoginResult(jsonResult.getJSONObject("user").getString("uid"),
-                                        jsonResult.getJSONObject("user").getString("uname"),
-                                        jsonResult.getJSONObject("user").getString("tel") );
+                            if (jsonObject.getString("isSuccess").equals(Constants.RESULT_SUCCEED_STATUS)) {
+                                JSONObject jsonResult = jsonObject.getJSONObject("result");
+                                UserInfoModel userInfoModel = new UserInfoModel();
+                                userInfoModel = gson.fromJson(jsonResult.getString("user"),
+                                        new TypeToken<UserInfoModel>() {
+                                        }.getType());
+                                DBHelper.getInstance(getApplicationContext()).saveUserInfo(userInfoModel);
+                                TempDataManager.getInstance(getApplicationContext()).setCurrentUid(userInfoModel.getUid());
+                                DebugFlags.logD(TAG, userInfoModel.getTel());
                                 finish();
                             }
                         } catch (JSONException e) {

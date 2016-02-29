@@ -18,7 +18,7 @@ public class ProSummary {
     private Double price1;
     private Double price2;
     private Integer xl;
-    private Integer count;
+    private Integer count = 0;
 
     // KEEP FIELDS - put your custom fields here
     // KEEP FIELDS END

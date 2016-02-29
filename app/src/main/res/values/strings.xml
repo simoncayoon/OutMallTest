@@ -90,4 +90,5 @@
     <string name="navi_title_pwd_back">找回密码</string>
     <string name="shop_cart_login_prompt">需要登录后才能查看购物车</string>
     <string name="prompt_at_least_one">请至少选择一件商品</string>
+    <string name="prompt_login_faild">登录失败</string>
 </resources>
