@@ -30,18 +30,20 @@
             android:drawablePadding="@dimen/regist_drawable_padding"
             android:gravity="center_vertical"
             android:hint="@string/hint_text_input_phone_num"
+            android:inputType="phone"
             android:paddingLeft="@dimen/regist_drawable_padding"
             android:singleLine="true"
             android:textColorHint="@color/hint_color"/>
 
         <Button
             android:id="@+id/btn_regist_get_verify_code"
+            style="@style/BtnStyle"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/edit_text_general_height"
             android:layout_marginLeft="8dp"
-            android:background="@color/colorPrimary"
-            android:text="@string/get_verify_text"
-            android:textColor="@color/general_main_title_color"/>
+            android:layout_marginRight="0dp"
+            android:padding="5dp"
+            android:text="@string/get_verify_text"/>
     </LinearLayout>
 
     <!-- 验证码-->
@@ -57,18 +59,16 @@
         android:drawablePadding="@dimen/regist_drawable_padding"
         android:gravity="center_vertical"
         android:hint="@string/hint_text_input_verify_code"
+        android:inputType="number"
         android:paddingLeft="@dimen/regist_drawable_padding"
         android:singleLine="true"
         android:textColorHint="@color/hint_color"/>
 
     <Button
-        android:id="@+id/btn_login"
+        android:id="@+id/btn_login_fast"
+        style="@style/BtnStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/edit_text_general_height"
-        android:layout_marginLeft="@dimen/regist_edit_margin"
-        android:layout_marginRight="@dimen/regist_edit_margin"
         android:layout_marginTop="30dp"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
         android:text="@string/text_login_and_verify" />
 </LinearLayout>

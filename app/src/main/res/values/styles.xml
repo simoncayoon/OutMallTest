@@ -35,4 +35,12 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="BtnStyle" >
+        <item name="android:layout_marginLeft">@dimen/regist_edit_margin</item>
+        <item name="android:layout_marginRight">@dimen/regist_edit_margin</item>
+        <item name="android:background">@drawable/btn_click_selector</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/general_main_title_color</item>
+    </style>
+
 </resources>

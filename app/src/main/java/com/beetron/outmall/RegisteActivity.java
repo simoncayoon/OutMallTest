@@ -15,10 +15,12 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
+import com.beetron.outmall.customview.ProgressHUD;
 import com.beetron.outmall.models.PostUser;
 import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -118,6 +120,10 @@ public class RegisteActivity extends Activity {
      * 注册
      */
     private void regist() throws Exception {
+
+        final ProgressHUD mProgressHUD;
+        mProgressHUD = ProgressHUD.show(this, getResources().getString(R.string.prompt_progress_regist), true, false,
+                null);
         String url = NetInterface.HOST + NetInterface.METHON_REGIST;
         PostUser postEntity = new PostUser();
         postEntity.setToken(Constants.TOKEN_VALUE);
@@ -132,20 +138,23 @@ public class RegisteActivity extends Activity {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         DebugFlags.logD(TAG, jsonObject.toString());
-                        Gson gson = new Gson();
-                        ResultEntity<JSONObject> resultEntity = gson.fromJson(jsonObject.toString(),
-                                new TypeToken<ResultEntity<JSONObject>>() {
-                                }.getType());
-                        if (resultEntity.isSuccess()) {//返回成功
-                            DebugFlags.logD(TAG, "保存uid");
-                        } else {
-                            Toast.makeText(RegisteActivity.this, resultEntity.getError(), Toast.LENGTH_SHORT).show();
+
+                        try {
+                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)){//返回成功
+                                JSONObject  resultUid = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
+                                TempDataManager.getInstance(getApplicationContext()).setCurrentUid(resultUid.getString("uid"));//保存用户ID
+                            } else {
+                                Toast.makeText(RegisteActivity.this, jsonObject.getString(Constants.RESULT_ERROR_FIELD).toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
+                        mProgressHUD.dismiss();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-
+                mProgressHUD.dismiss();
             }
         });
         NetController.getInstance(this).addToRequestQueue(getCategoryReq, TAG);
@@ -178,20 +187,20 @@ public class RegisteActivity extends Activity {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         DebugFlags.logD(TAG, jsonObject.toString());
-                        registNum = etPhoneNum.getText().toString();//设置当前验证的手机号码
-                        Gson gson = new Gson();
-                        ResultEntity<String> resultEntity = gson.fromJson(jsonObject.toString(),
-                                new TypeToken<ResultEntity<String>>() {
-                                }.getType());
-                        if (resultEntity.isSuccess()) {//返回成功
-                            try {
-                                verifyCode = new JSONObject(resultEntity.getResult()).getString("code");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            Toast.makeText(RegisteActivity.this, resultEntity.getError(), Toast.LENGTH_SHORT).show();
-                        }
+//                        registNum = etPhoneNum.getText().toString();//设置当前验证的手机号码
+//                        Gson gson = new Gson();
+//                        ResultEntity<String> resultEntity = gson.fromJson(jsonObject.toString(),
+//                                new TypeToken<ResultEntity<String>>() {
+//                                }.getType());
+//                        if (resultEntity.isSuccess()) {//返回成功
+//                            try {
+//                                verifyCode = new JSONObject(resultEntity.getResult()).getString("code");
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                        } else {
+//                            Toast.makeText(RegisteActivity.this, resultEntity.getError(), Toast.LENGTH_SHORT).show();
+//                        }
                     }
                 }, new Response.ErrorListener() {
             @Override

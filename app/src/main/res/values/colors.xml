@@ -18,4 +18,6 @@
     <color name="login_bottom_text_color">#1f2255</color>
     <color name="order_fix_text_color">#666666</color>
     <color name="addr_edit_text_title_color">#333333</color>
+
+    <color name="btn_click_color">#fffa12</color>
 </resources>

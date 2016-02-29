@@ -59,9 +59,19 @@ public class NetInterface {
     public static final String METHON_VERIFY_CODE_REGIST = "?m=home&c=app&a=reg_code";
 
     /**
+     * 获取注册码通用
+     */
+    public static final String METHON_VERIFY_CODE_REGIST_GEN = "?m=home&c=app&a=code";
+
+    /**
      * 登录
      */
     public static final String METHON_LOGIN = "?m=home&c=app&a=login_do";
+
+    /**
+     * 快速登录
+     */
+    public static final String METHON_LOGIN_FAST = "?m=home&c=app&a=tel_login";
 
     /**
      * 注册

@@ -68,14 +68,11 @@
 
     <Button
         android:id="@+id/btn_login"
+        style="@style/BtnStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/edit_text_general_height"
-        android:layout_marginLeft="@dimen/regist_edit_margin"
-        android:layout_marginRight="@dimen/regist_edit_margin"
         android:layout_marginTop="25dp"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
-        android:text="@string/text_login" />
+        android:text="@string/text_login"/>
 
     <LinearLayout
         android:layout_width="match_parent"

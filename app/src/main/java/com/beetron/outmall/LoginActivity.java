@@ -17,6 +17,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
+import com.beetron.outmall.customview.ProgressHUD;
 import com.beetron.outmall.models.PostUser;
 import com.beetron.outmall.models.UserInfoModel;
 import com.beetron.outmall.utils.DBHelper;
@@ -134,6 +135,10 @@ public class LoginActivity extends Activity {
      * 登录
      */
     private void login() throws Exception {
+
+        final ProgressHUD mProgressHUD;
+        mProgressHUD = ProgressHUD.show(this, getResources().getString(R.string.prompt_progress_login), true, false,
+                null);
         String url = NetInterface.HOST + NetInterface.METHON_LOGIN;
         PostUser postEntity = new PostUser();
         postEntity.setToken(Constants.TOKEN_VALUE);
@@ -150,8 +155,8 @@ public class LoginActivity extends Activity {
 
                         Gson gson = new Gson();
                         try {
-                            if (jsonObject.getString("isSuccess").equals(Constants.RESULT_SUCCEED_STATUS)) {
-                                JSONObject jsonResult = jsonObject.getJSONObject("result");
+                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)) {
+                                JSONObject jsonResult = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
                                 UserInfoModel userInfoModel = new UserInfoModel();
                                 userInfoModel = gson.fromJson(jsonResult.getString("user"),
                                         new TypeToken<UserInfoModel>() {
@@ -165,12 +170,12 @@ public class LoginActivity extends Activity {
                             e.printStackTrace();
                         }
 
-
+                        mProgressHUD.dismiss();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-
+                mProgressHUD.dismiss();
             }
         });
         NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);

@@ -91,4 +91,9 @@
     <string name="shop_cart_login_prompt">需要登录后才能查看购物车</string>
     <string name="prompt_at_least_one">请至少选择一件商品</string>
     <string name="prompt_login_faild">登录失败</string>
+    <string name="prompt_progress_login">正在登陆...</string>
+    <string name="prompt_progress_regist">正在注册...</string>
+    <string name="prompt_verify_code_get_faild">获取验证码失败</string>
+    <string name="prompt_bind_code_num_error">电话号码不匹配</string>
+    <string name="prompt_verigy_code_error">验证码错误</string>
 </resources>
