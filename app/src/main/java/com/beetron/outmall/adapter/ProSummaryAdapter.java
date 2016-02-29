@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -29,6 +30,7 @@ import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -99,6 +101,14 @@ public class ProSummaryAdapter extends BaseAdapter {
             convertView.setTag(viewHolder);
         }
         viewHolder = (ViewHolder) convertView.getTag();
+
+        try {
+            int initCount = DBHelper.getInstance(mContext).
+                    getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_SID, proSummaryList.get(position).getSid());
+            proSummaryList.get(position).setCount(initCount);//获取商品在购物车里的数量
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         ProSummary proItem = proSummaryList.get(position);
         viewHolder.proImg.setImageUrl(proItem.getImg(), NetController.getInstance(mContext).getImageLoader());
         viewHolder.title.setText(proItem.getTitle());
@@ -106,8 +116,7 @@ public class ProSummaryAdapter extends BaseAdapter {
         viewHolder.discount.setText(String.valueOf(proItem.getPrice2()));
         viewHolder.shopCart.setOnClickListener(new AddShopCart(position));
         try {
-            int inShopCart = DBHelper.getInstance(mContext).getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_SID, proItem.getSid());
-            viewHolder.shopCart.setBadge(BadgeView.POSITION_TOP_RIGHT, inShopCart
+            viewHolder.shopCart.setBadge(BadgeView.POSITION_TOP_RIGHT, proItem.getCount()
                     , 6, 0);
         } catch (Exception e) {
             e.printStackTrace();
@@ -133,18 +142,27 @@ public class ProSummaryAdapter extends BaseAdapter {
                     public void onResponse(JSONObject jsonObject) {
                         DebugFlags.logD(TAG, jsonObject.toString());
                         try {
-                            ProSummary clickItem = proSummaryList.get(position);
-                            if (DBHelper.getInstance(mContext).addShopCart(clickItem) != -1L) {
-                                clickItem.setCount(clickItem.getCount() + 1);
-                                notifyDataSetChanged();
-                                //通知更新数据
-                                countListener.notifyCountChange();
+                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)){//返回成功
+                                try {
+                                    ProSummary clickItem = proSummaryList.get(position);
+                                    JSONObject countJSON = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
+                                    clickItem.setCount(countJSON.getInt("count"));
+                                    if (DBHelper.getInstance(mContext).addShopCart(clickItem) != -1L) {
+                                        //通知更新数据
+                                        countListener.notifyCountChange();
+                                    } else {
+                                        DebugFlags.logD(TAG, "添加购物车数据库失败！");
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             } else {
-                                DebugFlags.logD(TAG, "添加购物车数据库失败！");
+                                Toast.makeText(mContext, jsonObject.getString(Constants.RESULT_ERROR_FIELD).toString(), Toast.LENGTH_SHORT).show();
                             }
-                        } catch (Exception e) {
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                     }
                 }, new Response.ErrorListener() {
             @Override

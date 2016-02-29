@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by DKY with IntelliJ IDEA.
@@ -387,10 +388,16 @@ public class HomeFragment extends BaseFragment {
         inflater = LayoutInflater.from(getApplicationContext());
     }
 
-    public void updateMenuItem(String fid) {
+    public void updateMenuItem() {
         DebugFlags.logD(TAG, "更新菜单！");
-        ProCategory menuItem = categories.get(fidCache.indexOf(fid));
-        menuItem.setCount(DBHelper.getInstance(getApplicationContext()).getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID, fid));
+
+        proAdapter.notifyDataSetChanged();
+        Map<String, String> fids = DBHelper.getInstance(getApplicationContext()).getFidCache();
+        for (Map.Entry<String, String> entry : fids.entrySet()) {
+            System.out.println("key= " + entry.getKey() );
+            ProCategory menuItem = categories.get(fidCache.indexOf(entry.getKey()));
+            menuItem.setCount(DBHelper.getInstance(getApplicationContext()).getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID, entry.getKey()));
+        }
         menuAdapter.notifyDataSetChanged();
     }
 

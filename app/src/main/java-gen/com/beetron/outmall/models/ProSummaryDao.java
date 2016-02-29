@@ -52,7 +52,11 @@ public class ProSummaryDao extends AbstractDao<ProSummary, String> {
     @Override
     protected void bindValues(SQLiteStatement stmt, ProSummary entity) {
         stmt.clearBindings();
-        stmt.bindString(1, entity.getSid());
+
+        String sid = entity.getSid();
+        if (sid != null) {
+            stmt.bindString(1, sid);
+        }
 
         String fid = entity.getFid();
         if (fid != null) {
@@ -98,14 +102,14 @@ public class ProSummaryDao extends AbstractDao<ProSummary, String> {
     /** @inheritdoc */
     @Override
     public String readKey(Cursor cursor, int offset) {
-        return cursor.getString(offset + 0);
+        return cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0);
     }
 
     /** @inheritdoc */
     @Override
     public ProSummary readEntity(Cursor cursor, int offset) {
         ProSummary entity = new ProSummary( //
-            cursor.getString(offset + 0), // sid
+            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // sid
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // fid
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // title
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // jianshu
@@ -121,7 +125,7 @@ public class ProSummaryDao extends AbstractDao<ProSummary, String> {
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, ProSummary entity, int offset) {
-        entity.setSid(cursor.getString(offset + 0));
+        entity.setSid(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
         entity.setFid(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setTitle(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setJianshu(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));

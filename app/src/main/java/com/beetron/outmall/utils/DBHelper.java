@@ -11,7 +11,10 @@ import com.beetron.outmall.models.UserInfoModel;
 import com.beetron.outmall.models.UserInfoModelDao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import de.greenrobot.dao.query.QueryBuilder;
 
@@ -53,14 +56,17 @@ public class DBHelper {
      * @return
      */
     public Long addShopCart(ProSummary proSummary) {
-        QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
-        qb.where(ProSummaryDao.Properties.Sid.eq(proSummary.getSid()));
-
-        List<ProSummary> list = qb.list();
-        for (ProSummary item : list) {
-            proSummary.setCount(item.getCount() + 1);//增加数量
-
-        }
+//        QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
+//        qb.where(ProSummaryDao.Properties.Sid.eq(proSummary.getSid()));
+//
+//        if (proSummaryDao.load(proSummary.getSid()) != null){//该选项已存在购物车
+//            proSummary = proSummaryDao.load(proSummary.getSid());
+//            int currCount = proSummary.getCount();
+//            proSummary.setCount(currCount ++);
+//        } else {
+//            proSummary.setCount(1);//初始化该商品的数量
+//        }
+        DebugFlags.logD(TAG, "当前该商品的数量是：" + proSummary.getCount());
         return proSummaryDao.insertOrReplace(proSummary);
     }
 
@@ -76,7 +82,6 @@ public class DBHelper {
         List<ProSummary> list = qb.list();
         for (ProSummary item : list) {
             proSummary.setCount(item.getCount() - 1);//增加数量
-
         }
         if (proSummary.getCount() > 0) {//当前购物车还有值
             proSummaryDao.insertOrReplace(proSummary);
@@ -133,6 +138,17 @@ public class DBHelper {
     public List<ProSummary> getShopCartList() {
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
         return qb.list();
+    }
+
+    public Map<String, String> getFidCache(){
+        QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
+
+
+        HashMap<String, String> map = new HashMap<String, String>();
+        for (ProSummary proSummary : qb.list()){
+            map.put(proSummary.getFid(), "");//map 保存不同的fid
+        }
+        return map;
     }
 
     /**

@@ -190,17 +190,18 @@ public class MainActivity extends AppCompatActivity
         DebugFlags.logD(TAG, "触发了数据更新！");
         try {
             ViewWithBadge shapCartTabView = (ViewWithBadge) (mIndicatorViewPager.getIndicatorView().
-                    getItemView(2).findViewById(R.id.tab_text_view));//获取到购物车的视图
+                    getItemView(2).findViewById(R.id.tab_text_view));//获取到购物车tabbar的视图
             shapCartTabView.setBadge(BadgeView.POSITION_TOP_RIGHT,
                     DBHelper.getInstance(MainActivity.this).getShopCartCount(), 6, 0);
 
-            HomeFragment firstFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
+            //更新首页菜单视图
+            HomeFragment homeFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
                     instantiateItem(mIndicatorViewPager.getViewPager(), 0);
 
-            List<ProSummary> shopCart = DBHelper.getInstance(getApplicationContext()).getShopCartList();
-            for (ProSummary item : shopCart){
-                firstFragment.updateMenuItem(item.getFid());
-            }
+//            List<ProSummary> shopCart = DBHelper.getInstance(getApplicationContext()).getShopCartList();
+//            for (ProSummary item : shopCart){
+                homeFragment.updateMenuItem();
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
