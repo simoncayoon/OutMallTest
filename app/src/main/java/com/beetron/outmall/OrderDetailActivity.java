@@ -23,6 +23,7 @@ import com.beetron.outmall.models.OrderFixInfo;
 import com.beetron.outmall.models.OrderInfoModel;
 import com.beetron.outmall.models.OrderPostModel;
 import com.beetron.outmall.models.PostEntity;
+import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.models.ShopCartModel;
 import com.beetron.outmall.utils.BooleanSerializer;
@@ -224,12 +225,12 @@ public class OrderDetailActivity extends Activity {
                 convertView.setTag(viewHolder);
             }
             viewHolder = (ViewHolder) convertView.getTag();
-            ShopCartModel shopCartModel = orderModel.getProDetail().get(position);
-            viewHolder.proImg.setImageUrl(shopCartModel.getGs().getImg(),
+            ProSummary shopCartModel = orderModel.getProDetail().get(position);
+            viewHolder.proImg.setImageUrl(shopCartModel.getImg(),
                     NetController.getInstance(OrderDetailActivity.this).getImageLoader());
-            viewHolder.proName.setText(shopCartModel.getGs().getTitle());
-            viewHolder.proPrice.setText("￥ " + shopCartModel.getGs().getPrice2());
-            viewHolder.proCount.setText("x " + shopCartModel.getNum());
+            viewHolder.proName.setText(shopCartModel.getTitle());
+            viewHolder.proPrice.setText("￥ " + shopCartModel.getPrice2());
+            viewHolder.proCount.setText("x " + shopCartModel.getCount());
             return convertView;
         }
 

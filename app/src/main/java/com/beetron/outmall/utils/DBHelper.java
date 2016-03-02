@@ -6,13 +6,11 @@ import com.beetron.outmall.OutMallApp;
 import com.beetron.outmall.models.DaoSession;
 import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.models.ProSummaryDao;
-import com.beetron.outmall.models.ShopCartModel;
 import com.beetron.outmall.models.UserInfoModel;
 import com.beetron.outmall.models.UserInfoModelDao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -114,25 +112,10 @@ public class DBHelper {
         return count;
     }
 
-    public synchronized void saveShopLocal(List<ShopCartModel> dataShopCart) {
-        List<ProSummary> dataList = new ArrayList<ProSummary>();
+    public synchronized void saveShopLocal(List<ProSummary> dataShopCart) {
         if (dataShopCart == null)
             return;
-        for (ShopCartModel shopCartModel : dataShopCart) {
-            ProSummary proSummary = new ProSummary();
-            proSummary.setFid(shopCartModel.getGs().getFid());
-            proSummary.setSid(shopCartModel.getSid());
-            proSummary.setXl(0);
-            proSummary.setPrice1(shopCartModel.getGs().getPrice1());
-            proSummary.setPrice2(shopCartModel.getGs().getPrice2());
-            proSummary.setTitle(shopCartModel.getGs().getTitle());
-            proSummary.setCount(shopCartModel.getNum());
-            proSummary.setImg(shopCartModel.getGs().getImg());
-            proSummary.setJianshu(shopCartModel.getGs().getJianshu());
-
-            dataList.add(proSummary);
-        }
-        proSummaryDao.insertOrReplaceInTx(dataList);
+        proSummaryDao.insertOrReplaceInTx(dataShopCart);
     }
 
     public List<ProSummary> getShopCartList() {
@@ -140,12 +123,12 @@ public class DBHelper {
         return qb.list();
     }
 
-    public Map<String, String> getFidCache(){
+    public Map<String, String> getFidCache() {
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
 
 
         HashMap<String, String> map = new HashMap<String, String>();
-        for (ProSummary proSummary : qb.list()){
+        for (ProSummary proSummary : qb.list()) {
             map.put(proSummary.getFid(), "");//map 保存不同的fid
         }
         return map;
@@ -166,6 +149,7 @@ public class DBHelper {
 
     /**
      * 保存用户数据
+     *
      * @param userInfoModel
      */
     public void saveUserInfo(UserInfoModel userInfoModel) {
@@ -177,9 +161,10 @@ public class DBHelper {
 
     /**
      * 获取本地用户数据
+     *
      * @return
      */
-    public UserInfoModel getUserInfo(){
+    public UserInfoModel getUserInfo() {
         QueryBuilder<UserInfoModel> qb = userInfoModelDao.queryBuilder();
         return qb.list().get(0);
     }

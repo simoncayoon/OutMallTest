@@ -8,7 +8,7 @@
         android:id="@+id/svp_scan_image_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/general_activity_bg" />
+        android:background="@android:color/white" />
 
     <com.shizhefei.view.indicator.FixedIndicatorView
         android:id="@+id/svp_scan_image_indicator"

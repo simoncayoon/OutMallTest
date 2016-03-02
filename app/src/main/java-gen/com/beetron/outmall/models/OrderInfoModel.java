@@ -12,7 +12,7 @@ public class OrderInfoModel {
 
     private static OrderInfoModel instance = null;
 
-    private List<ShopCartModel> proDetail;
+    private List<ProSummary> proDetail;
     private Double amount = 0.00;//商品总价
     private Double priceFree;//减免
 
@@ -38,18 +38,18 @@ public class OrderInfoModel {
         this.priceFree = priceFree;
     }
 
-    public List<ShopCartModel> getProDetail() {
+    public List<ProSummary> getProDetail() {
         return proDetail;
     }
 
-    public void setProDetail(List<ShopCartModel> proDetail) {
+    public void setProDetail(List<ProSummary> proDetail) {
 
         this.proDetail = proDetail;
 
         if (proDetail != null) {
-            for (ShopCartModel shopCartModel : proDetail) {
-                int count = Integer.valueOf(shopCartModel.getNum());
-                Double price = Double.valueOf(shopCartModel.getGs().getPrice2());
+            for (ProSummary shopCartModel : proDetail) {
+                int count = Integer.valueOf(shopCartModel.getCount());
+                Double price = Double.valueOf(shopCartModel.getPrice2());
                 Double itemPrice = count * price;
                 amount += itemPrice;
             }

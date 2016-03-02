@@ -24,7 +24,6 @@ import com.beetron.outmall.customview.BadgeView;
 import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.customview.CustomDialog;
 import com.beetron.outmall.customview.ViewWithBadge;
-import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.DisplayMetrics;
@@ -32,8 +31,6 @@ import com.beetron.outmall.utils.TempDataManager;
 import com.shizhefei.view.indicator.Indicator;
 import com.shizhefei.view.indicator.IndicatorViewPager;
 import com.shizhefei.view.viewpager.SViewPager;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProSummaryAdapter.ShopCartCountListener {
@@ -107,6 +104,7 @@ public class MainActivity extends AppCompatActivity
                     cusNaviView.setBtn(CusNaviView.PUT_RIGHT, 23, 23);
                     cusNaviView.getRightBtn().setBackgroundResource(R.mipmap.nav_ic_delete);
                     checkIsLogin();
+
                 } else {
                     cusNaviView.removeBtn(CusNaviView.PUT_RIGHT);
                 }
@@ -114,8 +112,8 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    void checkIsLogin(){
-        if (!TempDataManager.getInstance(this).isLogin()){
+    void checkIsLogin() {
+        if (!TempDataManager.getInstance(this).isLogin()) {
             final CustomDialog.Builder builder = new CustomDialog.Builder(this);
             builder.setTitle(R.string.prompt);
             builder.setMessage(R.string.shop_cart_login_prompt);
@@ -135,9 +133,17 @@ public class MainActivity extends AppCompatActivity
                 }
             });
             builder.create().show();
+        } else {
+            //更新购物车菜单视图
+            ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                    instantiateItem(mIndicatorViewPager.getViewPager(), 2);
+            try {
+                shopCart.reqShopcart(false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
-
 
     /**
      * 设置抽屉
@@ -185,7 +191,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void notifyCountChange() throws Exception{
+    public void notifyCountChange() throws Exception {
 
         DebugFlags.logD(TAG, "触发了数据更新！");
         try {
@@ -197,11 +203,7 @@ public class MainActivity extends AppCompatActivity
             //更新首页菜单视图
             HomeFragment homeFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
                     instantiateItem(mIndicatorViewPager.getViewPager(), 0);
-
-//            List<ProSummary> shopCart = DBHelper.getInstance(getApplicationContext()).getShopCartList();
-//            for (ProSummary item : shopCart){
-                homeFragment.updateMenuItem();
-//            }
+            homeFragment.updateMenuItem();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -212,12 +214,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (RESULT_OK == resultCode){
+        if (RESULT_OK == resultCode) {
             try {
                 ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
                         instantiateItem(mIndicatorViewPager.getViewPager(), 2);
 
-                shopCart.reqShopcart();
+                shopCart.reqShopcart(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }

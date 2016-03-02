@@ -20,6 +20,7 @@ public class ProSummary {
     private Integer count = 0;
 
     // KEEP FIELDS - put your custom fields here
+    private Boolean isSelect = false;
     // KEEP FIELDS END
 
     public ProSummary() {
@@ -114,6 +115,14 @@ public class ProSummary {
     }
 
     // KEEP METHODS - put your custom methods here
-    // KEEP METHODS END
+
+    public Boolean getIsSelect() {
+        return isSelect;
+    }
+
+    public void setIsSelect(Boolean isSelect) {
+        this.isSelect = isSelect;
+    }
+// KEEP METHODS END
 
 }

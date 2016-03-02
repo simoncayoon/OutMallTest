@@ -22,39 +22,53 @@
         android:layout_height="@dimen/shop_cart_detail_bottom_height"
         android:background="@android:color/white"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <CheckBox
-            android:id="@+id/cb_shop_cart_select_all"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:button="@mipmap/ic_select"
-            android:buttonTint="@color/home_page_general_red"
-            android:paddingLeft="5dp"
-            android:text="@string/shop_cart_select_all"
-            android:textColor="@color/general_tab_text_color"
-            android:textSize="@dimen/shop_cart_select_all_text_size"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/general_boundary_color"/>
 
-        <TextView
-            android:id="@+id/tv_shop_cart_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="right"
-            android:paddingRight="10dp"
-            android:textColor="@color/general_main_title_color"
-            android:textSize="@dimen/shop_cart_detail_amount_text_size"/>
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btn_to_account_shop_cart"
-            android:layout_width="@dimen/shop_cart_account_btn_width"
-            android:layout_height="@dimen/shop_cart_account_btn_height"
-            android:layout_margin="@dimen/btn_to_account_margin"
-            android:background="@color/home_page_general_red"
-            android:text="@string/to_settle_accounts"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/btn_to_account_text_size" />
+            <CheckBox
+                android:id="@+id/cb_shop_cart_select_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                android:button="@mipmap/ic_select"
+                android:buttonTint="@color/home_page_general_red"
+                android:paddingLeft="5dp"
+                android:text="@string/shop_cart_select_all"
+                android:textColor="@color/general_tab_text_color"
+                android:textSize="@dimen/shop_cart_select_all_text_size" />
+
+            <TextView
+                android:id="@+id/tv_shop_cart_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:paddingRight="10dp"
+                android:textColor="@color/general_main_title_color"
+                android:textSize="@dimen/shop_cart_detail_amount_text_size" />
+
+            <Button
+                android:id="@+id/btn_to_account_shop_cart"
+                android:layout_width="@dimen/shop_cart_account_btn_width"
+                android:layout_height="@dimen/shop_cart_account_btn_height"
+                android:layout_margin="@dimen/btn_to_account_margin"
+                android:background="@drawable/shape_btn_corner_red_selector"
+                android:text="@string/to_settle_accounts"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/btn_to_account_text_size" />
+
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

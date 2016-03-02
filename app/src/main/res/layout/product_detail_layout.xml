@@ -27,6 +27,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/white"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -114,14 +115,13 @@
             <com.shizhefei.view.indicator.ScrollIndicatorView
                 android:id="@+id/pro_detail_tab_indicator"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/pro_detail_tab_height" />
+                android:layout_height="@dimen/pro_detail_tab_height"
+                android:background="@android:color/white"/>
 
-            <TextView
+            <WebView
                 android:id="@+id/pro_detail_descript"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textColor="@color/general_tab_text_color"
-                android:textSize="@dimen/pro_detail_summary_text_size"/>
+                android:layout_height="match_parent"/>
         </LinearLayout>
     </LinearLayout>
 
@@ -138,7 +138,7 @@
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/tab_selected_color"
+            android:background="@drawable/shape_rect_btn_selector"
             android:text="@string/add_shop_cart"
             android:textColor="@color/general_main_title_color" />
 
@@ -147,7 +147,7 @@
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/home_page_general_red"
+            android:background="@drawable/shape_rect_red_btn_selector"
             android:text="@string/buy_immediately"
             android:textColor="@android:color/white" />
     </LinearLayout>

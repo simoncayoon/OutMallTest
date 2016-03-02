@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.beetron.outmall.R;
+import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.models.ShopCartModel;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
@@ -28,7 +29,7 @@ public class ShopCartAdapter extends BaseAdapter {
 
     private static final String TAG = ShopCartAdapter.class.getSimpleName();
     private Fragment mContext;
-    private List<ShopCartModel> dataShopcart;
+    private List<ProSummary> dataShopcart;
     private LayoutInflater inflater;
 
     private ProCountChange countChang = new ProCountChange() {
@@ -41,7 +42,7 @@ public class ShopCartAdapter extends BaseAdapter {
 
     private ProCountChange callback = countChang;
 
-    public ShopCartAdapter(Fragment context, List<ShopCartModel> dataShopcart) {
+    public ShopCartAdapter(Fragment context, List<ProSummary> dataShopcart) {
         mContext = context;
         this.dataShopcart = dataShopcart;
         inflater = LayoutInflater.from(context.getActivity());
@@ -86,15 +87,15 @@ public class ShopCartAdapter extends BaseAdapter {
         }
 
         viewHolder = (ViewHolder) convertView.getTag();
-        ShopCartModel shopcartItem = dataShopcart.get(position);
-        viewHolder.checkSelect.setSelected(shopcartItem.isSelect());
-        viewHolder.itemTitle.setText(shopcartItem.getGs().getTitle());
-        viewHolder.itemSummary.setText(shopcartItem.getGs().getJianshu());
-        viewHolder.itemSalsePrice.setText(SpanTextUtil.setSpanSize(0, 1, "￥" + shopcartItem.getGs().getPrice2(), 10));
-        viewHolder.itemPrimaryPrice.setText("￥" + shopcartItem.getGs().getPrice1());
+        ProSummary shopcartItem = dataShopcart.get(position);
+        viewHolder.checkSelect.setSelected(shopcartItem.getIsSelect());
+        viewHolder.itemTitle.setText(shopcartItem.getTitle());
+        viewHolder.itemSummary.setText(shopcartItem.getJianshu());
+        viewHolder.itemSalsePrice.setText(SpanTextUtil.setSpanSize(0, 1, "￥" + shopcartItem.getPrice2(), 10));
+        viewHolder.itemPrimaryPrice.setText("￥" + shopcartItem.getPrice1());
         viewHolder.itemPrimaryPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
-        viewHolder.itemVolume.setText(String.valueOf(shopcartItem.getNum()));
-        viewHolder.imgView.setImageUrl(shopcartItem.getGs().getImg(), NetController.getInstance(mContext.getActivity()).getImageLoader());
+        viewHolder.itemVolume.setText(String.valueOf(shopcartItem.getCount()));
+        viewHolder.imgView.setImageUrl(shopcartItem.getImg(), NetController.getInstance(mContext.getActivity()).getImageLoader());
         viewHolder.itemCountAdd.setOnClickListener(new OnProCountChangeListener(ProCountChange.FLAG_ADD, position));
         viewHolder.itemCountMinus.setOnClickListener(new OnProCountChangeListener(ProCountChange.FLAG_MINUS, position));
         return convertView;

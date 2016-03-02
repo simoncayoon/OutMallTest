@@ -33,6 +33,7 @@ import com.beetron.outmall.models.OrderFixInfo;
 import com.beetron.outmall.models.OrderInfoModel;
 import com.beetron.outmall.models.OrderPostModel;
 import com.beetron.outmall.models.PostEntity;
+import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.models.ShopCartModel;
 import com.beetron.outmall.utils.BooleanSerializer;
@@ -112,10 +113,10 @@ public class OrderFixActivity extends Activity {
                         convertView.setTag(R.id.order_scanner_id, viewHolder);
                     }
                     viewHolder = (ViewHolder) convertView.getTag(R.id.order_scanner_id);
-                    ShopCartModel shopCartModel = orderInfoModel.getProDetail().get(position);
-                    viewHolder.scanImg.setImageUrl(shopCartModel.getGs().getImg(), NetController.getInstance(getApplicationContext()).getImageLoader());
-                    viewHolder.proPrice.setText("￥" + shopCartModel.getGs().getPrice2());
-                    viewHolder.countView.setText(shopCartModel.getNum());
+                    ProSummary shopCartModel = orderInfoModel.getProDetail().get(position);
+                    viewHolder.scanImg.setImageUrl(shopCartModel.getImg(), NetController.getInstance(getApplicationContext()).getImageLoader());
+                    viewHolder.proPrice.setText("￥" + shopCartModel.getPrice2());
+                    viewHolder.countView.setText(shopCartModel.getCount());
                     viewHolder.countView.show();
                     return convertView;
                 }
@@ -366,11 +367,11 @@ public class OrderFixActivity extends Activity {
         String generateStr = "";
         StringBuilder sb = new StringBuilder(generateStr);
         for (int index = 0; index < orderInfoModel.getProDetail().size(); index++) {
-            ShopCartModel shopCartItem = orderInfoModel.getProDetail().get(index);
+            ProSummary shopCartItem = orderInfoModel.getProDetail().get(index);
             if (flag.equals(GENERATE_GOODS)) {
-                sb.append(shopCartItem.getId());
+                sb.append(shopCartItem.getSid());
             } else if (flag.equals(GENERATE_NUM)) {
-                sb.append(shopCartItem.getNum());
+                sb.append(shopCartItem.getCount());
             }
             if (index == orderInfoModel.getProDetail().size() - 1) {
                 break;

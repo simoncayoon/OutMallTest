@@ -22,6 +22,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.beetron.outmall.adapter.ProSummaryAdapter;
+import com.beetron.outmall.customview.ProgressHUD;
 import com.beetron.outmall.models.PageEntity;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ProCategory;
@@ -89,6 +90,9 @@ public class HomeFragment extends BaseFragment {
     private int index = 1;
     private List<ProSummary> proList;
     private PageEntity pageEntity;
+    private ProgressHUD mProgressHUD;
+
+
     /**
      * 幻灯片适配
      */
@@ -181,6 +185,9 @@ public class HomeFragment extends BaseFragment {
      * 获取产品种类
      */
     private void getMenu() throws JSONException {
+
+        mProgressHUD = ProgressHUD.show(getActivity(), getResources().getString(R.string.prompt_progress_loading), true, false,
+                null);
         String url = NetInterface.HOST + NetInterface.METHON_GET_PRO_CATEGORY;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
@@ -215,11 +222,13 @@ public class HomeFragment extends BaseFragment {
                         }
                         menuAdapter = new CategoryMenuAdapter(getActivity(), categories);
                         llProCategory.setAdapter(menuAdapter);
+                        mProgressHUD.dismiss();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-
+                volleyError.printStackTrace();
+                mProgressHUD.dismiss();
             }
         });
         NetController.getInstance(getActivity()).addToRequestQueue(getCategoryReq, TAG);
@@ -354,6 +363,7 @@ public class HomeFragment extends BaseFragment {
                 DebugFlags.logD(TAG, "onPullDownToRefresh");
                 isAppend = false;
                 index = 1;
+                refreshView.setRefreshing(true);
                 try {
                     refreshProByFid(currentFid);
                 } catch (Exception e) {
@@ -371,6 +381,7 @@ public class HomeFragment extends BaseFragment {
                 }
                 index ++;
                 isAppend = true;
+                refreshView.setRefreshing(true);
                 try {
                     refreshProByFid(currentFid);
                 } catch (Exception e) {
