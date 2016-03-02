@@ -123,6 +123,7 @@ public class DBHelper {
         List<ProSummary> result = new ArrayList<ProSummary>();
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
         for (ProSummary item :qb.list()){
+            item.setIsSelect(true);//默认宣布选中
             result.add(item);
         }
         return result;

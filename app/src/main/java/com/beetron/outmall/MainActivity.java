@@ -170,21 +170,22 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        Intent intent=new Intent(MainActivity.this,WebViewActivity.class);
         if (id == R.id.nav_camera) {
             // Handle the camera action
+            intent.putExtra("title","商城");
+            intent.putExtra("url","http://chulai-mai.com");
         } else if (id == R.id.nav_gallery) {
-
+            intent.putExtra("title","蚤市");
+            intent.putExtra("url","http://chulai-mai.com");
         } else if (id == R.id.nav_slideshow) {
-
+            intent.putExtra("title","社区");
+            intent.putExtra("url","http://chulai-mai.com");
         } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            finish();
         }
 
+        startActivity(intent);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

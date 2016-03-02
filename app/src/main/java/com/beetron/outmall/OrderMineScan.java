@@ -20,6 +20,7 @@ import com.beetron.outmall.customview.TabItemView;
 import com.beetron.outmall.models.OrderInfo;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -108,8 +109,8 @@ public class OrderMineScan extends Activity implements View.OnClickListener {
         String url = NetInterface.HOST + NetInterface.METHON_ORDER_INFO;
         OrderInfo postEntity = new OrderInfo();
         postEntity.setToken(Constants.TOKEN_VALUE);
-        postEntity.setIsLogin("1");
-        postEntity.setUid(Constants.POST_UID_TEST);
+        postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
+        postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
         String postString = new Gson().toJson(postEntity, new TypeToken<OrderInfo>() {
         }.getType());
         JSONObject postJson = null;

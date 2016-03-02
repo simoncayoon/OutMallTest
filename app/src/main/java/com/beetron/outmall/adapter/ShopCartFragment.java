@@ -88,7 +88,7 @@ public class ShopCartFragment extends BaseAdapter {
 
         viewHolder = (ViewHolder) convertView.getTag();
         ProSummary shopcartItem = dataShopcart.get(position);
-        viewHolder.checkSelect.setSelected(shopcartItem.getIsSelect());
+        viewHolder.checkSelect.setChecked(shopcartItem.getIsSelect());
         viewHolder.itemTitle.setText(shopcartItem.getTitle());
         viewHolder.itemSummary.setText(shopcartItem.getJianshu());
         viewHolder.itemSalsePrice.setText(SpanTextUtil.setSpanSize(0, 1, "￥" + shopcartItem.getPrice2(), 10));

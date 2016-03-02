@@ -14,9 +14,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/shop_cart_item_margin"
-        android:button="@mipmap/ic_select"
-        android:clickable="true"
-        android:focusable="false"/>
+        style="@style/mycheckbox"
+        android:focusable="false"
+        android:clickable="false"
+        android:background="@android:color/transparent"/>
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/iv_shop_cart_item_img"

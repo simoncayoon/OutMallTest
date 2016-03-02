@@ -240,10 +240,12 @@ public class AboutMine extends BaseFragment {
         super.onActivityResult(requestCode, resultCode, data);
         //重新获取用户信息
 
-        try {
-            getUserData();
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
+            try {
+                getUserData();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

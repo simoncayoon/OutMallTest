@@ -234,7 +234,11 @@ public class ProductDetail extends Activity {
             public void onClick(View v) {
                 ProSummary proSummary = new ProSummary();
                 proSummary.setFid(getIntent().getStringExtra(KEY_PRODUCT_ID));
-                proSummary.setImg("");
+                try {
+                    proSummary.setImg(proDetail.getImg().get(0).getPic());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 proSummary.setJianshu(proDetail.getMiaoshu());
                 proSummary.setPrice1(proDetail.getPrice1());
                 proSummary.setPrice2(proDetail.getPrice2());

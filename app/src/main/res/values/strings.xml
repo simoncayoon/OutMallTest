@@ -106,4 +106,5 @@
     <string name="prompt_verigy_code_error">验证码错误</string>
     <string name="prompt_progress_loading">正在加载...</string>
     <string name="prompt_progress_get_code">获取验证码...</string>
+    <string name="prompt_regist_phone_verify_error">验证码输入错误</string>
 </resources>

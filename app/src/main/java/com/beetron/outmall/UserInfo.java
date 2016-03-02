@@ -202,10 +202,14 @@ public class UserInfo extends Activity implements View.OnClickListener {
 
         tvNickName.setText(userInfoSummary.getNickname());
         tvEmail.setText(userInfoSummary.getMail());
-        if (userInfoSummary.getSex().equals("1")){
-            tvGender.setText("男");
-        }else{
-            tvGender.setText("女");
+        try {
+            if (userInfoSummary.getSex().equals("1")){
+                tvGender.setText("男");
+            }else{
+                tvGender.setText("女");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         tvProvince.setText(userInfoSummary.getProvince());
         tvCity.setText(userInfoSummary.getCity());
