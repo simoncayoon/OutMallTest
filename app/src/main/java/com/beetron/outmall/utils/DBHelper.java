@@ -74,6 +74,7 @@ public class DBHelper {
      * @param proSummary
      */
     public void deleteProByOne(ProSummary proSummary) {
+
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
         qb.where(ProSummaryDao.Properties.Sid.eq(proSummary.getSid()));
 

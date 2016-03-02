@@ -11,10 +11,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
-import com.beetron.outmall.MainActivity;
 import com.beetron.outmall.R;
 import com.beetron.outmall.models.ProSummary;
-import com.beetron.outmall.models.ShopCartModel;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
 import com.beetron.outmall.utils.SpanTextUtil;
@@ -24,10 +22,10 @@ import java.util.List;
 /**
  * Created by DKY with IntelliJ IDEA.
  * Author: DKY email: losemanshoe@gmail.com.
- * Date: 2016/2/22.
- * Time: 11:22.
+ * Date: 2016/3/2.
+ * Time: 15:16.
  */
-public class ShopCartAdapter extends BaseAdapter {
+public class ShopCartFragment extends BaseAdapter {
 
     private static final String TAG = ShopCartAdapter.class.getSimpleName();
     private Context mContext;
@@ -44,10 +42,10 @@ public class ShopCartAdapter extends BaseAdapter {
 
     private ProCountChange callback = countChang;
 
-    public ShopCartAdapter(Context context, List<ProSummary> dataShopcart) {
-        mContext = context;
+    public ShopCartFragment(Fragment context, List<ProSummary> dataShopcart) {
+        mContext = context.getActivity();
         this.dataShopcart = dataShopcart;
-        inflater = LayoutInflater.from(context);
+        inflater = LayoutInflater.from(mContext);
         if (context instanceof ProCountChange) {
             callback = (ProCountChange) context;
         } else {

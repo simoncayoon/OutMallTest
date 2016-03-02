@@ -154,6 +154,7 @@ public class RegisteActivity extends Activity {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
                 mProgressHUD.dismiss();
             }
         });
@@ -187,20 +188,20 @@ public class RegisteActivity extends Activity {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         DebugFlags.logD(TAG, jsonObject.toString());
-//                        registNum = etPhoneNum.getText().toString();//设置当前验证的手机号码
-//                        Gson gson = new Gson();
-//                        ResultEntity<String> resultEntity = gson.fromJson(jsonObject.toString(),
-//                                new TypeToken<ResultEntity<String>>() {
-//                                }.getType());
-//                        if (resultEntity.isSuccess()) {//返回成功
-//                            try {
-//                                verifyCode = new JSONObject(resultEntity.getResult()).getString("code");
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                        } else {
-//                            Toast.makeText(RegisteActivity.this, resultEntity.getError(), Toast.LENGTH_SHORT).show();
-//                        }
+                        registNum = etPhoneNum.getText().toString();//设置当前验证的手机号码
+                        Gson gson = new Gson();
+                        ResultEntity<String> resultEntity = gson.fromJson(jsonObject.toString(),
+                                new TypeToken<ResultEntity<String>>() {
+                                }.getType());
+                        if (resultEntity.isSuccess()) {//返回成功
+                            try {
+                                verifyCode = new JSONObject(resultEntity.getResult()).getString("code");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Toast.makeText(RegisteActivity.this, resultEntity.getError(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override

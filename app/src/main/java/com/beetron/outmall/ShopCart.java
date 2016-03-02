@@ -20,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.beetron.outmall.adapter.ShopCartAdapter;
+import com.beetron.outmall.adapter.ShopCartFragment;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.models.OrderInfoModel;
@@ -37,6 +38,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -48,7 +50,7 @@ import java.util.List;
  * Date: 2016/2/3.
  * Time: 15:32.
  */
-public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountChange {
+public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountChange {
 
     private static final String TAG = ShopCart.class.getSimpleName();
     private ListView lvShopcart;
@@ -59,7 +61,7 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
     private List<Integer> indexCache;
 
     private ShopCartResult shopcartResult;
-    private ShopCartAdapter shopCartAdapter;
+    private ShopCartFragment shopCartAdapter;
     private Double currentAmount = 0.00;
 
     @Override
@@ -93,7 +95,7 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
         } catch (Exception e) {
             e.printStackTrace();
         }
-        shopCartAdapter = new ShopCartAdapter(getActivity(), dataLocalList);
+        shopCartAdapter = new ShopCartFragment(ShopCart.this, dataLocalList);
         lvShopcart.setAdapter(shopCartAdapter);
     }
 
@@ -250,25 +252,38 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
         postEntity.setToken(Constants.TOKEN_VALUE);
         postEntity.setUid(Constants.POST_UID_TEST);
         postEntity.setIsLogin("1");
-        postEntity.setGid(dataLocalList.get(position).getSid());
         String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
         }.getType());
         JSONObject postJson = new JSONObject(postString);
+        postJson.put("sid", dataLocalList.get(position).getSid());//添加sid
         JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         DebugFlags.logD(TAG, jsonObject.toString());
-                        Gson gson = new Gson();
-                        ResultEntity<Integer> resultEntity = gson.fromJson(jsonObject.toString(),
-                                new TypeToken<ResultEntity<Integer>>() {
-                                }.getType());
-                        if (resultEntity.isSuccess()) {
 
-                            dataLocalList.get(position).setCount(resultEntity.getResult());
-                            shopCartAdapter.notifyDataSetChanged();
-                        } else {
-                            Toast.makeText(getActivity(), resultEntity.getError(), Toast.LENGTH_SHORT).show();
+                        try {
+                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)){
+                                int resultCount = jsonObject.getInt(Constants.RESULT_CONTENT_FIELD);
+
+                                //更新数据库信息
+                                if (flag == FLAG_ADD) {
+                                    DBHelper.getInstance(getApplicationContext()).addShopCart(dataLocalList.get(position));
+                                } else if (flag == FLAG_MINUS){
+                                    DBHelper.getInstance(getApplicationContext()).deleteProByOne(dataLocalList.get(position));
+                                }
+                                //更新当前列表信息
+                                if (resultCount == 0){
+                                    dataLocalList.remove(position);
+                                } else {
+                                    dataLocalList.get(position).setCount(resultCount);//
+                                }
+                                shopCartAdapter.notifyDataSetChanged();
+                            } else {
+                                Toast.makeText(getActivity(), jsonObject.getString(Constants.RESULT_ERROR_FIELD), Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
                     }
                 }, new Response.ErrorListener() {
