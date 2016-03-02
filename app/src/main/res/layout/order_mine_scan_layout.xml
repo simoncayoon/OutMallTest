@@ -4,16 +4,61 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.shizhefei.view.indicator.FixedIndicatorView
-        android:id="@+id/indicate_order_status_bar"
+    <com.beetron.outmall.customview.CusNaviView
+        android:id="@+id/general_navi_id"
         android:layout_width="match_parent"
-        android:layout_height="56dp">
-    </com.shizhefei.view.indicator.FixedIndicatorView>
+        android:layout_height="@dimen/general_navi_height">
 
-    <com.shizhefei.view.viewpager.SViewPager
-        android:id="@+id/viewpager_order_data_with_status"
+    </com.beetron.outmall.customview.CusNaviView>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="10dp">
 
-    </com.shizhefei.view.viewpager.SViewPager>
+        <com.beetron.outmall.customview.TabItemView
+            android:id="@+id/ti_title1"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" />
+
+        <com.beetron.outmall.customview.TabItemView
+            android:id="@+id/ti_title2"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" />
+
+
+        <com.beetron.outmall.customview.TabItemView
+            android:id="@+id/ti_title3"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" />
+
+        <com.beetron.outmall.customview.TabItemView
+            android:id="@+id/ti_title4"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" />
+
+        <com.beetron.outmall.customview.TabItemView
+            android:id="@+id/ti_title5"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/general_boundary_color" />
+
+    <ListView
+        android:id="@+id/lv_orderList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" />
+
 </LinearLayout>

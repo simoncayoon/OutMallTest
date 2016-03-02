@@ -5,6 +5,13 @@
     android:background="@color/general_activity_bg"
     android:orientation="vertical">
 
+    <com.beetron.outmall.customview.CusNaviView
+        android:id="@+id/general_navi_id"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/general_navi_height">
+
+    </com.beetron.outmall.customview.CusNaviView>
+
     <LinearLayout
         android:id="@+id/ll_portrait_layout"
         android:layout_width="match_parent"
@@ -23,10 +30,11 @@
             android:textColor="@color/general_tab_text_color"
             android:textSize="@dimen/order_fix_text_size"/>
 
-        <com.android.volley.toolbox.NetworkImageView
+        <ImageView
             android:id="@+id/user_info_protrait_img"
             android:layout_width="@dimen/user_info_portait_size"
             android:layout_height="@dimen/user_info_portait_size"
+            android:src="@mipmap/default_avatar"
             />
 
         <ImageView
@@ -63,47 +71,6 @@
 
         <TextView
             android:id="@+id/user_info_nick_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/general_main_title_color"
-            android:textSize="@dimen/order_fix_text_size"/>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/order_fix_content_padding"
-            android:layout_marginRight="@dimen/order_fix_content_padding"
-            android:src="@mipmap/address_ic_arrow"/>
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginLeft="@dimen/order_fix_content_padding"
-        android:layout_marginRight="@dimen/order_fix_content_padding"
-        android:background="@color/general_boundary_color"/>
-
-    <!-- 签名-->
-    <LinearLayout
-        android:id="@+id/ll_signature_layout"
-        android:layout_width="match_parent"
-        android:layout_height="44dp"
-        android:background="@android:color/white"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/order_fix_content_padding"
-            android:layout_weight="1"
-            android:text="@string/user_info_title_signature"
-            android:textColor="@color/general_tab_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
-
-        <TextView
-            android:id="@+id/user_info_signature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/general_main_title_color"
@@ -166,9 +133,9 @@
         android:layout_marginRight="@dimen/order_fix_content_padding"
         android:background="@color/general_boundary_color"/>
 
-    <!-- 学校-->
+    <!-- 邮件-->
     <LinearLayout
-        android:id="@+id/ll_school_layout"
+        android:id="@+id/ll_email_layout"
         android:layout_width="match_parent"
         android:layout_height="44dp"
         android:background="@android:color/white"
@@ -180,12 +147,172 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/order_fix_content_padding"
             android:layout_weight="1"
-            android:text="@string/user_info_school"
+            android:text="@string/user_info_email"
             android:textColor="@color/general_tab_text_color"
             android:textSize="@dimen/order_fix_text_size"/>
 
         <TextView
-            android:id="@+id/user_info_school"
+            android:id="@+id/user_info_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/general_main_title_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_marginRight="@dimen/order_fix_content_padding"
+            android:src="@mipmap/address_ic_arrow"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="@dimen/order_fix_content_padding"
+        android:layout_marginRight="@dimen/order_fix_content_padding"
+        android:background="@color/general_boundary_color"/>
+    <!-- 省-->
+    <LinearLayout
+        android:id="@+id/ll_province_layout"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_weight="1"
+            android:text="@string/user_info_province"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <TextView
+            android:id="@+id/user_info_province"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/general_main_title_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_marginRight="@dimen/order_fix_content_padding"
+            android:src="@mipmap/address_ic_arrow"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="@dimen/order_fix_content_padding"
+        android:layout_marginRight="@dimen/order_fix_content_padding"
+        android:background="@color/general_boundary_color"/>
+    <!-- 城市-->
+    <LinearLayout
+        android:id="@+id/ll_city_layout"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_weight="1"
+            android:text="@string/user_info_city"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <TextView
+            android:id="@+id/user_info_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/general_main_title_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_marginRight="@dimen/order_fix_content_padding"
+            android:src="@mipmap/address_ic_arrow"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="@dimen/order_fix_content_padding"
+        android:layout_marginRight="@dimen/order_fix_content_padding"
+        android:background="@color/general_boundary_color"/>
+    <!-- 区-->
+    <LinearLayout
+        android:id="@+id/ll_area_layout"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_weight="1"
+            android:text="@string/user_info_area"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <TextView
+            android:id="@+id/user_info_area"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/general_main_title_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_marginRight="@dimen/order_fix_content_padding"
+            android:src="@mipmap/address_ic_arrow"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_marginLeft="@dimen/order_fix_content_padding"
+        android:layout_marginRight="@dimen/order_fix_content_padding"
+        android:background="@color/general_boundary_color"/>
+    <!-- 地址-->
+    <LinearLayout
+        android:id="@+id/ll_street_layout"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/order_fix_content_padding"
+            android:layout_weight="1"
+            android:text="@string/user_info_street"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="@dimen/order_fix_text_size"/>
+
+        <TextView
+            android:id="@+id/user_info_street"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/general_main_title_color"

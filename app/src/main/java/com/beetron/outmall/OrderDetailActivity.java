@@ -19,21 +19,15 @@ import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.models.AddrInfoModel;
-import com.beetron.outmall.models.OrderFixInfo;
 import com.beetron.outmall.models.OrderInfoModel;
 import com.beetron.outmall.models.OrderPostModel;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ProSummary;
-import com.beetron.outmall.models.ResultEntity;
-import com.beetron.outmall.models.ShopCartModel;
-import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**

@@ -171,6 +171,9 @@ public class DBHelper {
      */
     public UserInfoModel getUserInfo() {
         QueryBuilder<UserInfoModel> qb = userInfoModelDao.queryBuilder();
+        if (qb.list().size() == 0){
+            return new UserInfoModel();
+        }
         return qb.list().get(0);
     }
 }

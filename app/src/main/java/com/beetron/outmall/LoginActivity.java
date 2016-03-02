@@ -164,6 +164,8 @@ public class LoginActivity extends Activity {
                                 DBHelper.getInstance(getApplicationContext()).saveUserInfo(userInfoModel);
                                 TempDataManager.getInstance(getApplicationContext()).setCurrentUid(userInfoModel.getUid());
                                 DebugFlags.logD(TAG, userInfoModel.getTel());
+                                Intent mIntent = new Intent();
+                                setResult(RESULT_OK, mIntent);
                                 finish();
                             }
                         } catch (JSONException e) {

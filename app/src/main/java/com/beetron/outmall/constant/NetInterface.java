@@ -137,4 +137,12 @@ public class NetInterface {
      * 删除内容
      */
     public static final String METHON_SHOP_CART_PRO_DELETE_BY_IDS = "?m=home&c=app&a=clear_chose_cart";
+    /**
+     * 订单信息
+     */
+    public static final String METHON_ORDER_INFO = "?m=home&c=app&a=uer_order";
+    /**
+     * 修改用户信息
+     */
+    public static final String METHON_EDIT_USER_INFO = "?m=home&c=app&a=user_edit";
 }

@@ -21,4 +21,8 @@
 
     <color name="btn_click_color">#fffa12</color>
     <color name="btn_red_click_color">#c13425</color>
+    <color name="menu_yellow_color">#ffd943</color>
+    <color name="tab_top2_text_1">#000</color>
+    <color name="tab_top2_text_2">#fff</color>
+    <color name="white">#FFFFFF</color>
 </resources>

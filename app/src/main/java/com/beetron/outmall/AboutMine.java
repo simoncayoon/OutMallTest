@@ -46,6 +46,7 @@ import org.json.JSONObject;
  */
 public class AboutMine extends BaseFragment {
 
+    public static final int INTENT_FLAG_LOGIN_REQ = 0x11;
     private static final String TAG = AboutMine.class.getSimpleName();
     Button testRegist;
     private RelativeLayout headView;
@@ -53,6 +54,7 @@ public class AboutMine extends BaseFragment {
     private TextView headName, headSign;
     private LinearLayout llOrderTab;
     private FixedIndicatorView scanTab;
+    private TempDataManager tempDataManager;
 
     private MemberModel memberModel;
 
@@ -67,11 +69,13 @@ public class AboutMine extends BaseFragment {
                 startActivity(new Intent(getActivity(), LoginActivity.class));
             }
         });
-
+        tempDataManager = TempDataManager.getInstance(getActivity());
         initView();
 
         try {
-            getUserData();
+            if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
+                getUserData();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -81,8 +85,8 @@ public class AboutMine extends BaseFragment {
         String url = NetInterface.HOST + NetInterface.METHON_GET_USER_INFO;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
-        postEntity.setUid(Constants.POST_UID_TEST);
-        postEntity.setIsLogin("1");
+        postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
+        postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
         String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
         }.getType());
         JSONObject postJson = new JSONObject(postString);
@@ -165,7 +169,14 @@ public class AboutMine extends BaseFragment {
             @Override
             public void onClick(View v) {
                 DebugFlags.logD(TAG, "去订单详情！");
-                startActivity(new Intent(getActivity(), OrderMineScan.class));
+                if (tempDataManager.isLogin()) {
+                    Intent intent = new Intent(getActivity(), OrderMineScan.class);
+                    intent.putExtra("select", 1);
+                    startActivity(intent);
+                } else {
+                    //跳转到登陆
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), INTENT_FLAG_LOGIN_REQ);
+                }
             }
         });
 
@@ -175,7 +186,27 @@ public class AboutMine extends BaseFragment {
                 getResources().getString(R.string.order_have_accept), getResources().getString(R.string.order_delivery),
                 getResources().getString(R.string.order_have_done)};
         final int[] drawableTop = new int[]{R.mipmap.user_card, R.mipmap.user_waiting, R.mipmap.user_receive, R.mipmap.user_distribution, R.mipmap.user_finish};
-        scanTab.setAdapter(new Indicator.IndicatorAdapter() {
+        scanTab.setAdapter(getAdapter(scanTabName, drawableTop, 0));
+
+        scanTab.setOnItemSelectListener(new Indicator.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(View selectItemView, int select, int preSelect) {
+                if (tempDataManager.isLogin()) {
+                    scanTab.setAdapter(getAdapter(scanTabName, drawableTop, select));
+                    Intent intent = new Intent(getActivity(), OrderMineScan.class);
+                    intent.putExtra("select", select + 1);
+                    startActivity(intent);
+                } else {
+                    //跳转到登陆
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), INTENT_FLAG_LOGIN_REQ);
+                }
+            }
+        });
+
+    }
+
+    private Indicator.IndicatorAdapter getAdapter(final String[] scanTabName, final int[] drawableTop, final int currueNum) {
+        return new Indicator.IndicatorAdapter() {
             @Override
             public int getCount() {
                 return scanTabName.length;
@@ -196,8 +227,23 @@ public class AboutMine extends BaseFragment {
                         getActivity(), 22)));
 
                 textView.setCompoundDrawables(null, top, null, null);
+                if (position == currueNum) {
+                    textView.setTextColor(getResources().getColor(R.color.menu_yellow_color));
+                }
                 return convertView;
             }
-        });
+        };
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //重新获取用户信息
+
+        try {
+            getUserData();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.beetron.outmall.constant;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by DKY with IntelliJ IDEA.
  * Author: DKY email: losemanshoe@gmail.com.
@@ -15,4 +17,5 @@ public class Constants {
     public static final String RESULT_STATUS_FIELD = "isSuccess";
     public static final String RESULT_CONTENT_FIELD = "result";
     public static final String RESULT_ERROR_FIELD = "error";
+    public static Bitmap mBitmap = null;// 用于上传头像
 }
