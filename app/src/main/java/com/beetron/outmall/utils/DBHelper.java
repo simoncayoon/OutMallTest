@@ -119,8 +119,12 @@ public class DBHelper {
     }
 
     public List<ProSummary> getShopCartList() {
+        List<ProSummary> result = new ArrayList<ProSummary>();
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
-        return qb.list();
+        for (ProSummary item :qb.list()){
+            result.add(item);
+        }
+        return result;
     }
 
     public Map<String, String> getFidCache() {

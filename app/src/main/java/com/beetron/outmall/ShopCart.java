@@ -32,6 +32,7 @@ import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -54,7 +55,6 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
     private CheckBox checkSelectAll;
     private TextView tvAmount;
     private Button btnAccount;
-    //    private List<ShopCartModel> dataShopCart;
     private List<ProSummary> dataLocalList;
     private List<Integer> indexCache;
 
@@ -66,7 +66,6 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
     protected void onCreateView(Bundle savedInstanceState) {
         super.onCreateView(savedInstanceState);
         setContentView(R.layout.shop_cart_layout);
-        dataLocalList = new ArrayList<ProSummary>();
         initView();
         try {
             updateAmount(0.00);//初始化总价
@@ -94,49 +93,57 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
         } catch (Exception e) {
             e.printStackTrace();
         }
-        shopCartAdapter = new ShopCartAdapter(ShopCart.this, dataLocalList);
+        shopCartAdapter = new ShopCartAdapter(getActivity(), dataLocalList);
         lvShopcart.setAdapter(shopCartAdapter);
     }
 
+    /**
+     * 获取服务端或者本地数据库购物车信息
+     * @param reqRemote 是否网络访问
+     * @throws Exception
+     */
     public void reqShopcart(Boolean reqRemote) throws Exception {
 
-        if (reqRemote) {
-            String url = NetInterface.HOST + NetInterface.METHON_GET_SHOPCART;
-            PostEntity postEntity = new PostEntity();
-            postEntity.setToken(Constants.TOKEN_VALUE);
-            postEntity.setUid(Constants.POST_UID_TEST);
-            postEntity.setIsLogin("1");
-            String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
-            }.getType());
-            JSONObject postJson = new JSONObject(postString);
-            JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject jsonObject) {
-                            DebugFlags.logD(TAG, jsonObject.toString());
-                            Gson gson = new Gson();
-                            ResultEntity<ShopCartResult> resultEntity = gson.fromJson(jsonObject.toString(),
-                                    new TypeToken<ResultEntity<ShopCartResult>>() {
-                                    }.getType());
-                            shopcartResult = resultEntity.getResult();
+        if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
+            if (reqRemote) {
+                String url = NetInterface.HOST + NetInterface.METHON_GET_SHOPCART;
+                PostEntity postEntity = new PostEntity();
+                postEntity.setToken(Constants.TOKEN_VALUE);
+                postEntity.setUid(Constants.POST_UID_TEST);
+                postEntity.setIsLogin("1");
+                String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
+                }.getType());
+                JSONObject postJson = new JSONObject(postString);
+                JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject jsonObject) {
+                                DebugFlags.logD(TAG, jsonObject.toString());
+                                Gson gson = new Gson();
+                                ResultEntity<ShopCartResult> resultEntity = gson.fromJson(jsonObject.toString(),
+                                        new TypeToken<ResultEntity<ShopCartResult>>() {
+                                        }.getType());
+                                dataLocalList = new ArrayList<ProSummary>();
+                                shopcartResult = resultEntity.getResult();
 
-                            convertProSummary();
+                                convertProSummary();
 
-                            DBHelper.getInstance(getApplicationContext()).saveShopLocal(dataLocalList);
-                            initData();
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    volleyError.printStackTrace();
+                                DBHelper.getInstance(getApplicationContext()).saveShopLocal(dataLocalList);
+                                initData();
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        volleyError.printStackTrace();
 
-                }
-            });
-            NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
-        } else {
-            dataLocalList = DBHelper.getInstance(getApplicationContext()).getShopCartList();
-            initData();
+                    }
+                });
+                NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
+            } else {
+                dataLocalList = DBHelper.getInstance(getApplicationContext()).getShopCartList();
+                initData();
 
+            }
         }
     }
 
@@ -291,7 +298,7 @@ public class ShopCart extends BaseFragment implements ShopCartAdapter.ProCountCh
     public void onResume() {
         super.onResume();
         try {
-            reqShopcart(false);
+            reqShopcart(true);//访问本地更新
         } catch (Exception e) {
             e.printStackTrace();
         }

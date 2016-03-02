@@ -186,7 +186,7 @@ public class LoginFastActivity extends Activity {
      */
     private void getRegistCode() throws JSONException {
         final ProgressHUD mProgressHUD;
-        mProgressHUD = ProgressHUD.show(this, getResources().getString(R.string.prompt_progress_login), true, false,
+        mProgressHUD = ProgressHUD.show(this, getResources().getString(R.string.prompt_progress_get_code), true, false,
                 null);
         String url = NetInterface.HOST + NetInterface.METHON_VERIFY_CODE_REGIST_GEN;
         PostUser postEntity = new PostUser();

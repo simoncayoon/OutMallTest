@@ -226,6 +226,11 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     private class MyAdapter extends IndicatorViewPager.IndicatorFragmentPagerAdapter {
         Resources rsc = getResources();
         public final String[] tabNames = {rsc.getString(R.string.framework_navi_home_page), rsc.getString(R.string.framework_navi_time_limit), rsc.getString(R.string.framework_navi_shope_cart),

@@ -1,5 +1,6 @@
 package com.beetron.outmall.adapter;
 
+import android.content.Context;
 import android.graphics.Paint;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -28,7 +29,7 @@ import java.util.List;
 public class ShopCartAdapter extends BaseAdapter {
 
     private static final String TAG = ShopCartAdapter.class.getSimpleName();
-    private Fragment mContext;
+    private Context mContext;
     private List<ProSummary> dataShopcart;
     private LayoutInflater inflater;
 
@@ -42,10 +43,10 @@ public class ShopCartAdapter extends BaseAdapter {
 
     private ProCountChange callback = countChang;
 
-    public ShopCartAdapter(Fragment context, List<ProSummary> dataShopcart) {
+    public ShopCartAdapter(Context context, List<ProSummary> dataShopcart) {
         mContext = context;
         this.dataShopcart = dataShopcart;
-        inflater = LayoutInflater.from(context.getActivity());
+        inflater = LayoutInflater.from(context);
         if (context instanceof ProCountChange) {
             callback = (ProCountChange) context;
         } else {
@@ -95,7 +96,7 @@ public class ShopCartAdapter extends BaseAdapter {
         viewHolder.itemPrimaryPrice.setText("￥" + shopcartItem.getPrice1());
         viewHolder.itemPrimaryPrice.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
         viewHolder.itemVolume.setText(String.valueOf(shopcartItem.getCount()));
-        viewHolder.imgView.setImageUrl(shopcartItem.getImg(), NetController.getInstance(mContext.getActivity()).getImageLoader());
+        viewHolder.imgView.setImageUrl(shopcartItem.getImg(), NetController.getInstance(mContext).getImageLoader());
         viewHolder.itemCountAdd.setOnClickListener(new OnProCountChangeListener(ProCountChange.FLAG_ADD, position));
         viewHolder.itemCountMinus.setOnClickListener(new OnProCountChangeListener(ProCountChange.FLAG_MINUS, position));
         return convertView;
