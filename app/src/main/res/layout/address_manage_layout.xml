@@ -1,53 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/general_activity_bg"
     android:orientation="vertical">
+    
+    <com.beetron.outmall.customview.CusNaviView
+        android:id="@+id/general_navi_id"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/general_navi_height"></com.beetron.outmall.customview.CusNaviView>
 
-    <ListView
-        android:id="@+id/shop_cart_detail_list"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:cacheColorHint="#00000000"
-        android:fadingEdge="none"
-        android:fastScrollEnabled="false"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
-        android:smoothScrollbar="true">
-    </ListView>
+        android:background="@color/general_activity_bg"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/shop_cart_detail_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="#00000000"
+            android:fadingEdge="none"
+            android:fastScrollEnabled="false"
+            android:footerDividersEnabled="false"
+            android:headerDividersEnabled="false"
+            android:smoothScrollbar="true"></ListView>
 
 
-    <LinearLayout
-        android:id="@+id/addr_manage_empty_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:visibility="gone">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:background="@mipmap/image_address"/>
+        <LinearLayout
+            android:id="@+id/addr_manage_empty_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:text="@string/addr_info_empty"
-            android:textColor="@color/general_tab_text_color"
-            android:textSize="13sp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:background="@mipmap/image_address" />
 
-        <Button
-            android:id="@+id/btn_add_addr_info"
-            android:layout_width="110dp"
-            android:layout_height="45dp"
-            android:layout_marginTop="30.5dp"
-            android:background="@color/tab_selected_color"
-            android:text="@string/addr_manage_add_addr_info"
-            android:textColor="@color/general_main_title_color"
-            android:textSize="14sp"/>
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/addr_info_empty"
+                android:textColor="@color/general_tab_text_color"
+                android:textSize="13sp" />
 
-</FrameLayout>
+            <Button
+                android:id="@+id/btn_add_addr_info"
+                android:layout_width="110dp"
+                android:layout_height="45dp"
+                android:layout_marginTop="30.5dp"
+                android:background="@color/tab_selected_color"
+                android:text="@string/addr_manage_add_addr_info"
+                android:textColor="@color/general_main_title_color"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>

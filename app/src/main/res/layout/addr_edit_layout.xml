@@ -1,195 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.beetron.outmall.customview.ReboundScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/general_activity_bg"
     android:orientation="vertical">
 
-    <LinearLayout
+    <com.beetron.outmall.customview.CusNaviView
+        android:id="@+id/general_navi_id"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/general_navi_height"></com.beetron.outmall.customview.CusNaviView>
+
+    <com.beetron.outmall.customview.ReboundScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
+        android:background="@color/general_activity_bg"
         android:orientation="vertical">
 
-        <!-- 姓名编辑-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/addr_edit_content_padding"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- 姓名编辑-->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/addr_edit_text_my_name"
-                android:textColor="@color/addr_edit_text_title_color"
-                android:textSize="@dimen/addr_edit_text_size"/>
+                android:layout_margin="@dimen/addr_edit_content_padding"
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/et_addr_edit_name"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/addr_edit_text_my_name"
+                    android:textColor="@color/addr_edit_text_title_color"
+                    android:textSize="@dimen/addr_edit_text_size" />
+
+                <EditText
+                    android:id="@+id/et_addr_edit_name"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/addr_edit_content_padding"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="@string/prompt_addr_edit_name_input"
+                    android:textColorHint="@color/hint_color"
+                    android:textSize="@dimen/addr_edit_text_size" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
                 android:layout_marginLeft="@dimen/addr_edit_content_padding"
-                android:layout_weight="1"
-                android:background="@null"
-                android:hint="@string/prompt_addr_edit_name_input"
-                android:textColorHint="@color/hint_color"
-                android:textSize="@dimen/addr_edit_text_size"/>
+                android:layout_marginRight="@dimen/addr_edit_content_padding"
+                android:background="@color/general_boundary_color" />
 
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginLeft="@dimen/addr_edit_content_padding"
-            android:layout_marginRight="@dimen/addr_edit_content_padding"
-            android:background="@color/general_boundary_color"/>
-
-        <!-- 手机编辑-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/addr_edit_content_padding"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- 手机编辑-->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/addr_edit_text_my_phone_num"
-                android:textColor="@color/addr_edit_text_title_color"
-                android:textSize="@dimen/addr_edit_text_size"/>
+                android:layout_margin="@dimen/addr_edit_content_padding"
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/et_addr_edit_phone_num"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/addr_edit_text_my_phone_num"
+                    android:textColor="@color/addr_edit_text_title_color"
+                    android:textSize="@dimen/addr_edit_text_size" />
+
+                <EditText
+                    android:id="@+id/et_addr_edit_phone_num"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/addr_edit_content_padding"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="@string/prompt_addr_edit_phone_input"
+                    android:inputType="phone"
+                    android:textColorHint="@color/hint_color"
+                    android:textSize="@dimen/addr_edit_text_size" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
                 android:layout_marginLeft="@dimen/addr_edit_content_padding"
-                android:layout_weight="1"
-                android:background="@null"
-                android:hint="@string/prompt_addr_edit_phone_input"
-                android:inputType="phone"
-                android:textColorHint="@color/hint_color"
-                android:textSize="@dimen/addr_edit_text_size"/>
+                android:layout_marginRight="@dimen/addr_edit_content_padding"
+                android:background="@color/general_boundary_color" />
 
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginLeft="@dimen/addr_edit_content_padding"
-            android:layout_marginRight="@dimen/addr_edit_content_padding"
-            android:background="@color/general_boundary_color"/>
-
-        <!-- 性别编辑-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/addr_edit_content_padding"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- 性别编辑-->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/addr_edit_text_my_gender"
-                android:textColor="@color/addr_edit_text_title_color"
-                android:textSize="@dimen/addr_edit_text_size"/>
+                android:layout_margin="@dimen/addr_edit_content_padding"
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/et_addr_edit_gender"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/addr_edit_text_my_gender"
+                    android:textColor="@color/addr_edit_text_title_color"
+                    android:textSize="@dimen/addr_edit_text_size" />
+
+                <EditText
+                    android:id="@+id/et_addr_edit_gender"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/addr_edit_content_padding"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="@string/prompt_addr_edit_gender_input"
+                    android:textColorHint="@color/hint_color"
+                    android:textSize="@dimen/addr_edit_text_size" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
                 android:layout_marginLeft="@dimen/addr_edit_content_padding"
-                android:layout_weight="1"
-                android:background="@null"
-                android:hint="@string/prompt_addr_edit_phone_input"
-                android:textColorHint="@color/hint_color"
-                android:textSize="@dimen/addr_edit_text_size"/>
+                android:layout_marginRight="@dimen/addr_edit_content_padding"
+                android:background="@color/general_boundary_color" />
 
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginLeft="@dimen/addr_edit_content_padding"
-            android:layout_marginRight="@dimen/addr_edit_content_padding"
-            android:background="@color/general_boundary_color"/>
-
-        <!--&lt;!&ndash; 学校编辑&ndash;&gt;-->
-        <!--<LinearLayout-->
+            <!--&lt;!&ndash; 学校编辑&ndash;&gt;-->
+            <!--<LinearLayout-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="wrap_content"-->
             <!--android:layout_margin="@dimen/addr_edit_content_padding"-->
             <!--android:orientation="horizontal">-->
 
             <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="@string/addr_edit_text_my_schoolr"-->
-                <!--android:textColor="@color/addr_edit_text_title_color"-->
-                <!--android:textSize="@dimen/addr_edit_text_size"/>-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/addr_edit_text_my_schoolr"-->
+            <!--android:textColor="@color/addr_edit_text_title_color"-->
+            <!--android:textSize="@dimen/addr_edit_text_size"/>-->
 
             <!--<EditText-->
-                <!--android:id="@+id/et_addr_edit_school"-->
-                <!--android:layout_width="0dip"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginLeft="@dimen/addr_edit_content_padding"-->
-                <!--android:layout_weight="1"-->
-                <!--android:background="@null"-->
-                <!--android:hint="@string/prompt_addr_edit_school_input"-->
-                <!--android:textColorHint="@color/hint_color"-->
-                <!--android:textSize="@dimen/addr_edit_text_size"/>-->
+            <!--android:id="@+id/et_addr_edit_school"-->
+            <!--android:layout_width="0dip"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="@dimen/addr_edit_content_padding"-->
+            <!--android:layout_weight="1"-->
+            <!--android:background="@null"-->
+            <!--android:hint="@string/prompt_addr_edit_school_input"-->
+            <!--android:textColorHint="@color/hint_color"-->
+            <!--android:textSize="@dimen/addr_edit_text_size"/>-->
 
-        <!--</LinearLayout>-->
+            <!--</LinearLayout>-->
 
-        <!--<View-->
+            <!--<View-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="1px"-->
             <!--android:layout_marginLeft="@dimen/addr_edit_content_padding"-->
             <!--android:layout_marginRight="@dimen/addr_edit_content_padding"-->
             <!--android:background="@color/general_boundary_color"/>-->
 
-        <!-- 地址编辑-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/addr_edit_content_padding"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
+            <!-- 地址编辑-->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/addr_edit_text_my_addr"
-                android:textColor="@color/addr_edit_text_title_color"
-                android:textSize="@dimen/addr_edit_text_size"/>
+                android:layout_margin="@dimen/addr_edit_content_padding"
+                android:orientation="horizontal">
 
-            <EditText
-                android:id="@+id/et_addr_edit_addr"
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/addr_edit_text_my_addr"
+                    android:textColor="@color/addr_edit_text_title_color"
+                    android:textSize="@dimen/addr_edit_text_size" />
+
+                <EditText
+                    android:id="@+id/et_addr_edit_addr"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/addr_edit_content_padding"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="@string/prompt_addr_edit_addr_input"
+                    android:textColorHint="@color/hint_color"
+                    android:textSize="@dimen/addr_edit_text_size" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
                 android:layout_marginLeft="@dimen/addr_edit_content_padding"
-                android:layout_weight="1"
-                android:background="@null"
-                android:hint="@string/prompt_addr_edit_addr_input"
-                android:textColorHint="@color/hint_color"
-                android:textSize="@dimen/addr_edit_text_size"/>
+                android:layout_marginRight="@dimen/addr_edit_content_padding"
+                android:background="@color/general_boundary_color" />
 
+            <!--<Button-->
+                <!--android:id="@+id/test_save"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="@string/save"-->
+                <!--style="@style/BtnStyle"/>-->
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginLeft="@dimen/addr_edit_content_padding"
-            android:layout_marginRight="@dimen/addr_edit_content_padding"
-            android:background="@color/general_boundary_color"/>
 
-        <Button
-            android:id="@+id/test_save"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="保存"
-            />
-    </LinearLayout>
+    </com.beetron.outmall.customview.ReboundScrollView>
 
-
-
-</com.beetron.outmall.customview.ReboundScrollView>
+</LinearLayout>

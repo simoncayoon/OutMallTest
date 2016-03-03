@@ -109,6 +109,11 @@ public class NetInterface {
     public static final String METHON_ADDR_ADD = "?m=home&c=app&a=address_add";
 
     /**
+     * 用户地址更新
+     */
+    public static final String METHON_ADDR_UPDATE = "?m=home&c=app&a=address_edit_do";
+
+    /**
      * 删除地址
      */
     public static final String METHON_ADDR_DELETE = "?m=home&c=app&a=address_del";

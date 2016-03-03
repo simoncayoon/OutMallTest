@@ -8,7 +8,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,7 +27,6 @@ import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
-import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -41,19 +39,14 @@ import java.util.List;
 /**
  * Created by DKY with IntelliJ IDEA.
  * Author: DKY email: losemanshoe@gmail.com.
- * Date: 2016/2/22.
- * Time: 18:04.
+ * Date: 2016/3/3.
+ * Time: 16:23.
  */
-public class AddrManager extends Activity {
+public class AddrConsole extends Activity {
 
-    public static final int ADDR_REQUEST_CODE = 0x1122;
-    public static final String RESULT_DATA = "RESULT_DATA";
     private static final String TAG = AddrManager.class.getSimpleName();
-    public static String ADDR_PICK = "ADDR_PICK";
     List<AddrInfoModel> addrList;
     private ListView llAddrList;
-    private Button btnToadd;
-    private LinearLayout llEmpty;
     private boolean isEdit = false;
     private AddrAdapter addrAdapter;
     private CusNaviView cusNaviView;
@@ -61,7 +54,7 @@ public class AddrManager extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.address_manage_layout);
+        setContentView(R.layout.address_console_layout);
         initView();
 
     }
@@ -70,55 +63,43 @@ public class AddrManager extends Activity {
 
         initNavi();
         llAddrList = (ListView) findViewById(R.id.shop_cart_detail_list);
-        llEmpty = (LinearLayout) findViewById(R.id.addr_manage_empty_layout);
-        btnToadd = (Button) findViewById(R.id.btn_add_addr_info);
-        btnToadd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(AddrManager.this, AddrEdit.class));
-            }
-        });
 
         llAddrList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (isEdit) {//编辑
-
-                } else {//选择
-                    Intent intent = new Intent(AddrManager.this, OrderFixActivity.class);
-                    intent.putExtra(ADDR_PICK, addrList.get(position));
-                    setResult(RESULT_OK, intent);
-                    finish();
-                }
+                Intent intent = new Intent(AddrConsole.this, AddrEdit.class);
+                AddrInfoModel addrInfoModel = addrList.get(position);
+                intent.putExtra(AddrEdit.INTENT_KEY_ADDR_EDIT, addrInfoModel);
+                startActivity(intent);
             }
         });
 
-//        llAddrList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                try {
-//                    addrDelete(position);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//                return false;
-//            }
-//        });
+        llAddrList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                try {
+                    addrDelete(position);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return false;
+            }
+        });
     }
 
     private void initNavi() {
         cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
-        cusNaviView.setNaviTitle(getResources().getString(R.string.navi_title_addr_select));
+        cusNaviView.setNaviTitle(getResources().getString(R.string.navi_title_addr_manage));
         cusNaviView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
-        ((Button) cusNaviView.getLeftBtn()).setText(getResources().getString(R.string.navi_title_order_fix));//设置返回标题
+        ((Button) cusNaviView.getLeftBtn()).setText(getResources().getString(R.string.navi_title_addr_select_test));//设置返回标题
 
         cusNaviView.setBtnView(CusNaviView.PUT_RIGHT, new TextView(this), 50, 30);
-        ((TextView) cusNaviView.getRightBtn()).setText(getResources().getString(R.string.navi_title_right_manage));//初始化
+        ((TextView) cusNaviView.getRightBtn()).setText(getResources().getString(R.string.symbol_add));//初始化
         ((TextView) cusNaviView.getRightBtn()).setGravity(Gravity.CENTER);
         ((TextView) cusNaviView.getRightBtn()).setTextColor(getResources().getColor(R.color.general_main_title_color));
-        ((TextView) cusNaviView.getRightBtn()).setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+        ((TextView) cusNaviView.getRightBtn()).setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 18, getResources().getDisplayMetrics()));
         cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
             @Override
             public void leftBtnListener() {
@@ -127,21 +108,69 @@ public class AddrManager extends Activity {
 
             @Override
             public void rightBtnListener() {
-                //去地址管理
-                startActivity(new Intent(AddrManager.this, AddrConsole.class));
+                //去地址编辑
+                startActivity(new Intent(AddrConsole.this, AddrEdit.class));
             }
         });
     }
 
+    private void addrDelete(final int position) throws Exception {
+        final ProgressHUD mProgressHUD;
+        mProgressHUD = ProgressHUD.show(AddrConsole.this, getResources().getString(R.string.prompt_progress_loading), true, false,
+                null);
+        String url = NetInterface.HOST + NetInterface.METHON_GET_ADDR_LIST;
+        AddrInfoModel postEntity = new AddrInfoModel();
+        postEntity.setToken(Constants.TOKEN_VALUE);
+        postEntity.setUid(Constants.POST_UID_TEST);
+        postEntity.setIsLogin("1");
+        postEntity.setId(addrList.get(position).getId());
+        String postString = new Gson().toJson(postEntity, new TypeToken<AddrInfoModel>() {
+        }.getType());
+        JSONObject postJson = new JSONObject(postString);
+        JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        DebugFlags.logD(TAG, jsonObject.toString());
+                        GsonBuilder gsonBuilder = new GsonBuilder();
+                        BooleanSerializer serializer = new BooleanSerializer();
+                        gsonBuilder.registerTypeAdapter(Boolean.class, serializer);
+                        gsonBuilder.registerTypeAdapter(boolean.class, serializer);
+                        Gson gson = gsonBuilder.create();
+                        ResultEntity<PageEntity<AddrInfoModel>> resultEntity = gson.fromJson(jsonObject.toString(),
+                                new TypeToken<ResultEntity<PageEntity<AddrInfoModel>>>() {
+                                }.getType());
+                        if (resultEntity.isSuccess()) {
+                            addrList.remove(position);
+                            addrAdapter.notifyDataSetChanged();
+                        } else {
+                            try {
+                                DebugFlags.logD(TAG, resultEntity.getError());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        mProgressHUD.dismiss();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+                mProgressHUD.dismiss();
+            }
+        });
+        NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
+    }
+
     private void reqAddr() throws Exception {
         final ProgressHUD mProgressHUD;
-        mProgressHUD = ProgressHUD.show(AddrManager.this, getResources().getString(R.string.prompt_progress_loading), true, false,
+        mProgressHUD = ProgressHUD.show(AddrConsole.this, getResources().getString(R.string.prompt_progress_loading), true, false,
                 null);
         String url = NetInterface.HOST + NetInterface.METHON_GET_ADDR_LIST;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
-        postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
-        postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
+        postEntity.setUid(Constants.POST_UID_TEST);
+        postEntity.setIsLogin("1");
         String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
         }.getType());
         JSONObject postJson = new JSONObject(postString);
@@ -186,12 +215,9 @@ public class AddrManager extends Activity {
 
     private void initData() {
 
-        addrAdapter = new AddrAdapter(AddrManager.this, addrList);
-        if (addrList.size() > 0) {
-            llAddrList.setAdapter(addrAdapter);
-        } else {
-            llEmpty.setVisibility(View.GONE);
-        }
+        addrAdapter = new AddrAdapter(AddrConsole.this, addrList);
+        llAddrList.setAdapter(addrAdapter);
+
     }
 
     @Override

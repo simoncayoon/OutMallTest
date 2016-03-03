@@ -107,4 +107,11 @@
     <string name="prompt_progress_loading">正在加载...</string>
     <string name="prompt_progress_get_code">获取验证码...</string>
     <string name="prompt_regist_phone_verify_error">验证码输入错误</string>
+    <string name="navi_title_addr_select">选择收货地址</string>
+    <string name="navi_title_right_manage">管理</string>
+    <string name="navi_title_addr_manage">管理地址</string>
+    <string name="navi_title_addr_select_test">地址选择</string>
+    <string name="navi_title_addr_xiugai">地址修改</string>
+    <string name="navi_title_addr_add">地址新增</string>
+    <string name="prompt_addr_edit_gender_input">请选择性别</string>
 </resources>

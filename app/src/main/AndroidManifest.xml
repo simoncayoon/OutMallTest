@@ -73,6 +73,9 @@
         <activity
             android:name=".WebViewActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddrConsole"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

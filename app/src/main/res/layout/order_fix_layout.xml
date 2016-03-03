@@ -50,7 +50,7 @@
                     android:layout_marginRight="@dimen/order_fix_content_padding"
                     android:layout_marginTop="@dimen/order_fix_content_padding"
                     android:button="@null"
-                    android:drawableRight="@mipmap/ic_select"
+                    android:drawableRight="@drawable/btn_check_press_selector"
                     android:gravity="left|center_vertical"
                     android:text="@string/pay_online"
                     android:textColor="@color/order_fix_text_color"
@@ -65,7 +65,7 @@
                     android:layout_marginRight="@dimen/order_fix_content_padding"
                     android:layout_marginTop="20dp"
                     android:button="@null"
-                    android:drawableRight="@mipmap/ic_select"
+                    android:drawableRight="@drawable/btn_check_press_selector"
                     android:gravity="left|center_vertical"
                     android:text="@string/pay_delivery"
                     android:textColor="@color/order_fix_text_color"
@@ -99,19 +99,12 @@
             android:textColor="@color/general_tab_text_color"
             android:textSize="22sp"/>
 
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:textColor="@color/general_tab_text_color"-->
-            <!--android:textSize="@dimen/order_fix_text_size" />-->
-
         <Button
             android:id="@+id/btn_to_account_shop_cart"
             android:layout_width="@dimen/shop_cart_account_btn_width"
             android:layout_height="@dimen/shop_cart_account_btn_height"
             android:layout_margin="@dimen/btn_to_account_margin"
-            android:background="@color/home_page_general_red"
+            android:background="@drawable/shape_btn_corner_red_selector"
             android:text="@string/to_settle_accounts"
             android:textColor="@android:color/white"
             android:textSize="@dimen/btn_to_account_text_size" />

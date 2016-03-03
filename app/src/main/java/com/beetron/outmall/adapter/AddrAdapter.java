@@ -30,7 +30,7 @@ public class AddrAdapter extends BaseAdapter {
     private Context mContext;
     private List<AddrInfoModel> addrList ;
 
-    public AddrAdapter(AddrManager addrManager, List<AddrInfoModel> addrList) {
+    public AddrAdapter(Context addrManager, List<AddrInfoModel> addrList) {
 
         this.mContext = addrManager;
         this.addrList = addrList;
