@@ -62,7 +62,7 @@
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/tab_selected_color"
+            android:background="@drawable/shape_rect_btn_selector"
             android:text="@string/order_detail_order_cancel"
             android:textColor="@color/general_main_title_color" />
 
@@ -71,7 +71,7 @@
             android:layout_width="0dip"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/home_page_general_red"
+            android:background="@drawable/shape_rect_red_btn_selector"
             android:text="@string/pay_immediately"
             android:textColor="@android:color/white" />
     </LinearLayout>

@@ -114,4 +114,8 @@
     <string name="navi_title_addr_xiugai">地址修改</string>
     <string name="navi_title_addr_add">地址新增</string>
     <string name="prompt_addr_edit_gender_input">请选择性别</string>
+    <string name="prompt_order_cancel">订单取消成功</string>
+    <string name="prompt_phone_num_not_match">请填写正确的电话号码</string>
+    <string name="prompt_regist_reget_verify_code">请重新获取验证码！</string>
+    <string name="prompt_commiting">提交中...</string>
 </resources>

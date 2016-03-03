@@ -54,7 +54,8 @@
                     android:gravity="left|center_vertical"
                     android:text="@string/pay_online"
                     android:textColor="@color/order_fix_text_color"
-                    android:textSize="@dimen/order_fix_text_size" />
+                    android:textSize="@dimen/order_fix_text_size"
+                    android:checked="true"/>
 
                 <RadioButton
                     android:id="@+id/order_fix_payment_delivery"

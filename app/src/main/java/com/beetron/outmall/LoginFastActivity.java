@@ -3,6 +3,8 @@ package com.beetron.outmall;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -18,11 +20,11 @@ import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.customview.ProgressHUD;
 import com.beetron.outmall.models.PostUser;
-import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.models.UserInfoModel;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TelCheckUtil;
 import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -67,13 +69,15 @@ public class LoginFastActivity extends Activity {
                     Toast.makeText(LoginFastActivity.this, getResources().getString(R.string.prompt_phone_num_empty),
                             Toast.LENGTH_SHORT).show();
                     return;
-                } else {
-                    etNum.setEnabled(false);
-                    try {
-                        getRegistCode();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                } else if (!TelCheckUtil.isMobileNO(etNum.getText().toString())) {
+                    Toast.makeText(LoginFastActivity.this, getResources().getString(R.string.prompt_phone_num_not_match), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                etNum.setEnabled(false);
+                try {
+                    getRegistCode();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -100,10 +104,10 @@ public class LoginFastActivity extends Activity {
         } else if (TextUtils.isEmpty(etVeriCode.getText().toString())) {
             Toast.makeText(this, getResources().getString(R.string.prompt_phone_verify_code_empty), Toast.LENGTH_SHORT).show();
             return false;
-        } else if (!etVeriCode.getText().toString().equals(verifyCode)){
+        } else if (!etVeriCode.getText().toString().equals(verifyCode)) {
             Toast.makeText(this, getResources().getString(R.string.prompt_verigy_code_error), Toast.LENGTH_SHORT).show();
             return false;
-        }else if (!etNum.getText().toString().equals(codeBindNum)){
+        } else if (!etNum.getText().toString().equals(codeBindNum)) {
             Toast.makeText(this, getResources().getString(R.string.prompt_bind_code_num_error), Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -164,6 +168,11 @@ public class LoginFastActivity extends Activity {
                                 DebugFlags.logD(TAG, userInfoModel.getTel());
                                 startActivity(new Intent(LoginFastActivity.this, MainActivity.class));
                                 finish();
+                            } else {
+                                if (TextUtils.isEmpty(jsonObject.getString(Constants.RESULT_ERROR_FIELD))){
+                                    Toast.makeText(LoginFastActivity.this, jsonObject.getString(Constants.RESULT_ERROR_FIELD),
+                                            Toast.LENGTH_SHORT).show();
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -182,6 +191,7 @@ public class LoginFastActivity extends Activity {
 
     /**
      * 获取验证码
+     *
      * @throws JSONException
      */
     private void getRegistCode() throws JSONException {
@@ -204,9 +214,11 @@ public class LoginFastActivity extends Activity {
                         codeBindNum = etNum.getText().toString();
                         etNum.setEnabled(true);
                         try {
-                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)){
+                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)) {
                                 JSONObject jsonCode = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
                                 verifyCode = jsonCode.getString("code");
+                                btnGetCode.setClickable(false);//关闭按钮点击
+                                refreshSecond();
                             } else {
                                 Toast.makeText(LoginFastActivity.this, getResources().getString(R.string.prompt_verify_code_get_faild),
                                         Toast.LENGTH_SHORT).show();
@@ -225,4 +237,49 @@ public class LoginFastActivity extends Activity {
         });
         NetController.getInstance(this).addToRequestQueue(getCategoryReq, TAG);
     }
+
+    private void refreshSecond() {
+        final int MAX_TIMEOUT = 60;//设置超时时间为60
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                for (int max = MAX_TIMEOUT; max >= 0; max--) {
+                    Message msg = new Message();
+                    Bundle currTime = new Bundle();
+                    currTime.putInt("current_time", max);
+                    msg.setData(currTime);
+                    handler.sendMessage(msg);//每秒发送
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        };
+        new Thread(runnable).start();
+    }
+
+    android.os.Handler handler = new Handler() {
+        String btnString = "获取验证码";
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            int currTime = msg.getData().getInt("current_time");
+            if (currTime > 0) {
+                btnGetCode.setText(btnString + "(" + currTime + ")");
+                DebugFlags.logD(TAG, btnString + "(" + currTime + ")");
+            } else {
+                btnGetCode.setClickable(true);
+                verifyCode = "";
+                btnGetCode.setText(btnString);
+                Toast.makeText(LoginFastActivity.this, getResources().getString(R.string.prompt_regist_reget_verify_code),
+                        Toast.LENGTH_SHORT).show();
+            }
+        }
+    };
 }

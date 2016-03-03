@@ -27,23 +27,25 @@
             android:layout_width="0dip"
             android:layout_height="@dimen/edit_text_general_height"
             android:layout_weight="1"
-            android:background="@android:color/white"
+            android:background="@drawable/shap_corner_box"
             android:drawableLeft="@mipmap/phone_num_ic"
             android:drawablePadding="@dimen/regist_drawable_padding"
             android:gravity="center_vertical"
             android:hint="@string/hint_text_input_phone_num"
             android:paddingLeft="@dimen/regist_drawable_padding"
             android:singleLine="true"
-            android:textColorHint="@color/hint_color"/>
+            android:textColorHint="@color/hint_color"
+            android:inputType="phone"/>
 
         <Button
             android:id="@+id/btn_regist_get_verify_code"
+            style="@style/BtnStyle"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/edit_text_general_height"
             android:layout_marginLeft="8dp"
-            android:background="@color/colorPrimary"
-            android:text="@string/get_verify_text"
-            android:textColor="@color/general_main_title_color"/>
+            android:layout_marginRight="0dp"
+            android:padding="5dp"
+            android:text="@string/get_verify_text"/>
     </LinearLayout>
 
     <!-- 验证码-->
@@ -54,14 +56,15 @@
         android:layout_marginLeft="@dimen/regist_edit_margin"
         android:layout_marginRight="@dimen/regist_edit_margin"
         android:layout_marginTop="10dp"
-        android:background="@android:color/white"
+        android:background="@drawable/shap_corner_box"
         android:drawableLeft="@mipmap/captcha_ic"
         android:drawablePadding="@dimen/regist_drawable_padding"
         android:gravity="center_vertical"
         android:hint="@string/hint_text_input_verify_code"
         android:paddingLeft="@dimen/regist_drawable_padding"
         android:singleLine="true"
-        android:textColorHint="@color/hint_color"/>
+        android:textColorHint="@color/hint_color"
+        android:inputType="phone"/>
 
     <!-- 密码-->
     <EditText
@@ -71,24 +74,22 @@
         android:layout_marginLeft="@dimen/regist_edit_margin"
         android:layout_marginRight="@dimen/regist_edit_margin"
         android:layout_marginTop="10dp"
-        android:background="@android:color/white"
+        android:background="@drawable/shap_corner_box"
         android:drawableLeft="@mipmap/password_ic"
         android:drawablePadding="@dimen/regist_drawable_padding"
         android:gravity="center_vertical"
         android:hint="@string/hint_text_input_pwd"
         android:paddingLeft="@dimen/regist_drawable_padding"
         android:singleLine="true"
-        android:textColorHint="@color/hint_color"/>
+        android:textColorHint="@color/hint_color"
+        android:inputType="textPassword"/>
 
     <Button
         android:id="@+id/btn_regist"
+        style="@style/BtnStyle"
         android:layout_width="match_parent"
         android:layout_height="@dimen/edit_text_general_height"
-        android:layout_marginLeft="@dimen/regist_edit_margin"
-        android:layout_marginRight="@dimen/regist_edit_margin"
         android:layout_marginTop="30dp"
-        android:background="@color/colorPrimary"
-        android:gravity="center"
         android:text="@string/text_commit"/>
 
 </LinearLayout>

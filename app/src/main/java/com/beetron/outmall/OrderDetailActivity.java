@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -19,15 +20,21 @@ import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.models.AddrInfoModel;
+import com.beetron.outmall.models.OrderFixInfo;
 import com.beetron.outmall.models.OrderInfoModel;
 import com.beetron.outmall.models.OrderPostModel;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ProSummary;
+import com.beetron.outmall.models.ResultEntity;
+import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -72,7 +79,8 @@ public class OrderDetailActivity extends Activity {
         orderNum.setText("订单号：" + orderInfo.getOrderno());
         setAddrInfo();
 
-        payType.setText("￥" + orderInfo.getPayment());
+        payType.setText(orderInfo.getPayment().equals("1") ?
+                getResources().getString(R.string.pay_online) : getResources().getString(R.string.pay_delivery));
         proAmount.setText("￥" + orderInfo.getZongjia());
         serviceFee.setText("￥" + orderInfo.getFuwufei());
         freeFee.setText("-￥" + orderInfo.getJianmian());
@@ -87,14 +95,18 @@ public class OrderDetailActivity extends Activity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                try {
+                    orderCancel();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         btnPayment = (Button) findViewById(R.id.order_detail_order_pay);
         btnPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Toast.makeText(OrderDetailActivity.this, "正在开发中...", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -156,30 +168,32 @@ public class OrderDetailActivity extends Activity {
         String url = NetInterface.HOST + NetInterface.METHON_ORDER_CANCEL;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
-        postEntity.setIsLogin("1");
+        postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
         String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
         }.getType());
         JSONObject postJson = new JSONObject(postString);
-//        postJson.put("orderid", orderInfo.getOrder)
+        postJson.put("orderid", orderInfo.getOrderno());
         JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         DebugFlags.logD(TAG, jsonObject.toString());
-//                        GsonBuilder gsonBuilder = new GsonBuilder();
-//                        BooleanSerializer serializer = new BooleanSerializer();
-//                        gsonBuilder.registerTypeAdapter(Boolean.class, serializer);
-//                        Gson gson = gsonBuilder.create();
-//                        ResultEntity<OrderFixInfo> resultEntity = gson.fromJson(jsonObject.toString(),
-//                                new TypeToken<ResultEntity<OrderFixInfo>>() {
-//                                }.getType());
-//                        if (resultEntity.isSuccess()) {
-//                            try {
-//                                initBottonData(resultEntity.getResult());
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
+                        GsonBuilder gsonBuilder = new GsonBuilder();
+                        BooleanSerializer serializer = new BooleanSerializer();
+                        gsonBuilder.registerTypeAdapter(Boolean.class, serializer);
+                        Gson gson = gsonBuilder.create();
+                        ResultEntity<OrderFixInfo> resultEntity = gson.fromJson(jsonObject.toString(),
+                                new TypeToken<ResultEntity<OrderFixInfo>>() {
+                                }.getType());
+                        if (resultEntity.isSuccess()) {
+                            try {
+                                Toast.makeText(OrderDetailActivity.this, getResources().getString(R.string.prompt_order_cancel),
+                                        Toast.LENGTH_SHORT).show();
+                                finish();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override

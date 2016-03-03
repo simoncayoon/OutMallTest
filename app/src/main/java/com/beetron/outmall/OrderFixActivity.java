@@ -39,6 +39,7 @@ import com.beetron.outmall.models.ShopCartModel;
 import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -151,6 +152,8 @@ public class OrderFixActivity extends Activity {
         proScanner.setSplitAuto(false);
 
         paymentGroup = (RadioGroup) findViewById(R.id.order_fix_payment_choice);
+
+//        在线支付时payment为1 货到付款为2
         paymentGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -306,8 +309,8 @@ public class OrderFixActivity extends Activity {
         String url = NetInterface.HOST + NetInterface.METHON_ORDER_COMMIT;
 
         orderPostModel.setToken(Constants.TOKEN_VALUE);
-        orderPostModel.setUid(Constants.POST_UID_TEST);
-        orderPostModel.setIsLogin("1");
+        orderPostModel.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
+        orderPostModel.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
         orderPostModel.setAddress_id(addrInfo.getId());
         orderPostModel.setRemark(etLeaveMsg.getText().toString());
         orderPostModel.setZongjia(String.valueOf(orderInfoModel.getAmount()));

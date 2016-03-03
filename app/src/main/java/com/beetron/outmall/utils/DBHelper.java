@@ -1,6 +1,7 @@
 package com.beetron.outmall.utils;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.beetron.outmall.OutMallApp;
 import com.beetron.outmall.models.DaoSession;
@@ -159,8 +160,8 @@ public class DBHelper {
      * @param userInfoModel
      */
     public void saveUserInfo(UserInfoModel userInfoModel) {
+
         synchronized (userInfoModelDao) {
-            userInfoModelDao.deleteAll();
             userInfoModelDao.insertOrReplace(userInfoModel);
         }
     }
@@ -171,10 +172,11 @@ public class DBHelper {
      * @return
      */
     public UserInfoModel getUserInfo() {
-        QueryBuilder<UserInfoModel> qb = userInfoModelDao.queryBuilder();
-        if (qb.list().size() == 0){
+        String currUid = TempDataManager.getInstance(mContext).getCurrentUid();
+        if (TextUtils.isEmpty(currUid)) {
             return new UserInfoModel();
+        } else {
+            return userInfoModelDao.load(currUid);
         }
-        return qb.list().get(0);
     }
 }

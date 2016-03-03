@@ -23,6 +23,7 @@ import com.beetron.outmall.models.UserInfoModel;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TelCheckUtil;
 import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -124,7 +125,11 @@ public class LoginActivity extends Activity {
         if (TextUtils.isEmpty(etPhoneNum.getText().toString())) {
             Toast.makeText(this, getResources().getString(R.string.prompt_phone_num_empty), Toast.LENGTH_SHORT).show();
             return false;
-        } else if (TextUtils.isEmpty(etPwd.getText().toString())) {
+        } else if (!TelCheckUtil.isMobileNO(etPhoneNum.getText().toString())){
+            Toast.makeText(this, getResources().getString(R.string.prompt_phone_num_not_match), Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if (TextUtils.isEmpty(etPwd.getText().toString())) {
             Toast.makeText(this, getResources().getString(R.string.prompt_pwd_empty), Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -167,6 +172,8 @@ public class LoginActivity extends Activity {
                                 Intent mIntent = new Intent();
                                 setResult(RESULT_OK, mIntent);
                                 finish();
+                            } else {
+                                Toast.makeText(LoginActivity.this, jsonObject.getString(Constants.RESULT_ERROR_FIELD), Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

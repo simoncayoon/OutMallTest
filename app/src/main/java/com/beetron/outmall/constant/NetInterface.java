@@ -79,6 +79,11 @@ public class NetInterface {
     public static final String METHON_REGIST = "?m=home&c=app&a=user_reg";
 
     /**
+     * 密码找回
+     */
+    public static final String METHON_TAKE_PWD_BACK = "?m=home&c=app&a=find_pass";
+
+    /**
      * 添加购物车
      */
     public static final String METHON_ADD_SHOPCART_BY_ID = "?m=home&c=app&a=add_to_car";

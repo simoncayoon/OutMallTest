@@ -27,7 +27,7 @@
             android:layout_width="0dip"
             android:layout_height="@dimen/edit_text_general_height"
             android:layout_weight="1"
-            android:background="@android:color/white"
+            android:background="@drawable/shap_corner_box"
             android:drawableLeft="@mipmap/phone_num_ic"
             android:drawablePadding="@dimen/regist_drawable_padding"
             android:gravity="center_vertical"
@@ -56,7 +56,7 @@
         android:layout_marginLeft="@dimen/regist_edit_margin"
         android:layout_marginRight="@dimen/regist_edit_margin"
         android:layout_marginTop="10dp"
-        android:background="@android:color/white"
+        android:background="@drawable/shap_corner_box"
         android:drawableLeft="@mipmap/captcha_ic"
         android:drawablePadding="@dimen/regist_drawable_padding"
         android:gravity="center_vertical"
@@ -74,14 +74,15 @@
         android:layout_marginLeft="@dimen/regist_edit_margin"
         android:layout_marginRight="@dimen/regist_edit_margin"
         android:layout_marginTop="10dp"
-        android:background="@android:color/white"
+        android:background="@drawable/shap_corner_box"
         android:drawableLeft="@mipmap/password_ic"
         android:drawablePadding="@dimen/regist_drawable_padding"
         android:gravity="center_vertical"
         android:hint="@string/hint_text_input_pwd"
         android:paddingLeft="@dimen/regist_drawable_padding"
         android:singleLine="true"
-        android:textColorHint="@color/hint_color"/>
+        android:textColorHint="@color/hint_color"
+        android:inputType="textPassword" />
 
     <!-- 邀请码-->
     <EditText
@@ -91,7 +92,7 @@
         android:layout_marginLeft="@dimen/regist_edit_margin"
         android:layout_marginRight="@dimen/regist_edit_margin"
         android:layout_marginTop="10dp"
-        android:background="@android:color/white"
+        android:background="@drawable/shap_corner_box"
         android:drawableLeft="@mipmap/phone_num_ic"
         android:drawablePadding="@dimen/regist_drawable_padding"
         android:gravity="center_vertical"
