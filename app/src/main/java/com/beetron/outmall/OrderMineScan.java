@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,7 +21,6 @@ import com.beetron.outmall.customview.TabItemView;
 import com.beetron.outmall.models.OrderInfo;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
-import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -48,6 +48,7 @@ public class OrderMineScan extends Activity implements View.OnClickListener {
     private OrderInfoAdapter mAdapter;
     private int select = 1;
     private float density;
+    private LinearLayout ll_shop_car;
 
     private CusNaviView cusNaviView;
 
@@ -83,6 +84,7 @@ public class OrderMineScan extends Activity implements View.OnClickListener {
     }
 
     private void initView() {
+        ll_shop_car=(LinearLayout)findViewById(R.id.ll_shop_car);
         ti_title1 = (TabItemView) findViewById(R.id.ti_title1);
         ti_title2 = (TabItemView) findViewById(R.id.ti_title2);
         ti_title3 = (TabItemView) findViewById(R.id.ti_title3);
@@ -109,8 +111,8 @@ public class OrderMineScan extends Activity implements View.OnClickListener {
         String url = NetInterface.HOST + NetInterface.METHON_ORDER_INFO;
         OrderInfo postEntity = new OrderInfo();
         postEntity.setToken(Constants.TOKEN_VALUE);
-        postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
-        postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
+        postEntity.setIsLogin("1");
+        postEntity.setUid(Constants.POST_UID_TEST);
         String postString = new Gson().toJson(postEntity, new TypeToken<OrderInfo>() {
         }.getType());
         JSONObject postJson = null;
@@ -240,6 +242,11 @@ public class OrderMineScan extends Activity implements View.OnClickListener {
                 break;
         }
         mAdapter.notifyDataSetChanged();
+        if (mAdapter.getCount()>0){
+            ll_shop_car.setVisibility(View.INVISIBLE);
+        }else{
+            ll_shop_car.setVisibility(View.VISIBLE);
+        }
     }
 
 

@@ -115,8 +115,8 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                 String url = NetInterface.HOST + NetInterface.METHON_GET_SHOPCART;
                 PostEntity postEntity = new PostEntity();
                 postEntity.setToken(Constants.TOKEN_VALUE);
-                postEntity.setUid(Constants.POST_UID_TEST);
-                postEntity.setIsLogin("1");
+                postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
+                postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
                 String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
                 }.getType());
                 JSONObject postJson = new JSONObject(postString);
@@ -266,6 +266,12 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                                 }
                                 //更新当前列表信息
                                 if (resultCount == 0) {
+                                    //更新已选择的产品的顺序
+//                                    for(int index = position; index < selectCache.size(); index ++){
+//                                        selectCac
+//                                    }
+                                    selectCache.remove(dataLocalList.get(position).getSid());
+
                                     dataLocalList.remove(position);
                                 } else {
                                     dataLocalList.get(position).setCount(resultCount);//

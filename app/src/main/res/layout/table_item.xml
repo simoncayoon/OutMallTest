@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="78dp"
     android:padding="5dp"
     android:layout_height="wrap_content">
 
@@ -10,8 +10,7 @@
         android:text="NewText"
         android:layout_weight="1"
         android:layout_marginRight="4dp"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
+        android:layout_gravity="left|center_vertical"
         android:textSize="18dp"
         android:textColor="@color/general_tab_text_color"
         android:id="@+id/tv_title" />
@@ -20,9 +19,9 @@
         android:id="@+id/tv_line"
         android:layout_width="1dp"
         android:layout_height="15dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dp"
+        android:layout_gravity="right|center_vertical"
         android:background="@color/bottom_navi_top_line_color"
         android:text="|"/>
 
-</RelativeLayout>
+</LinearLayout>
