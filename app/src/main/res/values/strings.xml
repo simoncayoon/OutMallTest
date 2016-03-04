@@ -118,4 +118,7 @@
     <string name="prompt_phone_num_not_match">请填写正确的电话号码</string>
     <string name="prompt_regist_reget_verify_code">请重新获取验证码！</string>
     <string name="prompt_commiting">提交中...</string>
+    <string name="prompt_addr_info_delete_confirm">真的要删除吗？</string>
+    <string name="prompt_delete_ing">删除中...</string>
+    <string name="prompt_progress_saving">正在保存...</string>
 </resources>

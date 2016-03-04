@@ -17,11 +17,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
+import com.beetron.outmall.customview.ProgressHUD;
 import com.beetron.outmall.models.AddrInfoModel;
 import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TelCheckUtil;
 import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -41,6 +43,10 @@ public class AddrEdit extends Activity {
     public static String INTENT_KEY_ADDR_EDIT = "INTENT_KEY_ADDR_EDIT";
     private EditText etName, etPhone, etGender, etAddr;
     private CusNaviView cusNaviView;
+
+    /**
+     * 进入该界面模式
+     */
     private Boolean isEdit = true;
     private AddrInfoModel postEntity;
 
@@ -48,21 +54,24 @@ public class AddrEdit extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.addr_edit_layout);
-        initView();
         postEntity = getIntent().getParcelableExtra(INTENT_KEY_ADDR_EDIT);
         if (postEntity == null) {//如果没有值，表示为新增地址
             postEntity = new AddrInfoModel();
             isEdit = false;
+            initView();
         } else {
             try {
+                initView();
                 initData();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+
     }
 
-    private void initData() throws Exception{
+    private void initData() throws Exception {
         etName.setText(postEntity.getName());
         etPhone.setText(postEntity.getMobile());
         etGender.setText(postEntity.getSex().equals("1") ? "男" : "女");
@@ -118,6 +127,8 @@ public class AddrEdit extends Activity {
      * @return
      */
     private boolean checkInput() {
+
+        DebugFlags.logD(TAG, "我的内容：" + etPhone.getText().toString());
         if (TextUtils.isEmpty(etName.getText().toString())) {
             Toast.makeText(AddrEdit.this, getResources().getString(R.string.prompt_addr_name_empty),
                     Toast.LENGTH_SHORT).show();
@@ -125,6 +136,10 @@ public class AddrEdit extends Activity {
         }
         if (TextUtils.isEmpty(etPhone.getText().toString())) {
             Toast.makeText(AddrEdit.this, getResources().getString(R.string.prompt_addr_phone_empty),
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (!TelCheckUtil.isMobileNO(etPhone.getText().toString())){
+            Toast.makeText(AddrEdit.this, getResources().getString(R.string.prompt_phone_num_not_match),
                     Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -137,6 +152,10 @@ public class AddrEdit extends Activity {
     }
 
     private void addAddr(Boolean isEdit) throws Exception {
+
+        final ProgressHUD mProgressHUD;
+        mProgressHUD = ProgressHUD.show(AddrEdit.this, getResources().getString(R.string.prompt_progress_saving), true, false,
+                null);
         String url;
         if (isEdit) {
             url = NetInterface.HOST + NetInterface.METHON_ADDR_UPDATE;
@@ -164,7 +183,6 @@ public class AddrEdit extends Activity {
                         GsonBuilder gsonBuilder = new GsonBuilder();
                         BooleanSerializer serializer = new BooleanSerializer();
                         gsonBuilder.registerTypeAdapter(Boolean.class, serializer);
-                        gsonBuilder.registerTypeAdapter(boolean.class, serializer);
                         Gson gson = gsonBuilder.create();
                         ResultEntity<String> resultEntity = gson.fromJson(jsonObject.toString(),
                                 new TypeToken<ResultEntity<String>>() {
@@ -175,17 +193,19 @@ public class AddrEdit extends Activity {
 
                         } else {
                             try {
+                                Toast.makeText(getApplicationContext(), resultEntity.getError(), Toast.LENGTH_SHORT).show();
                                 DebugFlags.logD(TAG, resultEntity.getError());
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
+                        mProgressHUD.dismiss();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
-
+                mProgressHUD.dismiss();
             }
         });
         NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);

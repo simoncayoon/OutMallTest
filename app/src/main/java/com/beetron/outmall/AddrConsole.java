@@ -1,6 +1,7 @@
 package com.beetron.outmall;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
@@ -19,6 +20,7 @@ import com.beetron.outmall.adapter.AddrAdapter;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
+import com.beetron.outmall.customview.CustomDialog;
 import com.beetron.outmall.customview.ProgressHUD;
 import com.beetron.outmall.models.AddrInfoModel;
 import com.beetron.outmall.models.PageEntity;
@@ -27,6 +29,7 @@ import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
@@ -78,13 +81,29 @@ public class AddrConsole extends Activity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
-                try {
-                    addrDelete(position);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                return false;
+                final int tempPosition = position;
+                final CustomDialog.Builder builder = new CustomDialog.Builder(AddrConsole.this);
+                builder.setTitle(R.string.prompt);
+                builder.setMessage(R.string.prompt_addr_info_delete_confirm);
+                builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            addrDelete(tempPosition);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+                return true;
             }
         });
     }
@@ -116,13 +135,13 @@ public class AddrConsole extends Activity {
 
     private void addrDelete(final int position) throws Exception {
         final ProgressHUD mProgressHUD;
-        mProgressHUD = ProgressHUD.show(AddrConsole.this, getResources().getString(R.string.prompt_progress_loading), true, false,
+        mProgressHUD = ProgressHUD.show(AddrConsole.this, getResources().getString(R.string.prompt_delete_ing), true, false,
                 null);
-        String url = NetInterface.HOST + NetInterface.METHON_GET_ADDR_LIST;
+        String url = NetInterface.HOST + NetInterface.METHON_ADDR_DELETE;
         AddrInfoModel postEntity = new AddrInfoModel();
         postEntity.setToken(Constants.TOKEN_VALUE);
-        postEntity.setUid(Constants.POST_UID_TEST);
-        postEntity.setIsLogin("1");
+        postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
+        postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
         postEntity.setId(addrList.get(position).getId());
         String postString = new Gson().toJson(postEntity, new TypeToken<AddrInfoModel>() {
         }.getType());
@@ -135,10 +154,9 @@ public class AddrConsole extends Activity {
                         GsonBuilder gsonBuilder = new GsonBuilder();
                         BooleanSerializer serializer = new BooleanSerializer();
                         gsonBuilder.registerTypeAdapter(Boolean.class, serializer);
-                        gsonBuilder.registerTypeAdapter(boolean.class, serializer);
                         Gson gson = gsonBuilder.create();
-                        ResultEntity<PageEntity<AddrInfoModel>> resultEntity = gson.fromJson(jsonObject.toString(),
-                                new TypeToken<ResultEntity<PageEntity<AddrInfoModel>>>() {
+                        ResultEntity resultEntity = gson.fromJson(jsonObject.toString(),
+                                new TypeToken<ResultEntity>() {
                                 }.getType());
                         if (resultEntity.isSuccess()) {
                             addrList.remove(position);
