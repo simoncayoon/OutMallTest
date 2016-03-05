@@ -118,6 +118,9 @@ public class ProSummaryAdapter extends BaseAdapter {
         try {
             viewHolder.shopCart.setBadge(BadgeView.POSITION_TOP_RIGHT, proItem.getCount()
                     , 6, 0);
+            if (proItem.getCount() > 0){
+                viewHolder.shopCart.setBackgroundResource(R.mipmap.list_ic_shopping_red);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

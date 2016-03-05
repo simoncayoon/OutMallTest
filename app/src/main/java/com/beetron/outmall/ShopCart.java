@@ -232,10 +232,22 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
             @Override
             public void onClick(View v) {
 
+                if (selectCache.size() == 0) {
+                    Toast.makeText(getActivity(), getResources().getString(R.string.prompt_pro_select_none),
+                            Toast.LENGTH_SHORT).show();
+                    return ;
+                }
                 Intent intent = new Intent(getActivity(), OrderFixActivity.class);
                 try {
                     OrderInfoModel intentData = OrderInfoModel.getInstance();
-                    intentData.setProDetail(dataLocalList);
+
+                    List<ProSummary> commitProList = new ArrayList<ProSummary>();
+                    for (Map.Entry<String, Integer> entry : selectCache.entrySet()) {
+                        DBHelper.getInstance(getActivity()).deleteShopById(entry.getKey());
+                        ProSummary proSummary = dataLocalList.get(entry.getValue());//获取列表中对应位置的对象
+                        commitProList.add(proSummary);
+                    }
+                    intentData.setProDetail(commitProList);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -318,9 +330,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                                     DBHelper.getInstance(getApplicationContext()).deleteProByOne(dataLocalList.get(position));
                                     dataLocalList.get(position).setCount(resultCount);
                                     updateAmount(FLAG_UPDATE_SELECT_ITEM_COUNT, false, position);
-                                    if (resultCount == 0){
-//                                        dataLocalList.remove(position);
-//                                        selectCache.remove(proSummary.getSid());
+                                    if (resultCount == 0) {
                                         removeItem(proSummary.getSid());
                                     }
                                 }
@@ -342,7 +352,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
     }
 
     /**
-     *
      * @param flag
      * @param status
      * @param position
@@ -350,7 +359,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
      */
     void updateAmount(String flag, Boolean status, int position) throws Exception {
 
-        if (flag.equals(FLAG_UPDATE_SELECT_ALL)){//点击了全选按钮
+        if (flag.equals(FLAG_UPDATE_SELECT_ALL)) {//点击了全选按钮
             if (status) {
                 currentAmount = 0.00;
                 for (int index = 0; index < dataLocalList.size(); index++) {
@@ -366,7 +375,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                 }
                 selectCache.clear();
             }
-        } else if (flag.equals(FLAG_UPDATE_SELECT_ITEM)){//点击了列表项
+        } else if (flag.equals(FLAG_UPDATE_SELECT_ITEM)) {//点击了列表项
             ProSummary selectItem = dataLocalList.get(position);
             if (status) {//价操作
                 currentAmount += Double.valueOf(selectItem.getPrice2()) *
@@ -379,9 +388,9 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
             }
 
             dataLocalList.get(position).setIsSelect(dataLocalList.get(position).getIsSelect() ? false : true);
-        } else if (flag.equals(FLAG_UPDATE_SELECT_ITEM_COUNT)){//点击了列表项内容
+        } else if (flag.equals(FLAG_UPDATE_SELECT_ITEM_COUNT)) {//点击了列表项内容
             ProSummary selectItem = dataLocalList.get(position);
-            if (selectItem.getIsSelect()){
+            if (selectItem.getIsSelect()) {
                 if (status) {
                     currentAmount += selectItem.getPrice2();
                 } else {
@@ -484,7 +493,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
 
     }
 
-    void removeItem(String sid){
+    void removeItem(String sid) {
         int position = selectCache.get(sid);
         dataLocalList.remove(position);
         selectCache.remove(sid);

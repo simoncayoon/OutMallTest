@@ -124,4 +124,5 @@
     <string name="prompt_commit_succeed">提交成功</string>
     <string name="prompt_commit_faild">提交失败</string>
     <string name="prompt_shop_cart_product_delete">要删除该商品吗？</string>
+    <string name="prompt_pro_select_none">请至少选择一项商品</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.beetron.outmall.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,8 +45,6 @@ public class OrderInfoModel {
 
     public void setProDetail(List<ProSummary> proDetail) {
 
-        this.proDetail = proDetail;
-
         if (proDetail != null) {
             for (ProSummary shopCartModel : proDetail) {
                 int count = Integer.valueOf(shopCartModel.getCount());
@@ -53,6 +52,11 @@ public class OrderInfoModel {
                 Double itemPrice = count * price;
                 amount += itemPrice;
             }
+            this.proDetail = proDetail;
+        } else {
+            amount = 0.00;
+            this.priceFree= 0.00;
+            this.proDetail = new ArrayList<ProSummary>();
         }
     }
 
@@ -63,29 +67,4 @@ public class OrderInfoModel {
     public void setAmount(Double amount) {
         this.amount = amount;
     }
-
-//    @Override
-//    public int describeContents() {
-//        return 0;
-//    }
-//
-//    @Override
-//    public void writeToParcel(Parcel dest, int flags) {
-//        dest.writeDouble(amount);
-//        dest.writeList(proDetail);
-//    }
-//
-//    public static final Parcelable.Creator<OrderInfoModel> CREATOR = new Parcelable.Creator<OrderInfoModel>() {
-//        public OrderInfoModel createFromParcel(Parcel in) {
-//            return new OrderInfoModel(in);
-//        }
-//
-//        public OrderInfoModel[] newArray(int size) {
-//            return new OrderInfoModel[size];
-//        }
-//    };
-//
-//    private OrderInfoModel(Parcel in){
-//        amount = in.readDouble();
-//    }
 }

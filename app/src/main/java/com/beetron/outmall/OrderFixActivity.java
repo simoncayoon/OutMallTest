@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -49,6 +50,8 @@ import com.shizhefei.view.indicator.ScrollIndicatorView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 /**
  * Created by DKY with IntelliJ IDEA.
  * Author: DKY email: losemanshoe@gmail.com.
@@ -65,7 +68,8 @@ public class OrderFixActivity extends Activity {
     private static final String GENERATE_NUM = "GENERATE_NUM";//生成商品对应的数量
     private LinearLayout llToAddrMng;
     private TextView tvAddrTitle, addrAddrDetal;
-    private TextView tvTotalPrice, tvServiceFee, tvFree, tvActuallyPay;
+    private TextView tvTotalPrice, tvActuallyPay;
+//    private TextView tvServiceFee, tvFree;
     private TextView tvBottomTotal;
     private EditText etLeaveMsg;
     private ScrollIndicatorView proScanner;
@@ -117,7 +121,7 @@ public class OrderFixActivity extends Activity {
                     ProSummary shopCartModel = orderInfoModel.getProDetail().get(position);
                     viewHolder.scanImg.setImageUrl(shopCartModel.getImg(), NetController.getInstance(getApplicationContext()).getImageLoader());
                     viewHolder.proPrice.setText("￥" + shopCartModel.getPrice2());
-                    viewHolder.countView.setText(shopCartModel.getCount());
+                    viewHolder.countView.setText(String.valueOf(shopCartModel.getCount()));
                     viewHolder.countView.show();
                     return convertView;
                 }
@@ -128,6 +132,7 @@ public class OrderFixActivity extends Activity {
                     BadgeView countView;
                 }
             });
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -149,7 +154,7 @@ public class OrderFixActivity extends Activity {
         tvAddrTitle = (TextView) findViewById(R.id.addr_info_item_title);
         addrAddrDetal = (TextView) findViewById(R.id.addr_info_item_detail);
         proScanner = (ScrollIndicatorView) findViewById(R.id.siv_order_fix_pro_scan);
-        proScanner.setSplitAuto(false);
+        proScanner.setSplitAuto(false);//不自动填充内容
 
         paymentGroup = (RadioGroup) findViewById(R.id.order_fix_payment_choice);
 
@@ -169,8 +174,8 @@ public class OrderFixActivity extends Activity {
         });
 
         tvTotalPrice = (TextView) findViewById(R.id.tv_order_product_amount);
-        tvServiceFee = (TextView) findViewById(R.id.tv_order_service_fee);
-        tvFree = (TextView) findViewById(R.id.tv_order_service_fee_minus);
+//        tvServiceFee = (TextView) findViewById(R.id.tv_order_service_fee);
+//        tvFree = (TextView) findViewById(R.id.tv_order_service_fee_minus);
         tvActuallyPay = (TextView) findViewById(R.id.tv_order_pay_actually);
         etLeaveMsg = (EditText) findViewById(R.id.order_fix_leave_message);
         tvBottomTotal = (TextView) findViewById(R.id.tv_order_fix_payment_total);
@@ -197,6 +202,7 @@ public class OrderFixActivity extends Activity {
        cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
            @Override
            public void leftBtnListener() {
+               clearCache();
                finish();
            }
 
@@ -278,20 +284,20 @@ public class OrderFixActivity extends Activity {
 
         try {
             tvTotalPrice.setText("￥" + orderInfoModel.getAmount());
-            tvServiceFee.setText("￥" + String.valueOf(orderInfoModel.getAmount()));
+//            tvServiceFee.setText("￥" + String.valueOf(orderInfoModel.getAmount()));
             //free为1则直接免服务费（fuwu），free为0，则订单超过man值免服务费。
             if (orderFixInfo.getFree() == 1) {
-                tvFree.setText("-￥" + orderFixInfo.getFuwu());//直接免
+//                tvFree.setText("-￥" + orderFixInfo.getFuwu());//直接免
                 orderInfoModel.setPriceFree(orderFixInfo.getFuwu());
             } else if (orderFixInfo.getFree() == 0) {
                 if (orderInfoModel.getAmount() > orderFixInfo.getMan()) {
-                    tvFree.setText("-￥" + orderFixInfo.getFuwu());
+//                    tvFree.setText("-￥" + orderFixInfo.getFuwu());
                     orderInfoModel.setPriceFree(orderFixInfo.getFuwu());
                 } else {
-                    tvFree.setText("-￥" + "0.0");
+//                    tvFree.setText("-￥" + "0.0");
                 }
             }
-            tvServiceFee.setText("￥" + orderFixInfo.getFuwu());
+//            tvServiceFee.setText("￥" + orderFixInfo.getFuwu());
             tvActuallyPay.setText("￥" + orderInfoModel.getAmount());
             SpannableString spannableString = new SpannableString("实付款： ￥ " + orderInfoModel.getAmount());
             spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.home_page_general_red)),
@@ -383,5 +389,25 @@ public class OrderFixActivity extends Activity {
         }
         DebugFlags.logD(TAG, "生成的逗号字符串 ：" + sb.toString());
         return sb.toString();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    void clearCache(){
+        OrderInfoModel.getInstance().setProDetail(null);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == event.KEYCODE_BACK){
+            clearCache();
+            finish();
+            return true;
+        }
+        return false;
     }
 }
