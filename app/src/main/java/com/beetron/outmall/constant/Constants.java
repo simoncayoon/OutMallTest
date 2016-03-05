@@ -17,5 +17,7 @@ public class Constants {
     public static final String RESULT_STATUS_FIELD = "isSuccess";
     public static final String RESULT_CONTENT_FIELD = "result";
     public static final String RESULT_ERROR_FIELD = "error";
+    public static final String PAYMENT_TYPE_ONLINE = "1";
+    public static final String PAYMENT_TYPE_DELIVERY = "2";
     public static Bitmap mBitmap = null;// 用于上传头像
 }

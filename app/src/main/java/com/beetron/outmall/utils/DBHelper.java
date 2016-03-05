@@ -177,4 +177,8 @@ public class DBHelper {
             return userInfoModelDao.load(currUid);
         }
     }
+
+    public void clearShopCart() {
+        proSummaryDao.deleteAll();
+    }
 }

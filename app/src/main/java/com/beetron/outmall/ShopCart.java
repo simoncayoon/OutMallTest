@@ -428,8 +428,12 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
     }
 
     public void deleteShopCart() throws Exception {
+        if (generateDot().equals("")) {//没有选择内容
+            Toast.makeText(getActivity(), getResources().getString(R.string.prompt_at_least_one), Toast.LENGTH_SHORT).show();
+            return;
+        }
         final ProgressHUD mProgressHUD;
-        mProgressHUD = ProgressHUD.show(getActivity(), getResources().getString(R.string.prompt_progress_login), true, false,
+        mProgressHUD = ProgressHUD.show(getActivity(), getResources().getString(R.string.prompt_delete_ing), true, false,
                 null);
         String url = NetInterface.HOST + NetInterface.METHON_SHOP_CART_PRO_DELETE_BY_IDS;
         PostEntity postEntity = new PostEntity();
@@ -439,10 +443,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
         String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
         }.getType());
         JSONObject postJson = new JSONObject(postString);
-        if (generateDot().equals("")) {//没有选择内容
-            Toast.makeText(getActivity(), getResources().getString(R.string.prompt_at_least_one), Toast.LENGTH_SHORT).show();
-            return;
-        }
         postJson.put("sid", generateDot());
         JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
                 new Response.Listener<JSONObject>() {
@@ -470,7 +470,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                                 selectCache.clear();//清空当前选择的内容
                                 updateAmount(FLAG_UPDATE_SELECT_ALL, false, FLAG_UPDATE_SELECT_ONE_KEY);
                                 shopCartAdapter.notifyDataSetChanged();
-                                Toast.makeText(getActivity(), getResources().getString(R.string.prompt_commit_succeed),
+                                Toast.makeText(getActivity(), getResources().getString(R.string.prompt_delete_succeed),
                                         Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 e.printStackTrace();

@@ -57,63 +57,63 @@
             android:textSize="@dimen/order_fix_text_size"/>
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginLeft="@dimen/order_fix_content_padding"
-        android:layout_marginRight="@dimen/order_fix_content_padding"
-        android:background="@color/general_boundary_color"/>
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1px"-->
+        <!--android:layout_marginLeft="@dimen/order_fix_content_padding"-->
+        <!--android:layout_marginRight="@dimen/order_fix_content_padding"-->
+        <!--android:background="@color/general_boundary_color"/>-->
 
-    <!-- 服务费-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/order_fix_content_padding"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/order_service_fee_string"
-            android:textColor="@color/order_fix_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+    <!--&lt;!&ndash; 服务费&ndash;&gt;-->
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="@dimen/order_fix_content_padding"-->
+        <!--android:orientation="horizontal">-->
+        <!--<TextView-->
+            <!--android:layout_width="0dip"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:text="@string/order_service_fee_string"-->
+            <!--android:textColor="@color/order_fix_text_color"-->
+            <!--android:textSize="@dimen/order_fix_text_size"/>-->
 
-        <TextView
-            android:id="@+id/tv_order_service_fee"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/order_fix_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
-    </LinearLayout>
+        <!--<TextView-->
+            <!--android:id="@+id/tv_order_service_fee"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@color/order_fix_text_color"-->
+            <!--android:textSize="@dimen/order_fix_text_size"/>-->
+    <!--</LinearLayout>-->
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:layout_marginLeft="@dimen/order_fix_content_padding"
-        android:layout_marginRight="@dimen/order_fix_content_padding"
-        android:background="@color/general_boundary_color"/>
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1px"-->
+        <!--android:layout_marginLeft="@dimen/order_fix_content_padding"-->
+        <!--android:layout_marginRight="@dimen/order_fix_content_padding"-->
+        <!--android:background="@color/general_boundary_color"/>-->
 
-    <!-- 减免服务费-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/order_fix_content_padding"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/order_service_fee_minus_string"
-            android:textColor="@color/order_fix_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+    <!--&lt;!&ndash; 减免服务费&ndash;&gt;-->
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="@dimen/order_fix_content_padding"-->
+        <!--android:orientation="horizontal">-->
+        <!--<TextView-->
+            <!--android:layout_width="0dip"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:text="@string/order_service_fee_minus_string"-->
+            <!--android:textColor="@color/order_fix_text_color"-->
+            <!--android:textSize="@dimen/order_fix_text_size"/>-->
 
-        <TextView
-            android:id="@+id/tv_order_service_fee_minus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/order_fix_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
-    </LinearLayout>
+        <!--<TextView-->
+            <!--android:id="@+id/tv_order_service_fee_minus"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textColor="@color/order_fix_text_color"-->
+            <!--android:textSize="@dimen/order_fix_text_size"/>-->
+    <!--</LinearLayout>-->
 
     <View
         android:layout_width="match_parent"

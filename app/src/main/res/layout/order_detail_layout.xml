@@ -35,7 +35,7 @@
                 android:layout_height="140dp"
                 android:layout_marginTop="@dimen/order_fix_layout_boundary_size" />
 
-            <ListView
+            <com.beetron.outmall.customview.LvHeightThree
                 android:id="@+id/order_detail_pro_scan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

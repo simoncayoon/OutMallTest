@@ -120,6 +120,9 @@ public class ProSummaryAdapter extends BaseAdapter {
                     , 6, 0);
             if (proItem.getCount() > 0){
                 viewHolder.shopCart.setBackgroundResource(R.mipmap.list_ic_shopping_red);
+
+            }else {
+                viewHolder.shopCart.setBackgroundResource(R.mipmap.list_ic_shopping);
             }
         } catch (Exception e) {
             e.printStackTrace();

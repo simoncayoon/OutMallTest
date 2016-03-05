@@ -152,7 +152,6 @@ public class RegisteActivity extends Activity {
                             if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)) {//返回成功
                                 JSONObject resultUid = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
                                 TempDataManager.getInstance(getApplicationContext()).setCurrentUid(resultUid.getString("uid"));//保存用户ID
-                                startActivity(new Intent(RegisteActivity.this, MainActivity.class));
                                 finish();
                             } else {
                                 Toast.makeText(RegisteActivity.this, jsonObject.getString(Constants.RESULT_ERROR_FIELD).toString(), Toast.LENGTH_SHORT).show();

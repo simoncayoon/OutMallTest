@@ -204,6 +204,12 @@ public class HomeFragment extends BaseFragment {
                                 new TypeToken<ResultEntity<List<ProCategory>>>() {
                                 }.getType());
                         categories = resultEntity.getResult();
+                        //新增一个分类
+                        ProCategory categoryAll = new ProCategory();
+                        categoryAll.setIsSelected(true);
+                        categoryAll.setId("");
+                        categoryAll.setName(getResources().getString(R.string.all_product));
+                        categories.add(0, categoryAll);
                         fidCache = new ArrayList<String>();
                         for (ProCategory item : categories) {
                             fidCache.add(item.getId());//保存当前分类ID列表，避免多次循环查找fid

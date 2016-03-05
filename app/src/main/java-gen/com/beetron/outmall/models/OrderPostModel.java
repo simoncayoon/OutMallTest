@@ -20,6 +20,7 @@ public class OrderPostModel implements Parcelable{
             return new OrderPostModel[size];
         }
     };
+    private String id;
     private String token;
     private String uid;
     private String isLogin;
@@ -39,6 +40,7 @@ public class OrderPostModel implements Parcelable{
     public OrderPostModel(){}
 
     private OrderPostModel(Parcel in){
+        this.id = in.readString();
         this.token = in.readString();
         this.uid = in.readString();
         this.isLogin = in.readString();
@@ -178,6 +180,14 @@ public class OrderPostModel implements Parcelable{
         this.num = num;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -185,6 +195,7 @@ public class OrderPostModel implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.id);
         dest.writeString(this.token);
         dest.writeString(this.uid);
         dest.writeString(this.isLogin);

@@ -65,6 +65,10 @@ public class MainActivity extends AppCompatActivity
         cusNaviView.setBtn(CusNaviView.PUT_LEFT, 28, 28);
         cusNaviView.setNaviTitle("首页");
         ((Button) cusNaviView.getLeftBtn()).setBackgroundResource(R.mipmap.nav_ic_menu);
+
+        cusNaviView.setBtn(CusNaviView.PUT_RIGHT, 23, 23);
+        cusNaviView.getRightBtn().setBackgroundResource(R.mipmap.nav_ic_delete);
+        cusNaviView.getRightBtn().setVisibility(View.GONE);
         cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
             @Override
             public void leftBtnListener() {
@@ -105,12 +109,11 @@ public class MainActivity extends AppCompatActivity
                 mIndicatorViewPager.setCurrentItem(select, false);
 
                 if (select == 2) {//添加购物车删除按钮
-                    cusNaviView.setBtn(CusNaviView.PUT_RIGHT, 23, 23);
-                    cusNaviView.getRightBtn().setBackgroundResource(R.mipmap.nav_ic_delete);
+                    cusNaviView.getRightBtn().setVisibility(View.VISIBLE);
                     checkIsLogin();
 
                 } else {
-                    cusNaviView.removeBtn(CusNaviView.PUT_RIGHT);
+                    cusNaviView.getRightBtn().setVisibility(View.GONE);
                 }
             }
         });

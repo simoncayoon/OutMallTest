@@ -8,7 +8,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,7 @@ import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.BadgeView;
 import com.beetron.outmall.customview.CusNaviView;
-import com.beetron.outmall.customview.ViewWithBadge;
+import com.beetron.outmall.customview.ProgressHUD;
 import com.beetron.outmall.models.AddrInfoModel;
 import com.beetron.outmall.models.OrderFixInfo;
 import com.beetron.outmall.models.OrderInfoModel;
@@ -36,8 +35,8 @@ import com.beetron.outmall.models.OrderPostModel;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.models.ResultEntity;
-import com.beetron.outmall.models.ShopCartModel;
 import com.beetron.outmall.utils.BooleanSerializer;
+import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
 import com.beetron.outmall.utils.TempDataManager;
@@ -49,8 +48,6 @@ import com.shizhefei.view.indicator.ScrollIndicatorView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
 
 /**
  * Created by DKY with IntelliJ IDEA.
@@ -69,7 +66,7 @@ public class OrderFixActivity extends Activity {
     private LinearLayout llToAddrMng;
     private TextView tvAddrTitle, addrAddrDetal;
     private TextView tvTotalPrice, tvActuallyPay;
-//    private TextView tvServiceFee, tvFree;
+    //    private TextView tvServiceFee, tvFree;
     private TextView tvBottomTotal;
     private EditText etLeaveMsg;
     private ScrollIndicatorView proScanner;
@@ -199,18 +196,18 @@ public class OrderFixActivity extends Activity {
         cusNaviView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
         ((Button) cusNaviView.getLeftBtn()).setText(getResources().getString(R.string.navi_title_shop_cart));//设置返回标题
 
-       cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
-           @Override
-           public void leftBtnListener() {
-               clearCache();
-               finish();
-           }
+        cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
+            @Override
+            public void leftBtnListener() {
+                clearCache();
+                finish();
+            }
 
-           @Override
-           public void rightBtnListener() {
+            @Override
+            public void rightBtnListener() {
 
-           }
-       });
+            }
+        });
     }
 
     @Override
@@ -240,11 +237,14 @@ public class OrderFixActivity extends Activity {
     }
 
     void getOrderCondition() throws Exception {
+        final ProgressHUD mProgressHUD;
+        mProgressHUD = ProgressHUD.show(this, getResources().getString(R.string.prompt_progress_loading), true, false,
+                null);
         String url = NetInterface.HOST + NetInterface.METHON_ORDER_FIX;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
-        postEntity.setUid(Constants.POST_UID_TEST);
-        postEntity.setIsLogin("1");
+        postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
+        postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
         String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
         }.getType());
         JSONObject postJson = new JSONObject(postString);
@@ -267,11 +267,12 @@ public class OrderFixActivity extends Activity {
                                 e.printStackTrace();
                             }
                         }
+                        mProgressHUD.dismiss();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-
+                mProgressHUD.dismiss();
             }
         });
         NetController.getInstance(this).addToRequestQueue(getCategoryReq, TAG);
@@ -311,7 +312,9 @@ public class OrderFixActivity extends Activity {
     }
 
     void toSettleAccounts() throws Exception {
-
+        final ProgressHUD mProgressHUD;
+        mProgressHUD = ProgressHUD.show(this, getResources().getString(R.string.prompt_progress_loading), true, false,
+                null);
         String url = NetInterface.HOST + NetInterface.METHON_ORDER_COMMIT;
 
         orderPostModel.setToken(Constants.TOKEN_VALUE);
@@ -338,15 +341,17 @@ public class OrderFixActivity extends Activity {
                         DebugFlags.logD(TAG, jsonObject.toString());
 
                         try {
-                            if (jsonObject.getString("isSuccess").equals("1")) {
+                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)) {
                                 OrderPostModel resultOrder = new OrderPostModel();
                                 Gson gson = new Gson();
-                                resultOrder = gson.fromJson(jsonObject.getJSONObject("result").getString("order"),
+                                resultOrder = gson.fromJson(jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD).getString("order"),
                                         new TypeToken<OrderPostModel>() {
                                         }.getType());
+                                DBHelper.getInstance(getApplicationContext()).clearShopCart();//清空本地购物车
                                 Intent intent = new Intent(OrderFixActivity.this, OrderDetailActivity.class);
                                 intent.putExtra(OrderDetailActivity.INTENT_KEY_ADDR_INFO, addrInfo);
                                 intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_DATA, resultOrder);
+                                intent.putExtra(OrderDetailActivity.INTENT_KEY_BACK_TITLE_FLAG, getResources().getString(R.string.navi_title_order_fix));
                                 startActivity(intent);
                             } else {
                                 Toast.makeText(OrderFixActivity.this, getResources().getString(R.string.prompt_order_commit_faild),
@@ -355,11 +360,13 @@ public class OrderFixActivity extends Activity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        mProgressHUD.dismiss();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-
+                volleyError.printStackTrace();
+                mProgressHUD.dismiss();
             }
         });
         NetController.getInstance(getApplicationContext()).addToRequestQueue(orderCommit, TAG);
@@ -397,13 +404,13 @@ public class OrderFixActivity extends Activity {
 
     }
 
-    void clearCache(){
+    void clearCache() {
         OrderInfoModel.getInstance().setProDetail(null);
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == event.KEYCODE_BACK){
+        if (keyCode == event.KEYCODE_BACK) {
             clearCache();
             finish();
             return true;

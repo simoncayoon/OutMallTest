@@ -125,4 +125,8 @@
     <string name="prompt_commit_faild">提交失败</string>
     <string name="prompt_shop_cart_product_delete">要删除该商品吗？</string>
     <string name="prompt_pro_select_none">请至少选择一项商品</string>
+    <string name="navi_title_order_detail">订单详情</string>
+    <string name="prompt_order_cancel_failed">订单取消失败</string>
+    <string name="all_product">全部商品</string>
+    <string name="prompt_delete_succeed">删除成功</string>
 </resources>

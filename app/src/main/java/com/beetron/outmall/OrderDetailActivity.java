@@ -1,12 +1,16 @@
 package com.beetron.outmall;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Debug;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,6 +23,8 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
+import com.beetron.outmall.customview.LvHeightThree;
+import com.beetron.outmall.customview.ProgressHUD;
 import com.beetron.outmall.models.AddrInfoModel;
 import com.beetron.outmall.models.OrderFixInfo;
 import com.beetron.outmall.models.OrderInfoModel;
@@ -28,13 +34,13 @@ import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.models.ResultEntity;
 import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DebugFlags;
+import com.beetron.outmall.utils.ListViewUtil;
 import com.beetron.outmall.utils.NetController;
 import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -48,13 +54,17 @@ public class OrderDetailActivity extends Activity {
     public static final String INTENT_KEY_ORDER_DATA = "INTENT_KEY_ORDER_DATA";
     public static final String INTENT_KEY_ADDR_INFO = "INTENT_KEY_ADDR_INFO";
     private static final String TAG = OrderDetailActivity.class.getSimpleName();
+    public static final String INTENT_KEY_BACK_TITLE_FLAG = "INTENT_KEY_FORM_FLAG";
+    private static int MAX_ITEM_LINES = 3;
 
     private TextView orderNum;
     private TextView addrTitle, addrDetail;
-    private TextView payType, proAmount, serviceFee, freeFee;
+    private TextView payType, proAmount;
+    //    private TextView payType, proAmount, serviceFee, freeFee;
     private TextView actualPay, orderDate, leaveMsg;
     private ListView lvProScan;
     private Button btnCancel, btnPayment;
+    private LinearLayout llBtnZone;
 
     private OrderPostModel orderInfo;
     private AddrInfoModel addrInfo;
@@ -79,18 +89,22 @@ public class OrderDetailActivity extends Activity {
         orderNum.setText("订单号：" + orderInfo.getOrderno());
         setAddrInfo();
 
-        payType.setText(orderInfo.getPayment().equals("1") ?
+        payType.setText(orderInfo.getPayment().equals(Constants.PAYMENT_TYPE_ONLINE) ?
                 getResources().getString(R.string.pay_online) : getResources().getString(R.string.pay_delivery));
+        if (orderInfo.getPayment().equals(Constants.PAYMENT_TYPE_DELIVERY)) {
+            llBtnZone.setVisibility(View.GONE);
+        }
         proAmount.setText("￥" + orderInfo.getZongjia());
-        serviceFee.setText("￥" + orderInfo.getFuwufei());
-        freeFee.setText("-￥" + orderInfo.getJianmian());
+//        serviceFee.setText("￥" + orderInfo.getFuwufei());
+//        freeFee.setText("-￥" + orderInfo.getJianmian());
 
         actualPay.setText("实付款 ￥" + orderInfo.getTotalprice());
         orderDate.setText("下单时间：" + orderInfo.getDate());
         leaveMsg.setText(orderInfo.getRemark());
 
         lvProScan.setAdapter(new OrderProAdapter());
-
+//        ListViewUtil.setListViewHeightBasedOnChildren(lvProScan);
+        ListViewUtil.setListViewHeightBasedOnChildrenT(lvProScan);
         btnCancel = (Button) findViewById(R.id.order_detail_order_cancel);
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,21 +135,25 @@ public class OrderDetailActivity extends Activity {
 
         payType = (TextView) findViewById(R.id.tv_order_payment_type);
         proAmount = (TextView) findViewById(R.id.tv_order_product_amount);
-        serviceFee = (TextView) findViewById(R.id.tv_order_service_fee);
-        freeFee = (TextView) findViewById(R.id.tv_order_service_fee_minus);
+//        serviceFee = (TextView) findViewById(R.id.tv_order_service_fee);
+//        freeFee = (TextView) findViewById(R.id.tv_order_service_fee_minus);
         actualPay = (TextView) findViewById(R.id.order_detail_pay_actually);
         orderDate = (TextView) findViewById(R.id.order_detail_order_date);
         leaveMsg = (TextView) findViewById(R.id.order_detail_leave_msg);
 
         lvProScan = (ListView) findViewById(R.id.order_detail_pro_scan);
-
+        llBtnZone = (LinearLayout) findViewById(R.id.order_detail_btn_zone);
     }
 
     private void initNavi() {
         cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
-        cusNaviView.setNaviTitle(getResources().getString(R.string.navi_title_order_fix));
+        cusNaviView.setNaviTitle(getResources().getString(R.string.navi_title_order_detail));
         cusNaviView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
-        ((Button) cusNaviView.getLeftBtn()).setText(getResources().getString(R.string.navi_title_waiting_pay));//设置返回标题
+        try {
+            ((Button) cusNaviView.getLeftBtn()).setText(getIntent().getStringExtra(INTENT_KEY_BACK_TITLE_FLAG));//设置返回标题
+        } catch (Resources.NotFoundException e) {
+            e.printStackTrace();
+        }
 
         cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
             @Override
@@ -164,7 +182,10 @@ public class OrderDetailActivity extends Activity {
         addrDetail.setText("收货地址：" + addrInfo.getAddress());
     }
 
-    void orderCancel() throws Exception{
+    void orderCancel() throws Exception {
+        final ProgressHUD mProgressHUD;
+        mProgressHUD = ProgressHUD.show(this, getResources().getString(R.string.prompt_progress_loading), true, false,
+                null);
         String url = NetInterface.HOST + NetInterface.METHON_ORDER_CANCEL;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
@@ -172,7 +193,7 @@ public class OrderDetailActivity extends Activity {
         String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
         }.getType());
         JSONObject postJson = new JSONObject(postString);
-        postJson.put("orderid", orderInfo.getOrderno());
+        postJson.put("orderid", orderInfo.getId());
         JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -185,6 +206,7 @@ public class OrderDetailActivity extends Activity {
                         ResultEntity<OrderFixInfo> resultEntity = gson.fromJson(jsonObject.toString(),
                                 new TypeToken<ResultEntity<OrderFixInfo>>() {
                                 }.getType());
+                        mProgressHUD.dismiss();
                         if (resultEntity.isSuccess()) {
                             try {
                                 Toast.makeText(OrderDetailActivity.this, getResources().getString(R.string.prompt_order_cancel),
@@ -193,12 +215,16 @@ public class OrderDetailActivity extends Activity {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        } else {
+                            Toast.makeText(OrderDetailActivity.this, getResources().getString(R.string.prompt_order_cancel_failed),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
-
+                volleyError.printStackTrace();
+                mProgressHUD.dismiss();
             }
         });
         NetController.getInstance(this).addToRequestQueue(getCategoryReq, TAG);
