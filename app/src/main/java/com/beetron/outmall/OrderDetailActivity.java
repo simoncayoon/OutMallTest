@@ -1,16 +1,15 @@
 package com.beetron.outmall;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Debug;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,7 +22,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
-import com.beetron.outmall.customview.LvHeightThree;
+import com.beetron.outmall.customview.CustomDialog;
 import com.beetron.outmall.customview.ProgressHUD;
 import com.beetron.outmall.models.AddrInfoModel;
 import com.beetron.outmall.models.OrderFixInfo;
@@ -109,11 +108,33 @@ public class OrderDetailActivity extends Activity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    orderCancel();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
+                final CustomDialog.Builder builder = new CustomDialog.Builder(OrderDetailActivity.this);
+                builder.setTitle(R.string.prompt);
+                builder.setMessage(R.string.prompt_order_delete_confirm);
+                builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            try {
+                                orderCancel();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+
             }
         });
         btnPayment = (Button) findViewById(R.id.order_detail_order_pay);

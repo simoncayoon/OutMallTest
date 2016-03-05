@@ -56,10 +56,10 @@
                 android:layout_width="110dp"
                 android:layout_height="45dp"
                 android:layout_marginTop="30.5dp"
-                android:background="@color/tab_selected_color"
                 android:text="@string/addr_manage_add_addr_info"
                 android:textColor="@color/general_main_title_color"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                style="@style/BtnStyle"/>
         </LinearLayout>
 
     </FrameLayout>

@@ -331,7 +331,12 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                                     dataLocalList.get(position).setCount(resultCount);
                                     updateAmount(FLAG_UPDATE_SELECT_ITEM_COUNT, false, position);
                                     if (resultCount == 0) {
-                                        removeItem(proSummary.getSid());
+                                        try {
+                                            selectCache.remove(dataLocalList.get(position).getSid());
+                                            dataLocalList.remove(position);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
                                     }
                                 }
                                 shopCartAdapter.notifyDataSetChanged();

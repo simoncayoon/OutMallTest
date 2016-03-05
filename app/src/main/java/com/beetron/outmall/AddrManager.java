@@ -36,6 +36,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,6 +63,7 @@ public class AddrManager extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.address_manage_layout);
+        addrList = new ArrayList<AddrInfoModel>();
         initView();
 
     }
@@ -70,11 +72,14 @@ public class AddrManager extends Activity {
 
         initNavi();
         llAddrList = (ListView) findViewById(R.id.shop_cart_detail_list);
+
         llEmpty = (LinearLayout) findViewById(R.id.addr_manage_empty_layout);
         btnToadd = (Button) findViewById(R.id.btn_add_addr_info);
         btnToadd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                addrList.clear();
+                addrAdapter.notifyDataSetChanged();
                 startActivity(new Intent(AddrManager.this, AddrEdit.class));
             }
         });
@@ -92,20 +97,6 @@ public class AddrManager extends Activity {
                 }
             }
         });
-
-//        llAddrList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//
-//                try {
-//                    addrDelete(position);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//                return false;
-//            }
-//        });
     }
 
     private void initNavi() {
@@ -161,6 +152,7 @@ public class AddrManager extends Activity {
                                     }.getType());
                             if (resultEntity.isSuccess()) {
                                 addrList = resultEntity.getResult().getList();
+                                addrAdapter = new AddrAdapter(AddrManager.this, addrList);
                                 initData();
                             } else {
                                 try {
@@ -185,12 +177,14 @@ public class AddrManager extends Activity {
     }
 
     private void initData() {
-
-        addrAdapter = new AddrAdapter(AddrManager.this, addrList);
+        addrAdapter.notifyDataSetChanged();
         if (addrList.size() > 0) {
             llAddrList.setAdapter(addrAdapter);
+            if (llEmpty.isShown()) {
+                llEmpty.setVisibility(View.GONE);
+            }
         } else {
-            llEmpty.setVisibility(View.GONE);
+            llEmpty.setVisibility(View.VISIBLE);
         }
     }
 

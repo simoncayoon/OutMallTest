@@ -36,5 +36,5 @@ dependencies {
     compile project(':MyLibs:viewPagerIndicator_Library')
     compile project(':MyLibs:lvRefreshLib')
     compile files('libs/greendao-2.1.0.jar')
-    compile files('libs/picasso-2.5.2.jar')
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 }

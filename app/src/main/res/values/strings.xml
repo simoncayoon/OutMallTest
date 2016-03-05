@@ -129,4 +129,5 @@
     <string name="prompt_order_cancel_failed">订单取消失败</string>
     <string name="all_product">全部商品</string>
     <string name="prompt_delete_succeed">删除成功</string>
+    <string name="prompt_order_delete_confirm">确定要取消此订单吗？</string>
 </resources>

@@ -7,6 +7,10 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +22,8 @@ import android.widget.ImageView.ScaleType;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.customview.ClipView;
 import com.beetron.outmall.customview.CusNaviView;
+import com.beetron.outmall.customview.ProgressHUD;
+import com.beetron.outmall.utils.CommonHelper;
 
 /**
  * Created by luomaozhong on 16/3/2.
@@ -58,6 +64,7 @@ public class CropHeaderImage extends Activity implements View.OnTouchListener {
 
     private Bitmap bitmap;
     private CusNaviView cusNaviView;
+    private ProgressHUD mProgressHUD;
 
     private void initNavi() {
         cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
@@ -86,7 +93,7 @@ public class CropHeaderImage extends Activity implements View.OnTouchListener {
 //                intent.putExtra("bitmap", bitmapByte);
 //                startActivity(intent);
 
-                Constants.mBitmap=getBitmap();
+                Constants.mBitmap = getBitmap();
                 Intent mIntent = new Intent();
                 setResult(RESULT_OK, mIntent);
                 finish();
@@ -100,19 +107,53 @@ public class CropHeaderImage extends Activity implements View.OnTouchListener {
         setContentView(R.layout.crop_header_image);
         initNavi();
         srcPic = (ImageView) this.findViewById(R.id.src_pic);
-        srcPic.setOnTouchListener(this);
+        mProgressHUD = ProgressHUD.show(this, "正在加载...", true, false,
+                null);
+        final int type = getIntent().getExtras().getInt("type");
 
-        ViewTreeObserver observer = srcPic.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+                if (UserInfo.TAKE_PICTURE == type) {
+                    Log.d("CropHeaderImage","enter CropHeaderImage take_picture");
+                    int degree = CommonHelper.getBitmapDegree(Environment
+                            .getExternalStorageDirectory()
+                            + "/image.jpg");
+                    if (degree != 0) {
+                        Constants.mBitmap = CommonHelper.rotateBitmapByDegree(CommonHelper.getDiskBitmap(Environment
+                                .getExternalStorageDirectory()
+                                + "/image.jpg"), degree);
+                    } else {
+                        Constants.mBitmap = CommonHelper.getDiskBitmap(Environment
+                                .getExternalStorageDirectory()
+                                + "/image.jpg");
+                    }
 
-            @SuppressWarnings("deprecation")
-            public void onGlobalLayout() {
-                srcPic.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                initClipView(srcPic.getTop());
-            }
-        });
+                }
+                Message message = mhandler.obtainMessage();
+                message.sendToTarget();
+//            }
+//        }).start();
 
     }
+
+    private Handler mhandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            mProgressHUD.dismiss();
+            srcPic.setOnTouchListener(CropHeaderImage.this);
+            ViewTreeObserver observer = srcPic.getViewTreeObserver();
+            observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+                @SuppressWarnings("deprecation")
+                public void onGlobalLayout() {
+                    srcPic.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    initClipView(srcPic.getTop());
+                }
+            });
+        }
+    };
 
     /**
      * 初始化截图区域，并将源图按裁剪框比例缩放

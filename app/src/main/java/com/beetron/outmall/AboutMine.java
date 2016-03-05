@@ -18,10 +18,10 @@ import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.DisplayMetrics;
 import com.beetron.outmall.utils.TempDataManager;
+import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.shizhefei.view.indicator.FixedIndicatorView;
 import com.shizhefei.view.indicator.Indicator;
-import com.squareup.picasso.Picasso;
 
 /**
  * Created by DKY with IntelliJ IDEA.
@@ -61,11 +61,8 @@ public class AboutMine extends BaseFragment {
                 Log.d("AboutMine","已登录");
                 memberModel = DBHelper.getInstance(getActivity()).getUserInfo();
                 Log.d("AboutMine","用户头像："+memberModel.getHeadimg());
-                Picasso.with(getActivity())
-                        .load(memberModel.getHeadimg())
-                        .placeholder(R.mipmap.default_avatar)
-                        .error(R.mipmap.default_avatar)
-                        .into(headImg);
+
+                Glide.with(getActivity()).load(memberModel.getHeadimg()).placeholder(R.mipmap.default_avatar).into(headImg);
 //                Uri uri=Uri.parse(memberModel.getHeadimg());
 //                headImg.setImageURI(uri);
                 if (memberModel == null || memberModel.getUname().equals("")) {

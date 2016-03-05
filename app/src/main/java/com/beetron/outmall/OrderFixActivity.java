@@ -182,12 +182,23 @@ public class OrderFixActivity extends Activity {
             @Override
             public void onClick(View v) {
                 try {
-                    toSettleAccounts();
+                    if (checkInfo())
+                        toSettleAccounts();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
+    }
+
+    private boolean checkInfo() {
+
+        if (TextUtils.isEmpty(addrInfo.getId())){
+            Toast.makeText(OrderFixActivity.this, getResources().getString(R.string.addr_info_empty),
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     private void initNavi() {
@@ -266,6 +277,8 @@ public class OrderFixActivity extends Activity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+                        } else {
+                            Toast.makeText(OrderFixActivity.this, "获取信息失败", Toast.LENGTH_SHORT).show();
                         }
                         mProgressHUD.dismiss();
                     }
@@ -280,7 +293,11 @@ public class OrderFixActivity extends Activity {
 
     private void initBottonData(OrderFixInfo orderFixInfo) throws JSONException {
         this.orderFixInfo = orderFixInfo;
-        addrInfo = orderFixInfo.getAddress();
+        if (orderFixInfo.getAddress() == null) {
+            addrInfo = new AddrInfoModel();
+        } else {
+            addrInfo = orderFixInfo.getAddress();
+        }
         updateAddrInfo();
 
         try {
