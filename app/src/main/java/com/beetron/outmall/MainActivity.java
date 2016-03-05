@@ -24,6 +24,7 @@ import com.beetron.outmall.customview.BadgeView;
 import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.customview.CustomDialog;
 import com.beetron.outmall.customview.ViewWithBadge;
+import com.beetron.outmall.models.UserInfoModel;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.DisplayMetrics;
@@ -54,6 +55,9 @@ public class MainActivity extends AppCompatActivity
         initNavi();
         initDrawable();
         initIndicator();
+
+        UserInfoModel userInfoModel =  DBHelper.getInstance(getApplicationContext()).getUserInfo();
+        DebugFlags.logD(TAG, "oooxoxoxoxoxoxo " + userInfoModel.getUid());
     }
 
     private void initNavi() {
@@ -208,8 +212,6 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override

@@ -1,8 +1,12 @@
 package com.beetron.outmall;
 
 import android.app.Activity;
+import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -17,17 +21,23 @@ import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.customview.ProgressHUD;
-import com.beetron.outmall.customview.TabItemView;
+import com.beetron.outmall.customview.ViewWithBadge;
 import com.beetron.outmall.models.OrderInfo;
+import com.beetron.outmall.models.UserInfoModel;
+import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
+import com.beetron.outmall.utils.DisplayMetrics;
 import com.beetron.outmall.utils.NetController;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.shizhefei.view.indicator.FixedIndicatorView;
+import com.shizhefei.view.indicator.Indicator;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
 
 /**
  * Created by DKY with IntelliJ IDEA.
@@ -35,9 +45,9 @@ import java.util.ArrayList;
  * Date: 2016/2/27.
  * Time: 22:38.
  */
-public class OrderMineScan extends Activity implements View.OnClickListener {
+public class OrderMineScan extends Activity {
 
-    private TabItemView ti_title1, ti_title2, ti_title3, ti_title4, ti_title5;
+    //    private TabItemView ti_title1, ti_title2, ti_title3, ti_title4, ti_title5;
     private static final String TAG = OrderMineScan.class.getSimpleName();
     private ArrayList<JSONObject> orderList = new ArrayList<>();
     private ArrayList<JSONObject> payList = new ArrayList<>();
@@ -49,8 +59,10 @@ public class OrderMineScan extends Activity implements View.OnClickListener {
     private int select = 1;
     private float density;
     private LinearLayout ll_shop_car;
-
+    private FixedIndicatorView scanTab;
+    UserInfoModel userInfoSummary;
     private CusNaviView cusNaviView;
+    private ProgressHUD mProgressHUD;
 
     private void initNavi() {
         cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
@@ -78,33 +90,71 @@ public class OrderMineScan extends Activity implements View.OnClickListener {
         setContentView(R.layout.order_mine_scan_layout);
         select = getIntent().getExtras().getInt("select");
         mAdapter = new OrderInfoAdapter(this, orderList);
+        userInfoSummary = DBHelper.getInstance(this).getUserInfo();
         initNavi();
         initView();
         getData();
     }
 
     private void initView() {
-        ll_shop_car=(LinearLayout)findViewById(R.id.ll_shop_car);
-        ti_title1 = (TabItemView) findViewById(R.id.ti_title1);
-        ti_title2 = (TabItemView) findViewById(R.id.ti_title2);
-        ti_title3 = (TabItemView) findViewById(R.id.ti_title3);
-        ti_title4 = (TabItemView) findViewById(R.id.ti_title4);
-        ti_title5 = (TabItemView) findViewById(R.id.ti_title5);
-        setTextColor();
-        upColor(select);
-        ti_title5.hiddenLine();
+        ll_shop_car = (LinearLayout) findViewById(R.id.ll_shop_car);
         mListView = (ListView) findViewById(R.id.lv_orderList);
         mListView.setAdapter(mAdapter);
 //        indicatorViewPager.setAdapter(new );
-        ti_title1.setOnClickListener(this);
-        ti_title2.setOnClickListener(this);
-        ti_title3.setOnClickListener(this);
-        ti_title4.setOnClickListener(this);
-        ti_title5.setOnClickListener(this);
+
+        scanTab = (FixedIndicatorView) findViewById(R.id.about_me_order_scan_tab);
+
+        final String[] scanTabName = new String[]{getResources().getString(R.string.order_waiting_pay), getResources().getString(R.string.order_waiting_grab),
+                getResources().getString(R.string.order_have_accept), getResources().getString(R.string.order_delivery),
+                getResources().getString(R.string.order_have_done)};
+        final int[] drawableTop = new int[]{R.mipmap.user_card, R.mipmap.user_waiting, R.mipmap.user_receive, R.mipmap.user_distribution, R.mipmap.user_finish};
+        scanTab.setAdapter(getAdapter(scanTabName, drawableTop, select));
+
+        scanTab.setOnItemSelectListener(new Indicator.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(View selectItemView, int select, int preSelect) {
+                //设置菜单的点击事件
+                scanTab.setAdapter(getAdapter(scanTabName, drawableTop, select));
+                updateData(select);
+            }
+        });
+
+    }
+
+    private Indicator.IndicatorAdapter getAdapter(final String[] scanTabName, final int[] drawableTop, final int currueNum) {
+        return new Indicator.IndicatorAdapter() {
+            @Override
+            public int getCount() {
+                return scanTabName.length;
+            }
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                if (convertView == null) {
+                    convertView = getLayoutInflater().inflate(R.layout.tab_main, parent, false);
+                }
+                ViewWithBadge textView = (ViewWithBadge) convertView.findViewById(R.id.tab_text_view);
+                textView.setText(scanTabName[position]);
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
+                textView.setTextColor(getResources().getColor(R.color.general_tab_text_color));
+                Drawable top = getResources().getDrawable(R.drawable.shape_line);
+                top.setBounds(new Rect(0, 0, DisplayMetrics.dip2px(
+                        OrderMineScan.this, 1), DisplayMetrics.dip2px(
+                        OrderMineScan.this, 20)));
+
+                if (position == currueNum) {
+                    textView.setTextColor(getResources().getColor(R.color.menu_yellow_color));
+                }
+                if (position != 4) {
+                    textView.setCompoundDrawables(null, null, top, null);
+                }
+                textView.setCompoundDrawablePadding(50);
+                return convertView;
+            }
+        };
     }
 
     private void getData() {
-        final ProgressHUD mProgressHUD;
         mProgressHUD = ProgressHUD.show(this, "正在加载...", true, false,
                 null);
 
@@ -112,7 +162,7 @@ public class OrderMineScan extends Activity implements View.OnClickListener {
         OrderInfo postEntity = new OrderInfo();
         postEntity.setToken(Constants.TOKEN_VALUE);
         postEntity.setIsLogin("1");
-        postEntity.setUid(Constants.POST_UID_TEST);
+        postEntity.setUid(userInfoSummary.getUid());
         String postString = new Gson().toJson(postEntity, new TypeToken<OrderInfo>() {
         }.getType());
         JSONObject postJson = null;
@@ -174,55 +224,8 @@ public class OrderMineScan extends Activity implements View.OnClickListener {
         NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.ti_title1:
-                setTextColor();
-                ti_title1.setText("已下单", R.color.menu_yellow_color);
-                updateData(1);
-                break;
-
-            case R.id.ti_title2:
-                setTextColor();
-                ti_title2.setText("已支付", R.color.menu_yellow_color);
-                updateData(2);
-                break;
-
-            case R.id.ti_title3:
-                setTextColor();
-                ti_title3.setText("已取消", R.color.menu_yellow_color);
-                updateData(3);
-                break;
-
-            case R.id.ti_title4:
-                setTextColor();
-                ti_title4.setText("配送中", R.color.menu_yellow_color);
-                updateData(4);
-                break;
-
-            case R.id.ti_title5:
-                setTextColor();
-                ti_title5.setText("已完成", R.color.menu_yellow_color);
-                updateData(5);
-                break;
-
-            default:
-
-                break;
-        }
-    }
-
-    private void setTextColor() {
-        ti_title1.setText("已下单", R.color.general_tab_text_color);
-        ti_title2.setText("已支付", R.color.general_tab_text_color);
-        ti_title3.setText("已取消", R.color.general_tab_text_color);
-        ti_title4.setText("配送中", R.color.general_tab_text_color);
-        ti_title5.setText("已完成", R.color.general_tab_text_color);
-    }
-
     private void updateData(int type) {
-        switch (type) {
+        switch (type + 1) {
             case 1:
                 mAdapter.upDate(orderList);
                 break;
@@ -242,39 +245,16 @@ public class OrderMineScan extends Activity implements View.OnClickListener {
                 break;
         }
         mAdapter.notifyDataSetChanged();
-        if (mAdapter.getCount()>0){
+        if (mAdapter.getCount() > 0) {
             ll_shop_car.setVisibility(View.INVISIBLE);
-        }else{
+        } else {
             ll_shop_car.setVisibility(View.VISIBLE);
         }
     }
 
-
-    private void upColor(int type) {
-        switch (type) {
-            case 1:
-                ti_title1.setText("已下单", R.color.menu_yellow_color);
-                break;
-
-            case 2:
-                ti_title2.setText("已支付", R.color.menu_yellow_color);
-                break;
-
-            case 3:
-                ti_title3.setText("已取消", R.color.menu_yellow_color);
-                break;
-
-            case 4:
-                ti_title4.setText("配送中", R.color.menu_yellow_color);
-                break;
-
-            case 5:
-                ti_title5.setText("已完成", R.color.menu_yellow_color);
-                break;
-
-            default:
-
-                break;
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mProgressHUD.hide();
     }
 }

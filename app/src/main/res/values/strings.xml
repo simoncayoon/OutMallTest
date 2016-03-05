@@ -52,9 +52,9 @@
     <string name="prompt_addr_edit_school_input">请输入您的学校</string>
     <string name="prompt_addr_edit_addr_input">请输入您所在的公寓和宿舍号</string>
     <string name="about_me_order_scan_title">我的消费订单</string>
-    <string name="order_waiting_pay">代付款</string>
-    <string name="order_waiting_grab">待抢单</string>
-    <string name="order_have_accept">已接单</string>
+    <string name="order_waiting_pay">已下单</string>
+    <string name="order_waiting_grab">已付款</string>
+    <string name="order_have_accept">已取消</string>
     <string name="order_delivery">配送中</string>
     <string name="order_have_done">已完成</string>
     <string name="order_fix_addr_name_empty">收货人：无</string>

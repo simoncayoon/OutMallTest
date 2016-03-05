@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.beetron.outmall.adapter.ShopCartAdapter;
@@ -73,7 +74,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
         initView();
         try {
             selectCache = new LinkedHashMap<>();
-//            updateAmount(false, FLAG_UPDATE_SELECT_ONE_KEY);//初始化总价
             try {
                 reqShopcart(true);
             } catch (Exception e) {
@@ -94,7 +94,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
         }
 
         try {
-            updateAmount(true, FLAG_UPDATE_SELECT_ONE_KEY);//初始化总价
+            updateAmount(true, FLAG_UPDATE_SELECT_ONE_KEY);//初始化总价，默认全部选择
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -143,10 +143,18 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                         volleyError.printStackTrace();
 
                     }
-                });
+                }) {
+                    @Override
+                    public Request<?> setRetryPolicy(RetryPolicy retryPolicy) {
+                        return super.setRetryPolicy(retryPolicy);
+                    }
+                };
                 NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
             } else {
                 dataLocalList = DBHelper.getInstance(getApplicationContext()).getShopCartList();
+                for (int index = 0; index < dataLocalList.size(); index ++){
+                    selectCache.put(dataLocalList.get(index).getSid(), index);
+                }
                 initData();
 
             }
@@ -170,7 +178,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
             proSummary.setCount(shopCartModel.getNum());
             proSummary.setImg(shopCartModel.getGs().getImg());
             proSummary.setJianshu(shopCartModel.getGs().getJianshu());
-            proSummary.setIsSelect(true);//默认全选
             dataLocalList.add(proSummary);
         }
     }
@@ -241,8 +248,8 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
         }
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
-        postEntity.setUid(Constants.POST_UID_TEST);
-        postEntity.setIsLogin("1");
+        postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
+        postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
         String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
         }.getType());
         JSONObject postJson = new JSONObject(postString);
@@ -266,10 +273,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                                 }
                                 //更新当前列表信息
                                 if (resultCount == 0) {
-                                    //更新已选择的产品的顺序
-//                                    for(int index = position; index < selectCache.size(); index ++){
-//                                        selectCac
-//                                    }
                                     selectCache.remove(dataLocalList.get(position).getSid());
 
                                     dataLocalList.remove(position);
@@ -296,13 +299,13 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
     /**
      * 更新数据
      *
-     * @param status
-     * @param position
+     * @param status   true是加操作， false 减操作
+     * @param position 位置判断：全选或者点击单个数据
      * @throws Exception
      */
     void updateAmount(Boolean status, int position) throws Exception {
 
-        if (position > FLAG_UPDATE_SELECT_ONE_KEY) {//有数据情况
+        if (position > FLAG_UPDATE_SELECT_ONE_KEY) {//点击了列表的某一项
 
             ProSummary selectItem = dataLocalList.get(position);
             if (status) {//价操作
@@ -316,7 +319,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
             }
 
             dataLocalList.get(position).setIsSelect(dataLocalList.get(position).getIsSelect() ? false : true);
-        } else {
+        } else {//全选或者全取消
             if (status) {
                 currentAmount = 0.00;
                 for (int index = 0; index < dataLocalList.size(); index++) {
@@ -332,10 +335,9 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                 }
                 selectCache.clear();
             }
-
         }
 
-        if (selectCache.size() == dataLocalList.size()) {//判断是否全选
+        if (selectCache.size() == dataLocalList.size() && selectCache.size() != 0) {//判断是否全选
             checkSelectAll.setChecked(true);
         } else {
             checkSelectAll.setChecked(false);
@@ -396,9 +398,11 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                             try {
                                 for (Map.Entry<String, Integer> entry : selectCache.entrySet()) {
                                     DBHelper.getInstance(getActivity()).deleteShopById(entry.getKey());
-                                    dataLocalList.remove(entry.getValue());
+                                    ProSummary proSummary = dataLocalList.get(entry.getValue());//获取列表中对应位置的对象
+                                    dataLocalList.remove(proSummary);
                                 }
                                 selectCache.clear();//清空当前选择的内容
+                                updateAmount(false, FLAG_UPDATE_SELECT_ONE_KEY);
                                 shopCartAdapter.notifyDataSetChanged();
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -406,8 +410,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                         } else {
                             DebugFlags.logD(TAG, "失败");
                         }
-
-                        initData();
                     }
                 }, new Response.ErrorListener() {
             @Override

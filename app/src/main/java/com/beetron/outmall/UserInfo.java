@@ -11,7 +11,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +35,7 @@ import com.beetron.outmall.utils.NetController;
 import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -60,8 +60,9 @@ public class UserInfo extends Activity implements View.OnClickListener {
     private LinearLayout llPortrait, llGender, llNickName, llEmail, llProvince, llCity, llArea, llStreet;
     private CusNaviView cusNaviView;
     public static final String FLAG_NAVI_ROOT = "FLAG_NAVI_ROOT";
+    public static final int FLAG_HEAD_REFRESH = 1;
     private DBHelper dbHelper;
-    private ImageView headerImage;
+    private RoundedImageView headerImage;
     private ProgressHUD mProgressHUD;
 
     private void initNavi() {
@@ -96,18 +97,14 @@ public class UserInfo extends Activity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.user_info_layout);
-//        userInfoSummary = new UserInfoModel();
-//        userInfoSummary.setProvince("");
-//        userInfoSummary.setArea("");
-//        userInfoSummary.setCity("");
-//        userInfoSummary.setMail("");
         dbHelper = DBHelper.getInstance(this);
         userInfoSummary = dbHelper.getUserInfo();
+        Log.d("UserInfo","头像Url:"+userInfoSummary.getHeadimg());
         initNavi();
         initView();
 
         try {
-            //getUserInfo();
+            setUserHeadImg();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -126,7 +123,7 @@ public class UserInfo extends Activity implements View.OnClickListener {
         String url = NetInterface.HOST + NetInterface.METHON_EDIT_USER_INFO;
         PostUserInfo postEntity = new PostUserInfo();
         postEntity.setToken(Constants.TOKEN_VALUE);
-        postEntity.setUid(Constants.POST_UID_TEST);
+        postEntity.setUid(userInfoSummary.getUid());
         postEntity.setIsLogin("1");
         postEntity.setCity(tvCity.getText().toString());
         postEntity.setProvince(tvProvince.getText().toString());
@@ -197,7 +194,7 @@ public class UserInfo extends Activity implements View.OnClickListener {
         tvCity = (TextView) findViewById(R.id.user_info_city);
         tvArea = (TextView) findViewById(R.id.user_info_area);
         tvStreet = (TextView) findViewById(R.id.user_info_street);
-        headerImage = (ImageView) findViewById(R.id.user_info_protrait_img);
+        headerImage = (RoundedImageView) findViewById(R.id.user_info_protrait_img);
         headerImage.setDrawingCacheEnabled(true);
 
         tvNickName.setText(userInfoSummary.getNickname());
@@ -215,11 +212,8 @@ public class UserInfo extends Activity implements View.OnClickListener {
         tvCity.setText(userInfoSummary.getCity());
         tvArea.setText(userInfoSummary.getArea());
         tvStreet.setText(userInfoSummary.getAddress());
-        Picasso.with(this)
-                .load(userInfoSummary.getHeadimg())
-                .placeholder(R.mipmap.default_avatar)
-                .error(R.mipmap.default_avatar)
-                .into(headerImage);
+
+        setUserHeadImg();//设置用户头像
         llNickName.setOnClickListener(this);
         llEmail.setOnClickListener(this);
         llGender.setOnClickListener(this);
@@ -229,6 +223,21 @@ public class UserInfo extends Activity implements View.OnClickListener {
         llStreet.setOnClickListener(this);
         llPortrait.setOnClickListener(this);
         llPortrait.setOnClickListener(this);
+    }
+
+    private void setUserHeadImg() {
+//        Transformation transformation = new RoundedTransformationBuilder()
+//                .borderColor(Color.BLACK)
+//                .borderWidthDp(3)
+//                .cornerRadiusDp(30)
+//                .oval(false)
+//                .build();
+        Picasso.with(this)
+                .load(userInfoSummary.getHeadimg())
+                .placeholder(R.mipmap.default_avatar)
+                //.transform(transformation)
+                .error(R.mipmap.default_avatar)
+                .into(headerImage);
     }
 
     @Override
@@ -298,6 +307,7 @@ public class UserInfo extends Activity implements View.OnClickListener {
 
     }
 
+
     public static final int TAKE_PICTURE = 0;// 选择照相
     public static final int CHOOSE_PICTURE = 1;// 选择相册
     public static final int CROP_PICTURE = 2;//图片剪切
@@ -313,6 +323,8 @@ public class UserInfo extends Activity implements View.OnClickListener {
             // 指定照片保存路径（SD卡），image.jpg为一个临时文件，每次拍照后这个图片都会被替换
             openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
             startActivityForResult(openCameraIntent, TAKE_PICTURE);
+            mProgressHUD = ProgressHUD.show(UserInfo.this, "正在加载...", true, false,
+                    null);
         }
 
     };
@@ -325,6 +337,8 @@ public class UserInfo extends Activity implements View.OnClickListener {
             Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
             openAlbumIntent.setType("image/*");
             startActivityForResult(openAlbumIntent, CHOOSE_PICTURE);
+            mProgressHUD = ProgressHUD.show(UserInfo.this, "正在加载...", true, false,
+                    null);
         }
 
     };
@@ -340,11 +354,9 @@ public class UserInfo extends Activity implements View.OnClickListener {
 
             if (requestCode == TAKE_PICTURE || requestCode == CHOOSE_PICTURE) {
                 //头像处理
-                mProgressHUD = ProgressHUD.show(this, "图片处理中...", true, false,
-                        null);
-
                 getPicData(requestCode, resultCode, data);
-                headerImage.setImageBitmap(Constants.mBitmap);
+                mProgressHUD.hide();
+//                headerImage.setImageBitmap(Constants.mBitmap);
                 Intent intent = new Intent(UserInfo.this,
                         CropHeaderImage.class);
                 startActivityForResult(intent, CROP_PICTURE);
@@ -389,6 +401,10 @@ public class UserInfo extends Activity implements View.OnClickListener {
                         userInfoSummary.setAddress(backSring);
                     }
                 }
+            }
+        }else{
+            if (mProgressHUD!=null) {
+                mProgressHUD.hide();
             }
         }
 

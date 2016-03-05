@@ -161,9 +161,7 @@ public class DBHelper {
      */
     public void saveUserInfo(UserInfoModel userInfoModel) {
 
-        synchronized (userInfoModelDao) {
             userInfoModelDao.insertOrReplace(userInfoModel);
-        }
     }
 
     /**

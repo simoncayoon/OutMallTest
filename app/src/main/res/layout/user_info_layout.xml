@@ -21,6 +21,7 @@
         android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dip"
             android:layout_height="wrap_content"
@@ -28,27 +29,39 @@
             android:layout_weight="1"
             android:text="@string/user_info_title_portrait"
             android:textColor="@color/general_tab_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
-        <ImageView
+        <!--<ImageView-->
+        <!--android:id="@+id/user_info_protrait_img"-->
+        <!--android:layout_width="@dimen/user_info_portait_size"-->
+        <!--android:layout_height="@dimen/user_info_portait_size"-->
+        <!--android:src="@mipmap/default_avatar"-->
+        <!--/>-->
+        <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/user_info_protrait_img"
             android:layout_width="@dimen/user_info_portait_size"
             android:layout_height="@dimen/user_info_portait_size"
+            android:scaleType="fitCenter"
             android:src="@mipmap/default_avatar"
-            />
+            app:riv_border_color="#333333"
+            app:riv_border_width="0dip"
+            app:riv_corner_radius="30dip"
+            app:riv_mutate_background="true"
+            app:riv_oval="true"
+            app:riv_tile_mode="clamp" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/order_fix_content_padding"
             android:layout_marginRight="@dimen/order_fix_content_padding"
-            android:src="@mipmap/address_ic_arrow"/>
+            android:src="@mipmap/address_ic_arrow" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/general_boundary_color"/>
+        android:background="@color/general_boundary_color" />
 
     <!-- 昵称-->
     <LinearLayout
@@ -60,6 +73,7 @@
         android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dip"
             android:layout_height="wrap_content"
@@ -67,21 +81,21 @@
             android:layout_weight="1"
             android:text="@string/user_info_title_nick"
             android:textColor="@color/general_tab_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <TextView
             android:id="@+id/user_info_nick_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/general_main_title_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/order_fix_content_padding"
             android:layout_marginRight="@dimen/order_fix_content_padding"
-            android:src="@mipmap/address_ic_arrow"/>
+            android:src="@mipmap/address_ic_arrow" />
 
     </LinearLayout>
 
@@ -90,7 +104,7 @@
         android:layout_height="1px"
         android:layout_marginLeft="@dimen/order_fix_content_padding"
         android:layout_marginRight="@dimen/order_fix_content_padding"
-        android:background="@color/general_boundary_color"/>
+        android:background="@color/general_boundary_color" />
 
     <!-- 性别-->
     <LinearLayout
@@ -101,6 +115,7 @@
         android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dip"
             android:layout_height="wrap_content"
@@ -108,21 +123,21 @@
             android:layout_weight="1"
             android:text="@string/user_info_title_gender"
             android:textColor="@color/general_tab_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <TextView
             android:id="@+id/user_info_gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/general_main_title_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/order_fix_content_padding"
             android:layout_marginRight="@dimen/order_fix_content_padding"
-            android:src="@mipmap/address_ic_arrow"/>
+            android:src="@mipmap/address_ic_arrow" />
 
     </LinearLayout>
 
@@ -131,7 +146,7 @@
         android:layout_height="1px"
         android:layout_marginLeft="@dimen/order_fix_content_padding"
         android:layout_marginRight="@dimen/order_fix_content_padding"
-        android:background="@color/general_boundary_color"/>
+        android:background="@color/general_boundary_color" />
 
     <!-- 邮件-->
     <LinearLayout
@@ -142,6 +157,7 @@
         android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dip"
             android:layout_height="wrap_content"
@@ -149,21 +165,21 @@
             android:layout_weight="1"
             android:text="@string/user_info_email"
             android:textColor="@color/general_tab_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <TextView
             android:id="@+id/user_info_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/general_main_title_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/order_fix_content_padding"
             android:layout_marginRight="@dimen/order_fix_content_padding"
-            android:src="@mipmap/address_ic_arrow"/>
+            android:src="@mipmap/address_ic_arrow" />
 
     </LinearLayout>
 
@@ -172,7 +188,7 @@
         android:layout_height="1px"
         android:layout_marginLeft="@dimen/order_fix_content_padding"
         android:layout_marginRight="@dimen/order_fix_content_padding"
-        android:background="@color/general_boundary_color"/>
+        android:background="@color/general_boundary_color" />
     <!-- 省-->
     <LinearLayout
         android:id="@+id/ll_province_layout"
@@ -182,6 +198,7 @@
         android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dip"
             android:layout_height="wrap_content"
@@ -189,21 +206,21 @@
             android:layout_weight="1"
             android:text="@string/user_info_province"
             android:textColor="@color/general_tab_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <TextView
             android:id="@+id/user_info_province"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/general_main_title_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/order_fix_content_padding"
             android:layout_marginRight="@dimen/order_fix_content_padding"
-            android:src="@mipmap/address_ic_arrow"/>
+            android:src="@mipmap/address_ic_arrow" />
 
     </LinearLayout>
 
@@ -212,7 +229,7 @@
         android:layout_height="1px"
         android:layout_marginLeft="@dimen/order_fix_content_padding"
         android:layout_marginRight="@dimen/order_fix_content_padding"
-        android:background="@color/general_boundary_color"/>
+        android:background="@color/general_boundary_color" />
     <!-- 城市-->
     <LinearLayout
         android:id="@+id/ll_city_layout"
@@ -222,6 +239,7 @@
         android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dip"
             android:layout_height="wrap_content"
@@ -229,21 +247,21 @@
             android:layout_weight="1"
             android:text="@string/user_info_city"
             android:textColor="@color/general_tab_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <TextView
             android:id="@+id/user_info_city"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/general_main_title_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/order_fix_content_padding"
             android:layout_marginRight="@dimen/order_fix_content_padding"
-            android:src="@mipmap/address_ic_arrow"/>
+            android:src="@mipmap/address_ic_arrow" />
 
     </LinearLayout>
 
@@ -252,7 +270,7 @@
         android:layout_height="1px"
         android:layout_marginLeft="@dimen/order_fix_content_padding"
         android:layout_marginRight="@dimen/order_fix_content_padding"
-        android:background="@color/general_boundary_color"/>
+        android:background="@color/general_boundary_color" />
     <!-- 区-->
     <LinearLayout
         android:id="@+id/ll_area_layout"
@@ -262,6 +280,7 @@
         android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dip"
             android:layout_height="wrap_content"
@@ -269,21 +288,21 @@
             android:layout_weight="1"
             android:text="@string/user_info_area"
             android:textColor="@color/general_tab_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <TextView
             android:id="@+id/user_info_area"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/general_main_title_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/order_fix_content_padding"
             android:layout_marginRight="@dimen/order_fix_content_padding"
-            android:src="@mipmap/address_ic_arrow"/>
+            android:src="@mipmap/address_ic_arrow" />
 
     </LinearLayout>
 
@@ -292,7 +311,7 @@
         android:layout_height="1px"
         android:layout_marginLeft="@dimen/order_fix_content_padding"
         android:layout_marginRight="@dimen/order_fix_content_padding"
-        android:background="@color/general_boundary_color"/>
+        android:background="@color/general_boundary_color" />
     <!-- 地址-->
     <LinearLayout
         android:id="@+id/ll_street_layout"
@@ -302,6 +321,7 @@
         android:clickable="true"
         android:gravity="center_vertical"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dip"
             android:layout_height="wrap_content"
@@ -309,26 +329,26 @@
             android:layout_weight="1"
             android:text="@string/user_info_street"
             android:textColor="@color/general_tab_text_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <TextView
             android:id="@+id/user_info_street"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/general_main_title_color"
-            android:textSize="@dimen/order_fix_text_size"/>
+            android:textSize="@dimen/order_fix_text_size" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/order_fix_content_padding"
             android:layout_marginRight="@dimen/order_fix_content_padding"
-            android:src="@mipmap/address_ic_arrow"/>
+            android:src="@mipmap/address_ic_arrow" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/general_boundary_color"/>
+        android:background="@color/general_boundary_color" />
 </LinearLayout>

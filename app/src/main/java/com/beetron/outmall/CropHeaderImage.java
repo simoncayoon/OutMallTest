@@ -2,54 +2,251 @@ package com.beetron.outmall;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.PointF;
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 
-import com.beetron.outmall.Crop.CropImageView4;
 import com.beetron.outmall.constant.Constants;
+import com.beetron.outmall.customview.ClipView;
+import com.beetron.outmall.customview.CusNaviView;
 
 /**
  * Created by luomaozhong on 16/3/2.
  */
-public class CropHeaderImage extends Activity {
+public class CropHeaderImage extends Activity implements View.OnTouchListener {
+    private ImageView srcPic;
+    private ClipView clipview;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        // TODO 自动生成的方法存根
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.crop_header_image);
+    private Matrix matrix = new Matrix();
+    private Matrix savedMatrix = new Matrix();
 
-        final CropImageView4 mCropImage = (CropImageView4) findViewById(R.id.cropImg);
-        //设置要裁剪的图片和默认的裁剪区域
-        Drawable drawable = new BitmapDrawable(Constants.mBitmap);
-        mCropImage.setDrawable(drawable, 200, 200);
+    /**
+     * 动作标志：无
+     */
+    private static final int NONE = 0;
+    /**
+     * 动作标志：拖动
+     */
+    private static final int DRAG = 1;
+    /**
+     * 动作标志：缩放
+     */
+    private static final int ZOOM = 2;
+    /**
+     * 初始化动作标志
+     */
+    private int mode = NONE;
 
+    /**
+     * 记录起始坐标
+     */
+    private PointF start = new PointF();
+    /**
+     * 记录缩放时两指中间点坐标
+     */
+    private PointF mid = new PointF();
+    private float oldDist = 1f;
 
-        findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+    private Bitmap bitmap;
+    private CusNaviView cusNaviView;
 
-            /* （非 Javadoc）
-             * @see android.view.View.OnClickListener#onClick(android.view.View)
-             * 开启一个新线程来保存图片
-             */
+    private void initNavi() {
+        cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
+        cusNaviView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
+        cusNaviView.setBtn(CusNaviView.PUT_RIGHT, CusNaviView.NAVI_WRAP_CONTENT, 56);
+        cusNaviView.setNaviTitle("个人头像");
+
+        ((Button) cusNaviView.getLeftBtn()).setText(getResources().getString(R.string.me));//设置返回标题
+        ((Button) cusNaviView.getRightBtn()).setText(getResources().getString(R.string.save));//设置返回标题
+
+        cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
             @Override
-            public void onClick(View v) {
+            public void leftBtnListener() {
+                finish();
+            }
 
-                new Thread(new Runnable() {
+            @Override
+            public void rightBtnListener() {
+                //Bitmap clipBitmap = getBitmap();
+//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                clipBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//                byte[] bitmapByte = baos.toByteArray();
+//
+//                Intent intent = new Intent();
+//                intent.setClass(getApplicationContext(), CropHeaderImage.class);
+//                intent.putExtra("bitmap", bitmapByte);
+//                startActivity(intent);
 
-                    @Override
-                    public void run() {
-                        //得到裁剪好的图片
-                        Constants.mBitmap = mCropImage.getCropImage();
-//                        FileUtil.writeImage(bitmap, FileUtil.SDCARD_PAHT+"/crop.png", 100);
-                        Intent mIntent = new Intent();
-                        //mIntent.putExtra("cropImagePath", FileUtil.SDCARD_PAHT+"/crop.png");
-                        setResult(RESULT_OK, mIntent);
-                        finish();
-                    }
-                }).start();
+                Constants.mBitmap=getBitmap();
+                Intent mIntent = new Intent();
+                setResult(RESULT_OK, mIntent);
+                finish();
             }
         });
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.crop_header_image);
+        initNavi();
+        srcPic = (ImageView) this.findViewById(R.id.src_pic);
+        srcPic.setOnTouchListener(this);
+
+        ViewTreeObserver observer = srcPic.getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
+            @SuppressWarnings("deprecation")
+            public void onGlobalLayout() {
+                srcPic.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                initClipView(srcPic.getTop());
+            }
+        });
+
+    }
+
+    /**
+     * 初始化截图区域，并将源图按裁剪框比例缩放
+     *
+     * @param top
+     */
+    private void initClipView(int top) {
+        clipview = new ClipView(CropHeaderImage.this);
+        clipview.setCustomTopBarHeight(top);
+        clipview.addOnDrawCompleteListener(new ClipView.OnDrawListenerComplete() {
+
+            public void onDrawCompelete() {
+                clipview.removeOnDrawCompleteListener();
+                int clipHeight = clipview.getClipHeight();
+                int clipWidth = clipview.getClipWidth();
+                int midX = clipview.getClipLeftMargin() + (clipWidth / 2);
+                int midY = clipview.getClipTopMargin() + (clipHeight / 2);
+
+                int imageWidth = Constants.mBitmap.getWidth();
+                int imageHeight = Constants.mBitmap.getHeight();
+                // 按裁剪框求缩放比例
+                float scale = (clipWidth * 1.0f) / imageWidth;
+                if (imageWidth > imageHeight) {
+                    scale = (clipHeight * 1.0f) / imageHeight;
+                }
+
+                // 起始中心点
+                float imageMidX = imageWidth * scale / 2;
+                float imageMidY = clipview.getCustomTopBarHeight()
+                        + imageHeight * scale / 2;
+                srcPic.setScaleType(ScaleType.MATRIX);
+
+                // 缩放
+                matrix.postScale(scale, scale);
+                // 平移
+                matrix.postTranslate(midX - imageMidX, midY - imageMidY);
+
+                srcPic.setImageMatrix(matrix);
+                srcPic.setImageBitmap(Constants.mBitmap);
+            }
+        });
+
+        this.addContentView(clipview, new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+
+    public boolean onTouch(View v, MotionEvent event) {
+        ImageView view = (ImageView) v;
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                savedMatrix.set(matrix);
+                // 设置开始点位置
+                start.set(event.getX(), event.getY());
+                mode = DRAG;
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                oldDist = spacing(event);
+                if (oldDist > 10f) {
+                    savedMatrix.set(matrix);
+                    midPoint(mid, event);
+                    mode = ZOOM;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_POINTER_UP:
+                mode = NONE;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                if (mode == DRAG) {
+                    matrix.set(savedMatrix);
+                    matrix.postTranslate(event.getX() - start.x, event.getY()
+                            - start.y);
+                } else if (mode == ZOOM) {
+                    float newDist = spacing(event);
+                    if (newDist > 10f) {
+                        matrix.set(savedMatrix);
+                        float scale = newDist / oldDist;
+                        matrix.postScale(scale, scale, mid.x, mid.y);
+                    }
+                }
+                break;
+        }
+        view.setImageMatrix(matrix);
+        return true;
+    }
+
+    /**
+     * 多点触控时，计算最先放下的两指距离
+     *
+     * @param event
+     * @return
+     */
+    private float spacing(MotionEvent event) {
+        float x = event.getX(0) - event.getX(1);
+        float y = event.getY(0) - event.getY(1);
+        return (float) Math.sqrt(x * x + y * y);
+    }
+
+    /**
+     * 多点触控时，计算最先放下的两指中心坐标
+     *
+     * @param point
+     * @param event
+     */
+    private void midPoint(PointF point, MotionEvent event) {
+        float x = event.getX(0) + event.getX(1);
+        float y = event.getY(0) + event.getY(1);
+        point.set(x / 2, y / 2);
+    }
+
+    /**
+     * 获取裁剪框内截图
+     *
+     * @return
+     */
+    private Bitmap getBitmap() {
+        // 获取截屏
+        View view = this.getWindow().getDecorView();
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+
+        // 获取状态栏高度
+        Rect frame = new Rect();
+        this.getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+        int statusBarHeight = frame.top;
+
+        Bitmap finalBitmap = Bitmap.createBitmap(view.getDrawingCache(),
+                clipview.getClipLeftMargin(), clipview.getClipTopMargin()
+                        + statusBarHeight, clipview.getClipWidth(),
+                clipview.getClipHeight());
+
+        // 释放资源
+        view.destroyDrawingCache();
+        return finalBitmap;
+    }
+
 }

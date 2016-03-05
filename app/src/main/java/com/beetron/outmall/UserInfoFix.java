@@ -3,12 +3,15 @@ package com.beetron.outmall;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Selection;
+import android.text.Spannable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.beetron.outmall.adapter.SexAdapter;
 import com.beetron.outmall.customview.CusNaviView;
@@ -101,6 +104,11 @@ public class UserInfoFix extends Activity {
         } else {
             etFix.setText(value);
             etFix.setVisibility(View.VISIBLE);
+            CharSequence text = etFix.getText();
+            if (text instanceof Spannable) {
+                Spannable spanText = (Spannable) text;
+                Selection.setSelection(spanText, text.length());
+            }
         }
 
         if (flag == INTENT_FLAG_PROVINCE_REQ) {
@@ -166,8 +174,16 @@ public class UserInfoFix extends Activity {
                 String result = "";
                 if (flag == INTENT_FLAG_GENDER_REQ) {
                     result = value;
+                    if(result.equals("")){
+                        Toast.makeText(UserInfoFix.this, "请先选择性别！", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                 } else {
                     result = etFix.getText().toString();
+                    if(result.equals("")){
+                        Toast.makeText(UserInfoFix.this, "请先填写"+naviTitle+"！", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                 }
                 Intent intentBack = new Intent();
                 intentBack.putExtra(RETURN_BACK_STRING_KEY, result);
@@ -176,7 +192,6 @@ public class UserInfoFix extends Activity {
             }
         });
     }
-
 
 
 }

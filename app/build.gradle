@@ -32,6 +32,7 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile files('libs/gson-2.3.1.jar')
     compile files('libs/volley.jar')
+    compile 'com.makeramen:roundedimageview:2.2.1'
     compile project(':MyLibs:viewPagerIndicator_Library')
     compile project(':MyLibs:lvRefreshLib')
     compile files('libs/greendao-2.1.0.jar')
