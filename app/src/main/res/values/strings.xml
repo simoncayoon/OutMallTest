@@ -121,4 +121,7 @@
     <string name="prompt_addr_info_delete_confirm">真的要删除吗？</string>
     <string name="prompt_delete_ing">删除中...</string>
     <string name="prompt_progress_saving">正在保存...</string>
+    <string name="prompt_commit_succeed">提交成功</string>
+    <string name="prompt_commit_faild">提交失败</string>
+    <string name="prompt_shop_cart_product_delete">要删除该商品吗？</string>
 </resources>
