@@ -136,7 +136,7 @@ public class ShopCartActivity extends Activity {
 
                 Intent intent = new Intent(ShopCartActivity.this, OrderFixActivity.class);
                 try {
-                    OrderInfoModel intentData = OrderInfoModel.getInstance();
+                    OrderInfoModel intentData = new OrderInfoModel();
                     intentData.setProDetail(dataLocalList);
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -2,6 +2,7 @@ package com.beetron.outmall;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -28,6 +29,7 @@ import com.beetron.outmall.models.UserInfoModel;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.DisplayMetrics;
+import com.beetron.outmall.utils.ShopCartChangReceiver;
 import com.beetron.outmall.utils.TempDataManager;
 import com.shizhefei.view.indicator.Indicator;
 import com.shizhefei.view.indicator.IndicatorViewPager;
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, ProSummaryAdapter.ShopCartCountListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    public static final String ACTION_STR = "com.chulai.mai.datachange";
+    private static final int RESULT_LOGIN = 0x256;
     DrawerLayout drawer;
     private IndicatorViewPager mIndicatorViewPager;
     private SViewPager viewPager;
@@ -77,10 +81,11 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void rightBtnListener() {
-                ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
-                        instantiateItem(mIndicatorViewPager.getViewPager(), 2);
+
                 try {
-                    shopCart.deleteShopCart();
+                    ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                            instantiateItem(mIndicatorViewPager.getViewPager(), 2);
+                    shopCart.notifyDelete();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -111,7 +116,6 @@ public class MainActivity extends AppCompatActivity
                 if (select == 2) {//添加购物车删除按钮
                     cusNaviView.getRightBtn().setVisibility(View.VISIBLE);
                     checkIsLogin();
-
                 } else {
                     cusNaviView.getRightBtn().setVisibility(View.GONE);
                 }
@@ -129,7 +133,7 @@ public class MainActivity extends AppCompatActivity
                 public void onClick(DialogInterface dialog, int which) {
                     Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                     intent.putExtra(LoginActivity.FLAG_NAVI_ROOT, getResources().getString(R.string.framework_navi_shope_cart));
-                    startActivity(intent);
+                    startActivityForResult(intent, RESULT_LOGIN);
                     dialog.dismiss();
                 }
             });
@@ -140,16 +144,17 @@ public class MainActivity extends AppCompatActivity
                 }
             });
             builder.create().show();
-        } else {
-            //更新购物车菜单视图
-            ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
-                    instantiateItem(mIndicatorViewPager.getViewPager(), 2);
-            try {
-                shopCart.reqShopcart(false);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
+//        else {
+//            //更新购物车菜单视图
+//            ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
+//                    instantiateItem(mIndicatorViewPager.getViewPager(), 2);
+//            try {
+//                shopCart.reqShopcart(false);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     /**
@@ -202,6 +207,12 @@ public class MainActivity extends AppCompatActivity
     public void notifyCountChange() throws Exception {
 
         DebugFlags.logD(TAG, "触发了数据更新！");
+        /**
+         * 此时有三处更新
+         * 1、更新购物车tab的视图
+         * 2、更新首页菜单栏
+         * 3、更新产品列表状态
+         */
         try {
             ViewWithBadge shapCartTabView = (ViewWithBadge) (mIndicatorViewPager.getIndicatorView().
                     getItemView(2).findViewById(R.id.tab_text_view));//获取到购物车tabbar的视图
@@ -212,23 +223,44 @@ public class MainActivity extends AppCompatActivity
             HomeFragment homeFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
                     instantiateItem(mIndicatorViewPager.getViewPager(), 0);
             homeFragment.updateMenuItem();
+
+            ShopCart shopcart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                    instantiateItem(mIndicatorViewPager.getViewPager(), 2);
+            shopcart.reqShopcart(false);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @Override
+    public void addShopCart(int positon) throws Exception {
+        HomeFragment homeFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                instantiateItem(mIndicatorViewPager.getViewPager(), 0);
+        homeFragment.addShopCart(positon);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (RESULT_OK == resultCode) {
-            try {
-                ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
-                        instantiateItem(mIndicatorViewPager.getViewPager(), 2);
+            if (requestCode == RESULT_LOGIN){
+                DebugFlags.logD(TAG, "点击购物车的Fragment 返回");
+                try {
+                    ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                            instantiateItem(mIndicatorViewPager.getViewPager(), 2);
 
-                shopCart.reqShopcart(true);
-            } catch (Exception e) {
-                e.printStackTrace();
+                    shopCart.reqShopcart(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return ;
             }
+            if (requestCode == HomeFragment.RESULT_ADD_SHOPCART){
+                DebugFlags.logD(TAG, "点击添加商品购物车登陆返回");
+            }
+
+
         }
     }
 
@@ -297,6 +329,14 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case 2:
                     fragment = new ShopCart();
+                    try {
+                        ShopCartChangReceiver receiver;
+                        receiver = new ShopCartChangReceiver((ShopCartChangReceiver.ShopCartChange)fragment);
+                        IntentFilter intentFilter = new IntentFilter(ACTION_STR);
+                        registerReceiver(receiver, intentFilter);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     break;
                 case 3:
                     fragment = new AboutMine();

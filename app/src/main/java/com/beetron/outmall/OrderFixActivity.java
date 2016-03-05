@@ -94,7 +94,7 @@ public class OrderFixActivity extends Activity {
 
     private void initData() {
         try {
-            orderInfoModel = OrderInfoModel.getInstance();
+            orderInfoModel = (OrderInfoModel) getIntent().getSerializableExtra(OrderDetailActivity.INTENT_KEY_ORDER_MODEL);
             orderPostModel.setPayment(FLAG_PAYMENT_ONLINE);
             proScanner.setAdapter(new Indicator.IndicatorAdapter() {
                 @Override
@@ -210,7 +210,6 @@ public class OrderFixActivity extends Activity {
         cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
             @Override
             public void leftBtnListener() {
-                clearCache();
                 finish();
             }
 
@@ -368,7 +367,7 @@ public class OrderFixActivity extends Activity {
                                 Intent intent = new Intent(OrderFixActivity.this, OrderDetailActivity.class);
                                 intent.putExtra(OrderDetailActivity.INTENT_KEY_ADDR_INFO, addrInfo);
                                 intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_DATA, resultOrder);
-                                intent.putExtra(OrderDetailActivity.INTENT_KEY_BACK_TITLE_FLAG, getResources().getString(R.string.navi_title_order_fix));
+                                intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_MODEL, orderInfoModel);
                                 startActivity(intent);
                             } else {
                                 Toast.makeText(OrderFixActivity.this, getResources().getString(R.string.prompt_order_commit_faild),
@@ -419,19 +418,5 @@ public class OrderFixActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
 
-    }
-
-    void clearCache() {
-        OrderInfoModel.getInstance().setProDetail(null);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == event.KEYCODE_BACK) {
-            clearCache();
-            finish();
-            return true;
-        }
-        return false;
     }
 }

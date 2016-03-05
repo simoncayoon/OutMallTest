@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -28,6 +29,7 @@ import com.beetron.outmall.models.AddrInfoModel;
 import com.beetron.outmall.models.OrderFixInfo;
 import com.beetron.outmall.models.OrderInfoModel;
 import com.beetron.outmall.models.OrderPostModel;
+import com.beetron.outmall.models.PayInfoModel;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.models.ResultEntity;
@@ -35,11 +37,17 @@ import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.ListViewUtil;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.PayHelper;
 import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.tencent.mm.sdk.constants.Build;
+import com.tencent.mm.sdk.modelpay.PayReq;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -50,6 +58,7 @@ import org.json.JSONObject;
  */
 public class OrderDetailActivity extends Activity {
 
+    public static final String INTENT_KEY_ORDER_MODEL = "INTENT_KEY_ORDER_MODEL";
     public static final String INTENT_KEY_ORDER_DATA = "INTENT_KEY_ORDER_DATA";
     public static final String INTENT_KEY_ADDR_INFO = "INTENT_KEY_ADDR_INFO";
     private static final String TAG = OrderDetailActivity.class.getSimpleName();
@@ -83,21 +92,22 @@ public class OrderDetailActivity extends Activity {
     private void initData() {
         orderInfo = getIntent().getParcelableExtra(INTENT_KEY_ORDER_DATA);
         addrInfo = getIntent().getParcelableExtra(INTENT_KEY_ADDR_INFO);
-        orderModel = OrderInfoModel.getInstance();
+        orderModel = (OrderInfoModel) getIntent().getSerializableExtra(INTENT_KEY_ORDER_MODEL);
 
         orderNum.setText("订单号：" + orderInfo.getOrderno());
         setAddrInfo();
 
         payType.setText(orderInfo.getPayment().equals(Constants.PAYMENT_TYPE_ONLINE) ?
                 getResources().getString(R.string.pay_online) : getResources().getString(R.string.pay_delivery));
-        if (orderInfo.getPayment().equals(Constants.PAYMENT_TYPE_DELIVERY)) {
+        if (orderInfo.getStatus().equals("1")||
+                orderInfo.getPayment().equals(Constants.PAYMENT_TYPE_DELIVERY)) {
             llBtnZone.setVisibility(View.GONE);
         }
         proAmount.setText("￥" + orderInfo.getZongjia());
 //        serviceFee.setText("￥" + orderInfo.getFuwufei());
 //        freeFee.setText("-￥" + orderInfo.getJianmian());
 
-        actualPay.setText("实付款 ￥" + orderInfo.getTotalprice());
+        actualPay.setText("实付款 ￥" + orderInfo.getZongjia());
         orderDate.setText("下单时间：" + orderInfo.getDate());
         leaveMsg.setText(orderInfo.getRemark());
 
@@ -141,7 +151,12 @@ public class OrderDetailActivity extends Activity {
         btnPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(OrderDetailActivity.this, "正在开发中...", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(OrderDetailActivity.this, "正在开发中...", Toast.LENGTH_SHORT).show();
+                try {
+                    payOrder(orderInfo.getId());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -293,5 +308,59 @@ public class OrderDetailActivity extends Activity {
             NetworkImageView proImg;
             TextView proName, proPrice, proCount;
         }
+    }
+
+    public String payOrder(final String orderID) {
+        final ProgressHUD mProgressHUD = ProgressHUD.show(this, "正在处理...", true, false,
+                null);
+        PayHelper payHelper = new PayHelper(new PayHelper.PayListenner() {
+            @Override
+            public void payInfo(int status, PayInfoModel payInfoModel) {
+                mProgressHUD.dismiss();
+                if (status != 1) {
+                    Toast.makeText(OrderDetailActivity.this, "生成订单失败！！", Toast.LENGTH_SHORT).show();
+                } else {
+                    try {
+                        final IWXAPI msgApi = WXAPIFactory.createWXAPI(OrderDetailActivity.this, null);
+                        // 将该app注册到微信
+                        msgApi.registerApp(payInfoModel.getAppid());
+                        IWXAPI api = WXAPIFactory.createWXAPI(OrderDetailActivity.this, payInfoModel.getAppid());
+
+                        boolean isPaySupported = api.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT;
+                        if (isPaySupported) {
+                            PayReq req = new PayReq();
+                            //req.appId = "wxf8b4f85f3a794e77";  // 测试用appId
+                            req.appId = payInfoModel.getAppid();
+                            req.partnerId = payInfoModel.getPartnerid();
+                            req.prepayId = payInfoModel.getPrepayid();
+                            req.nonceStr = payInfoModel.getNoncestr();
+                            req.timeStamp = payInfoModel.getTimestamp();
+                            req.packageValue = payInfoModel.getPackageName();
+                            req.sign = payInfoModel.getSign();
+                            req.extData = orderID; // optional
+                            Toast.makeText(OrderDetailActivity.this, "正常调起支付", Toast.LENGTH_SHORT).show();
+                            // 在支付之前，如果应用没有注册到微信，应该先调用IWXMsg.registerApp将应用注册到微信
+                            if (api.sendReq(req)) {
+                                Toast.makeText(OrderDetailActivity.this, "请求成功！", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(OrderDetailActivity.this, "请求失败！", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(OrderDetailActivity.this, "该微信版本不支持微信支付！", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Log.e("PAY_GET", "异常：" + e.getMessage());
+                        Toast.makeText(OrderDetailActivity.this, "异常：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            }
+        });
+        try {
+            payHelper.getPayInfo(OrderDetailActivity.this, orderID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

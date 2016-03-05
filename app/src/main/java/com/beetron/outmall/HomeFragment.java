@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -21,29 +19,28 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
+import com.beetron.outmall.adapter.CategoryMenuAdapter;
 import com.beetron.outmall.adapter.ProSummaryAdapter;
+import com.beetron.outmall.constant.Constants;
+import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.ProgressHUD;
 import com.beetron.outmall.models.PageEntity;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ProCategory;
 import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.models.ResultEntity;
-import com.beetron.outmall.adapter.CategoryMenuAdapter;
-import com.beetron.outmall.constant.Constants;
-import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.DisplayMetrics;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.shizhefei.fragment.LazyFragment;
 import com.shizhefei.view.indicator.Indicator;
 import com.shizhefei.view.indicator.IndicatorViewPager;
-import com.shizhefei.view.viewpager.SViewPager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -67,6 +64,7 @@ public class HomeFragment extends BaseFragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
     private static final String FLAG_FILTER_BY_SALES = "flag_filter_by_sales";
     private static final String FLAG_FILTER_BY_PRICE = "flag_filter_by_PRICE";
+    public static final int RESULT_ADD_SHOPCART = 0x213;
 
     private List<ProCategory> categories;
     private List<String> imgList;
@@ -90,8 +88,7 @@ public class HomeFragment extends BaseFragment {
     private int index = 1;
     private List<ProSummary> proList;
     private PageEntity pageEntity;
-    private ProgressHUD mProgressHUD;
-
+    private Boolean isUpdate = false;
 
     /**
      * 幻灯片适配
@@ -186,7 +183,7 @@ public class HomeFragment extends BaseFragment {
      */
     private void getMenu() throws JSONException {
 
-        mProgressHUD = ProgressHUD.show(getActivity(), getResources().getString(R.string.prompt_progress_loading), true, false,
+        final ProgressHUD mProgressHUD = ProgressHUD.show(getActivity(), getResources().getString(R.string.prompt_progress_loading), true, false,
                 null);
         String url = NetInterface.HOST + NetInterface.METHON_GET_PRO_CATEGORY;
         PostEntity postEntity = new PostEntity();
@@ -218,7 +215,7 @@ public class HomeFragment extends BaseFragment {
                             currentFid = categories.get(0).getId();//初始化当前的分类ID
                             refreshProByFid(currentFid);//初始化产品列表内容
                             categories.get(0).setIsSelected(true);//初始化菜单按钮效果
-                            for (int i = 0; i < categories.size(); i++ ){//初始化购物车种类
+                            for (int i = 0; i < categories.size(); i++) {//初始化购物车种类
                                 ProCategory menuItem = categories.get(i);
                                 categories.get(i).setCount(DBHelper.getInstance(getActivity()).getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID,
                                         menuItem.getId()));
@@ -353,7 +350,7 @@ public class HomeFragment extends BaseFragment {
         });
     }
 
-    void initLvRefresh(){
+    void initLvRefresh() {
         llProList = (PullToRefreshListView) findViewById(R.id.product_pull_refresh_list);
         llProList.getRefreshableView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -380,12 +377,12 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
                 DebugFlags.logD(TAG, "onPullUpToRefresh");
-                if(index > pageEntity.getPage() ){
+                if (index > pageEntity.getPage()) {
                     Toast.makeText(getActivity(), "已经到最后一页了", Toast.LENGTH_SHORT).show();
                     refreshView.onRefreshComplete();
                     return;
                 }
-                index ++;
+                index++;
                 isAppend = true;
                 refreshView.setRefreshing(true);
                 try {
@@ -409,16 +406,32 @@ public class HomeFragment extends BaseFragment {
         DebugFlags.logD(TAG, "更新菜单！");
 
         proAdapter.notifyDataSetChanged();
+
         Map<String, String> fids = DBHelper.getInstance(getApplicationContext()).getFidCache();
-        for (Map.Entry<String, String> entry : fids.entrySet()) {
-            System.out.println("key= " + entry.getKey() );
-            ProCategory menuItem = categories.get(fidCache.indexOf(entry.getKey()));
-            menuItem.setCount(DBHelper.getInstance(getApplicationContext()).getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID, entry.getKey()));
+        if (fids.size() == 0){
+            for (int index = 0; index < categories.size(); index ++){
+                categories.get(index).setCount(0);
+            }
+        } else {
+            for (Map.Entry<String, String> entry : fids.entrySet()) {
+                System.out.println("key= " + entry.getKey());
+                ProCategory menuItem = categories.get(fidCache.indexOf(entry.getKey()));
+                menuItem.setCount(DBHelper.getInstance(getApplicationContext()).getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID, entry.getKey()));
+            }
         }
+
         menuAdapter.notifyDataSetChanged();
     }
 
+    /**
+     * 根据不同ID刷新不同商品
+     *
+     * @param currentFid
+     * @throws Exception
+     */
     void refreshProByFid(String currentFid) throws Exception {
+
+        llProList.setRefreshing(true);
         String url = NetInterface.HOST + NetInterface.METHON_GET_PRO_BY_CATEGORY;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
@@ -437,15 +450,20 @@ public class HomeFragment extends BaseFragment {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
                         initData(jsonObject, "");
-                        if(llProList.isRefreshing()){
+                        if (llProList.isRefreshing()) {
                             llProList.onRefreshComplete();//停止刷新
+                        }
+                        if (!isUpdate) {
+                            Intent intent = new Intent(MainActivity.ACTION_STR);
+                            getActivity().sendBroadcast(intent);
+                            isUpdate = true;//状态更新为已更新
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
-                if(llProList.isRefreshing()){
+                if (llProList.isRefreshing()) {
                     llProList.onRefreshComplete();//停止刷新
                 }
             }
@@ -465,9 +483,9 @@ public class HomeFragment extends BaseFragment {
 
             if (filterIndicator.getCurrentItem() > 0) {
                 try {
-                    if ((Boolean)filterIndicator.getItemView(filterIndicator.getCurrentItem()).getTag(R.id.step1)) {
+                    if ((Boolean) filterIndicator.getItemView(filterIndicator.getCurrentItem()).getTag(R.id.step1)) {
                         Collections.sort(dataRefresh, new SortByFilter(checkFlag(), true));//根据条件排序
-                    } else if((Boolean)filterIndicator.getItemView(filterIndicator.getCurrentItem()).getTag(R.id.step2)){
+                    } else if ((Boolean) filterIndicator.getItemView(filterIndicator.getCurrentItem()).getTag(R.id.step2)) {
                         Collections.sort(dataRefresh, new SortByFilter(checkFlag(), false));//根据条件排序
                     }
                 } catch (Exception e) {
@@ -512,8 +530,9 @@ public class HomeFragment extends BaseFragment {
 
         /**
          * 根据条件按照指定排列方式 重新组装列表
+         *
          * @param flagFilter 排序条件
-         * @param isDesc 排序方式
+         * @param isDesc     排序方式
          */
         public SortByFilter(String flagFilter, boolean isDesc) {
             this.flagFilter = flagFilter;
@@ -542,5 +561,73 @@ public class HomeFragment extends BaseFragment {
                 return flagAsc;
             }
         }
+    }
+
+    void addShopCart(final int position) throws Exception {
+
+        if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
+
+            try {
+                addShopCartReq(position);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            intent.putExtra(LoginActivity.FLAG_NAVI_ROOT, getResources().getString(R.string.framework_navi_home_page));
+            startActivityForResult(intent, RESULT_ADD_SHOPCART);
+        }
+
+    }
+
+    void addShopCartReq(final int position) throws Exception{
+        final ProgressHUD mProgressHUD = ProgressHUD.show(getActivity(), getResources().getString(R.string.prompt_progress_loading), true, false,
+                null);
+        String url = NetInterface.HOST + NetInterface.METHON_ADD_SHOPCART_BY_ID;
+        PostEntity postEntity = new PostEntity();
+        postEntity.setToken(Constants.TOKEN_VALUE);
+        postEntity.setUid(TempDataManager.getInstance(getActivity().getApplicationContext()).getCurrentUid());
+        postEntity.setIsLogin(TempDataManager.getInstance(getActivity().getApplicationContext()).getLoginState());
+        postEntity.setGid(proList.get(position).getSid());
+        String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
+        }.getType());
+        JSONObject postJson = new JSONObject(postString);
+        JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        DebugFlags.logD(TAG, jsonObject.toString());
+                        try {
+                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)){//返回成功
+                                try {
+                                    ProSummary clickItem = proList.get(position);
+                                    JSONObject countJSON = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
+                                    clickItem.setCount(countJSON.getInt("count"));
+                                    if (DBHelper.getInstance(getActivity().getApplicationContext()).addShopCart(clickItem) != -1L) {
+                                        //通知更新数据
+                                        ((MainActivity)getActivity()).notifyCountChange();
+                                    } else {
+                                        DebugFlags.logD(TAG, "添加购物车数据库失败！");
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Toast.makeText(getActivity(), jsonObject.getString(Constants.RESULT_ERROR_FIELD).toString(),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        mProgressHUD.dismiss();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+                mProgressHUD.dismiss();
+            }
+        });
+        NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
     }
 }

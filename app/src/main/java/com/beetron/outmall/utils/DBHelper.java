@@ -133,7 +133,6 @@ public class DBHelper {
     public Map<String, String> getFidCache() {
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
 
-
         HashMap<String, String> map = new HashMap<String, String>();
         for (ProSummary proSummary : qb.list()) {
             map.put(proSummary.getFid(), "");//map 保存不同的fid

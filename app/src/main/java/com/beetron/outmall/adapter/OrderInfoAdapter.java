@@ -1,7 +1,6 @@
 package com.beetron.outmall.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +10,8 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
-import com.beetron.outmall.OrderDetailActivity;
 import com.beetron.outmall.R;
+import com.beetron.outmall.models.AddrInfoModel;
 import com.beetron.outmall.models.OrderInfoModel;
 import com.beetron.outmall.models.OrderPostModel;
 import com.beetron.outmall.models.ProSummary;
@@ -35,15 +34,15 @@ public class OrderInfoAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private Context context;
     private ArrayList<String> imgList;
-    private int type = 1;
+    private int type;
     private CannelOrderListenner cannelOrderListenner;
 
-    public OrderInfoAdapter(Context c, ArrayList<HashMap<String, Object>> list, int type,CannelOrderListenner listenner) {
+    public OrderInfoAdapter(Context c, ArrayList<HashMap<String, Object>> list, int type, CannelOrderListenner listenner) {
         inflater = LayoutInflater.from(c);
         mlist = list;
         context = c;
         this.type = type;
-        cannelOrderListenner=listenner;
+        cannelOrderListenner = listenner;
     }
 
     public void upDate(ArrayList<HashMap<String, Object>> list, int type) {
@@ -75,7 +74,6 @@ public class OrderInfoAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.order_info_item, null);
             viewHolder.tv_cation_pay = (TextView) convertView.findViewById(R.id.tv_cation_pay);
             viewHolder.tv_total_num = (TextView) convertView.findViewById(R.id.tv_total_num);
-//            viewHolder.gridView = (GridView) convertView.findViewById(R.id.gridView);
             viewHolder.btn_order = (Button) convertView.findViewById(R.id.btn_order);
             viewHolder.btn_cancel = (Button) convertView.findViewById(R.id.btn_cancel);
             viewHolder.scanTab = (ScrollIndicatorView) convertView.findViewById(R.id.about_me_order_scan_tab);
@@ -83,20 +81,23 @@ public class OrderInfoAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
+
+//        viewHolder = new ViewHolder();
+//        convertView = inflater.inflate(R.layout.order_info_item, null);
+//        viewHolder.tv_cation_pay = (TextView) convertView.findViewById(R.id.tv_cation_pay);
+//        viewHolder.tv_total_num = (TextView) convertView.findViewById(R.id.tv_total_num);
+//        viewHolder.btn_order = (Button) convertView.findViewById(R.id.btn_order);
+//        viewHolder.btn_cancel = (Button) convertView.findViewById(R.id.btn_cancel);
+//        viewHolder.scanTab = (ScrollIndicatorView) convertView.findViewById(R.id.about_me_order_scan_tab);
+
         HashMap<String, Object> map = mlist.get(position);
         final OrderInfoModel orderInfoModel = (OrderInfoModel) map.get("orderInfoModels");
         final OrderPostModel orderPostModel = (OrderPostModel) map.get("orderPostModels");
+        final AddrInfoModel addrInfoModel = (AddrInfoModel) map.get("addrInfoModel");
 
         if (type == 1) {
             viewHolder.btn_cancel.setVisibility(View.VISIBLE);
             viewHolder.btn_order.setText("去付款");
-            viewHolder.btn_cancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, OrderDetailActivity.class);
-                    context.startActivity(intent);
-                }
-            });
             viewHolder.btn_cancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -105,35 +106,31 @@ public class OrderInfoAdapter extends BaseAdapter {
                 }
             });
         } else {
+            viewHolder.btn_order.setText("查看订单");
             viewHolder.btn_cancel.setVisibility(View.GONE);
         }
 
         viewHolder.btn_order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (type==1){
+                if (type == 1) {
                     //去支付
-                    cannelOrderListenner.payOrder();
-                }else {
+//                    cannelOrderListenner.payOrder(orderPostModel.getId());
+                    cannelOrderListenner.showDetail(orderInfoModel, orderPostModel, addrInfoModel);
+
+                } else {
                     //查看订单详情
-                    cannelOrderListenner.showDetail(orderInfoModel,orderPostModel);
+                    cannelOrderListenner.showDetail(orderInfoModel, orderPostModel, addrInfoModel);
                 }
             }
         });
-        viewHolder.tv_cation_pay.setText("实际付款：￥" + orderPostModel.getPayment());
+        viewHolder.tv_cation_pay.setText("实际付款：￥" + orderPostModel.getZongjia());
         viewHolder.tv_total_num.setText("共" + orderInfoModel.getProDetail().size() + "件商品");
         viewHolder.scanTab.setHorizontalFadingEdgeEnabled(true);
         viewHolder.scanTab.setSplitAuto(false);
         viewHolder.scanTab.setHorizontalScrollBarEnabled(false);
         viewHolder.scanTab.setAdapter(getAdapter(orderInfoModel.getProDetail()));
 
-
-        viewHolder.btn_order.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
         return convertView;
     }
@@ -175,6 +172,13 @@ public class OrderInfoAdapter extends BaseAdapter {
                 } else {
                     childHolder = (ChildHolder) convertView.getTag();
                 }
+
+//                childHolder = new ChildHolder();
+//                convertView = LayoutInflater.from(context).inflate(R.layout.img_gv_item, null);
+//                //imgList.add(jsonArray.getJSONObject(position).getString("img"));
+//                childHolder.ri_product = (RoundedImageView) convertView.findViewById(R.id.imageView2);
+//                childHolder.tv_price = (TextView) convertView.findViewById(R.id.order_pro_scan_price);
+//                childHolder.tv_num = (TextView) convertView.findViewById(R.id.tv_num);
                 ProSummary proSummary = proList.get(position);
 
                 try {

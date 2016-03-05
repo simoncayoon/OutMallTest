@@ -29,6 +29,7 @@ import com.beetron.outmall.models.OrderFixInfo;
 import com.beetron.outmall.models.OrderInfo;
 import com.beetron.outmall.models.OrderInfoModel;
 import com.beetron.outmall.models.OrderPostModel;
+import com.beetron.outmall.models.PayInfoModel;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.ProSummary;
 import com.beetron.outmall.models.ResultEntity;
@@ -38,12 +39,17 @@ import com.beetron.outmall.utils.CannelOrderListenner;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
+import com.beetron.outmall.utils.PayHelper;
 import com.beetron.outmall.utils.TempDataManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.shizhefei.view.indicator.FixedIndicatorView;
 import com.shizhefei.view.indicator.Indicator;
+import com.tencent.mm.sdk.constants.Build;
+import com.tencent.mm.sdk.modelpay.PayReq;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -104,7 +110,7 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_mine_scan_layout);
         select = getIntent().getExtras().getInt("select");
-        mAdapter = new OrderInfoAdapter(this, orderList, select,this);
+        mAdapter = new OrderInfoAdapter(this, orderList, select, this);
         userInfoSummary = DBHelper.getInstance(this).getUserInfo();
         initNavi();
         initView();
@@ -205,17 +211,16 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
                                 transList = new ArrayList<>();
                                 completeList = new ArrayList<>();
                                 JSONArray jsonArray = jsonObject.getJSONObject("result").getJSONArray("list");
-                                JSONObject json = null;
-                                HashMap<String, Object> map = null;
                                 for (int i = 0; i < jsonArray.length(); i++) {
 //                                    try {
 
-                                    map = new HashMap<>();
-                                    json = jsonArray.getJSONObject(i);
+                                    HashMap<String, Object> map = new HashMap<>();
+                                    JSONObject json = jsonArray.getJSONObject(i);
 
                                     Log.d("OrderInfoAdapter", "json:" + json.toString());
-                                    OrderInfoModel orderInfoModel = OrderInfoModel.getInstance();
+                                    OrderInfoModel orderInfoModel = new OrderInfoModel();
                                     OrderPostModel orderPostModel = new OrderPostModel();
+                                    AddrInfoModel addrInfoModel = new AddrInfoModel();
                                     orderPostModel.setAddress_id(json.getString("address_id"));
                                     orderPostModel.setDate(json.getString("date"));
                                     orderPostModel.setFuwufei(json.getString("fuwufei"));
@@ -234,15 +239,27 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
                                     orderPostModel.setUid(json.getString("uid"));
 
 
+                                    JSONArray addArray = json.getJSONArray("ads");
+                                    if (addArray != null && addArray.length() > 0) {
+                                        JSONObject addrObject = addArray.getJSONObject(0);
+                                        addrInfoModel.setIsLogin("1");
+                                        addrInfoModel.setUid(addrObject.getString("uid"));
+                                        addrInfoModel.setId(addrObject.getString("id"));
+                                        addrInfoModel.setSex(addrObject.getString("sex"));
+                                        addrInfoModel.setShiqu(addrObject.getString("shiqu"));
+                                        addrInfoModel.setAddress(addrObject.getString("address"));
+                                        addrInfoModel.setName(addrObject.getString("name"));
+                                        addrInfoModel.setShenfen(addrObject.getString("shenfen"));
+                                        addrInfoModel.setMobile(addrObject.getString("mobile"));
+                                    }
+
                                     JSONArray array = json.getJSONArray("gs");
                                     orderInfoModel.setAmount(json.getDouble("totalprice"));
                                     orderInfoModel.setPriceFree(json.getDouble("payment"));
                                     List<ProSummary> list = new ArrayList<>();
-                                    ProSummary proSummary = null;
-                                    JSONObject object = null;
                                     for (int j = 0; j < array.length(); j++) {
-                                        object = array.getJSONObject(j);
-                                        proSummary = new ProSummary();
+                                        JSONObject object = array.getJSONObject(j);
+                                        ProSummary proSummary = new ProSummary();
                                         proSummary.setCount(object.getInt("num"));
                                         proSummary.setImg(object.getString("img"));
                                         proSummary.setTitle(object.getString("title"));
@@ -252,6 +269,7 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
                                     orderInfoModel.setProDetail(list);
                                     map.put("orderInfoModels", orderInfoModel);
                                     map.put("orderPostModels", orderPostModel);
+                                    map.put("addrInfoModel", addrInfoModel);
 
                                     switch (json.getInt("status")) {
                                         case 1:
@@ -297,19 +315,19 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
     private void updateData(int type) {
         switch (type + 1) {
             case 1:
-                mAdapter.upDate(orderList, select + 1);
+                mAdapter.upDate(orderList, 1);
                 break;
             case 2:
-                mAdapter.upDate(payList, select + 1);
+                mAdapter.upDate(payList, 2);
                 break;
             case 3:
-                mAdapter.upDate(cannelList, select + 1);
+                mAdapter.upDate(cannelList, 3);
                 break;
             case 4:
-                mAdapter.upDate(transList, select + 1);
+                mAdapter.upDate(transList, 4);
                 break;
             case 5:
-                mAdapter.upDate(completeList, select + 1);
+                mAdapter.upDate(completeList, 5);
                 break;
             default:
                 break;
@@ -336,20 +354,68 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
     }
 
     @Override
-    public void showDetail(OrderInfoModel orderInfoModel, OrderPostModel orderPostModel) {
-        Intent intent=new Intent(this,OrderDetailActivity.class);
-        AddrInfoModel addrInfoModel=new AddrInfoModel();
-        addrInfoModel.setId(orderPostModel.getAddress_id());
-        intent.putExtra(OrderDetailActivity.INTENT_KEY_ADDR_INFO,addrInfoModel);
-        intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_DATA,orderPostModel);
+    public void showDetail(OrderInfoModel orderInfoModel, OrderPostModel orderPostModel, AddrInfoModel addrInfoModel) {
+        Intent intent = new Intent(this, OrderDetailActivity.class);
+        intent.putExtra(OrderDetailActivity.INTENT_KEY_ADDR_INFO, addrInfoModel);
+        intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_DATA, orderPostModel);
+        intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_MODEL,  orderInfoModel);
         startActivity(intent);
     }
 
     @Override
-    public String payOrder() {
+    public String payOrder(final String orderID) {
+        mProgressHUD = ProgressHUD.show(this, "正在处理...", true, false,
+                null);
+        PayHelper payHelper = new PayHelper(new PayHelper.PayListenner() {
+            @Override
+            public void payInfo(int status, PayInfoModel payInfoModel) {
+                mProgressHUD.dismiss();
+                if (status != 1) {
+                    Toast.makeText(OrderMineScan.this, "生成订单失败！！", Toast.LENGTH_SHORT).show();
+                } else {
+                    try {
+                        final IWXAPI msgApi = WXAPIFactory.createWXAPI(OrderMineScan.this, null);
+                        // 将该app注册到微信
+                        msgApi.registerApp(payInfoModel.getAppid());
+                        IWXAPI api = WXAPIFactory.createWXAPI(OrderMineScan.this, payInfoModel.getAppid());
+
+                        boolean isPaySupported = api.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT;
+                        if (isPaySupported) {
+                            PayReq req = new PayReq();
+                            //req.appId = "wxf8b4f85f3a794e77";  // 测试用appId
+                            req.appId = payInfoModel.getAppid();
+                            req.partnerId = payInfoModel.getPartnerid();
+                            req.prepayId = payInfoModel.getPrepayid();
+                            req.nonceStr = payInfoModel.getNoncestr();
+                            req.timeStamp = payInfoModel.getTimestamp();
+                            req.packageValue = payInfoModel.getPackageName();
+                            req.sign = payInfoModel.getSign();
+                            req.extData = orderID; // optional
+                            Toast.makeText(OrderMineScan.this, "正常调起支付", Toast.LENGTH_SHORT).show();
+                            // 在支付之前，如果应用没有注册到微信，应该先调用IWXMsg.registerApp将应用注册到微信
+                            if (api.sendReq(req)) {
+                                Toast.makeText(OrderMineScan.this, "请求成功！", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(OrderMineScan.this, "请求失败！", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(OrderMineScan.this, "该微信版本不支持微信支付！", Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (Exception e) {
+                        Log.e("PAY_GET", "异常：" + e.getMessage());
+                        Toast.makeText(OrderMineScan.this, "异常：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            }
+        });
+        try {
+            payHelper.getPayInfo(OrderMineScan.this, orderID);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return null;
     }
-
 
     private void cancelOrder(final String orderid) {
         final CustomDialog.Builder builder = new CustomDialog.Builder(this);

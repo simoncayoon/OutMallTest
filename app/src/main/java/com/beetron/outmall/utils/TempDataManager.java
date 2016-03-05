@@ -15,6 +15,7 @@ public class TempDataManager {
     private static final String SP_IS_LOGIN = "SP_IS_LOGIN";
     private static final String SP_USER_NAME = "SP_USER_NAME";
     private static final String SP_USER_TEL = "SP_USER_TEL";
+    private static final String SP_IS_UPDATE_FLAG = "SP_IS_UPDATE_FLAG";
     private static TempDataManager instance = null;
     private Context mContext = null;
     private SharedPreferences sp = null;
@@ -78,4 +79,5 @@ public class TempDataManager {
     public String getLoginState() {
         return sp.getString(SP_IS_LOGIN, "");
     }
+
 }

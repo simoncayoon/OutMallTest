@@ -1,5 +1,6 @@
 package com.beetron.outmall.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,26 +10,13 @@ import java.util.List;
  * Date: 2016/2/25.
  * Time: 14:43.
  */
-public class OrderInfoModel {
+public class OrderInfoModel implements Serializable{
 
-    private static OrderInfoModel instance = null;
 
     private List<ProSummary> proDetail;
     private Double amount = 0.00;//商品总价
     private Double priceFree;//减免
 
-    private OrderInfoModel() {
-
-    }
-
-    public static OrderInfoModel getInstance() {
-
-        if (instance == null) {
-            instance = new OrderInfoModel();
-        }
-
-        return instance;
-    }
 
     public Double getPriceFree() {
         return priceFree;

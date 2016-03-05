@@ -3,6 +3,8 @@ package com.beetron.outmall;
 import android.os.Bundle;
 import android.view.View;
 
+import com.beetron.outmall.utils.ShopCartChangReceiver;
+
 /**
  * Created by DKY with IntelliJ IDEA.
  * Author: DKY email: losemanshoe@gmail.com.

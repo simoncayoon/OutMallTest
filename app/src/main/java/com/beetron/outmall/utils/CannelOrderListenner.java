@@ -1,5 +1,6 @@
 package com.beetron.outmall.utils;
 
+import com.beetron.outmall.models.AddrInfoModel;
 import com.beetron.outmall.models.OrderInfoModel;
 import com.beetron.outmall.models.OrderPostModel;
 
@@ -18,11 +19,11 @@ public interface CannelOrderListenner {
      * @param orderInfoModel
      * @param orderPostModel
      */
-    public void showDetail(OrderInfoModel orderInfoModel, OrderPostModel orderPostModel);
+    public void showDetail(OrderInfoModel orderInfoModel, OrderPostModel orderPostModel, AddrInfoModel addrInfoModel);
 
     /**
      * 去支付
      * @return
      */
-    public String payOrder();
+    public String payOrder(String orderID);
 }

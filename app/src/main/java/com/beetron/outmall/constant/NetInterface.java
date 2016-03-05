@@ -155,4 +155,16 @@ public class NetInterface {
      * 修改用户信息
      */
     public static final String METHON_EDIT_USER_INFO = "?m=home&c=app&a=user_edit";
+    /**
+     * 签到
+     */
+    public static final String METHON_SIGN_INFO = "?m=home&c=app&a=qiandao";
+    /**
+     * 微信支付接口
+     */
+    public static final String METHON_WEIXIN_PAY = "?m=home&c=app&a=weixin_pay";
+    /**
+     * 微信支付成功通知接口
+     */
+    public static final String METHON_WEIXIN_PAY_NOTICE = "?m=home&c=app&a=update_order";
 }
