@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.beetron.outmall.adapter.SexAdapter;
 import com.beetron.outmall.customview.CusNaviView;
+import com.beetron.outmall.utils.CommonHelper;
 import com.beetron.outmall.utils.DebugFlags;
 
 import java.util.ArrayList;
@@ -180,6 +181,10 @@ public class UserInfoFix extends Activity {
                     }
                 } else {
                     result = etFix.getText().toString();
+                    if(flag==INTENT_FLAG_EMAIL_REQ && !CommonHelper.checkMail(result)){
+                        Toast.makeText(UserInfoFix.this, "请先填写正确的"+naviTitle+"！", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     if(result.equals("")){
                         Toast.makeText(UserInfoFix.this, "请先填写"+naviTitle+"！", Toast.LENGTH_SHORT).show();
                         return;

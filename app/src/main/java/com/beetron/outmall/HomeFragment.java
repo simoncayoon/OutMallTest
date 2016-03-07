@@ -225,6 +225,8 @@ public class HomeFragment extends BaseFragment {
 
                 //根据不同分类ID， 刷新商品列表
                 try {
+                    index = 1;
+                    isAppend = false;
                     refreshProByFid(currentFid);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -243,7 +245,7 @@ public class HomeFragment extends BaseFragment {
 
             }
         });
-        scrollView=LayoutInflater.from(getActivity()).inflate(R.layout.general_banner_layout,null);
+        scrollView = LayoutInflater.from(getActivity()).inflate(R.layout.general_banner_layout, null);
 
         initImageScanView();
 
@@ -427,15 +429,29 @@ public class HomeFragment extends BaseFragment {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
-                        setProContent(jsonObject, "");
+                        try {
+                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)) {
+                                setProContent(jsonObject, "");
+                                if (!isUpdate) {
+                                    Intent intent = new Intent(MainActivity.ACTION_STR);
+                                    getActivity().sendBroadcast(intent);
+                                    isUpdate = true;//状态更新为已更新
+                                }
+                            }
+                        } catch (JSONException e) {
+                            try {
+                                Toast.makeText(getActivity(), jsonObject.getString(Constants.RESULT_ERROR_FIELD),
+                                        Toast.LENGTH_SHORT).show();
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                            e.printStackTrace();
+                        }
+
                         if (llProList.isRefreshing()) {
                             llProList.onRefreshComplete();//停止刷新
                         }
-                        if (!isUpdate) {
-                            Intent intent = new Intent(MainActivity.ACTION_STR);
-                            getActivity().sendBroadcast(intent);
-                            isUpdate = true;//状态更新为已更新
-                        }
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -459,7 +475,7 @@ public class HomeFragment extends BaseFragment {
                     }.getType());
             List<ProSummary> dataRefresh = pageEntity.getList();
 
-            for(int index = 0; index < dataRefresh.size(); index ++){
+            for (int index = 0; index < dataRefresh.size(); index++) {
                 dataRefresh.get(index).setIsLimit(!Constants.PRO_IS_LIMIT);//添加数据标志，区分首页还是限时购
             }
 

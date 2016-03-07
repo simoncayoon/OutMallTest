@@ -460,7 +460,7 @@ public class ShopLimit extends BaseFragment{
             List<ProSummary> dataRefresh = pageEntity.getList();
 
             for(int index = 0; index < dataRefresh.size(); index ++){
-                dataRefresh.get(index).setIsLimit(!Constants.PRO_IS_LIMIT);//添加数据标志，区分首页还是限时购
+                dataRefresh.get(index).setIsLimit(Constants.PRO_IS_LIMIT);//添加数据标志，区分首页还是限时购
             }
 
             if (filterIndicator.getCurrentItem() > 0) {
