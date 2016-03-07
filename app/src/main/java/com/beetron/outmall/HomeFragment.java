@@ -582,7 +582,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     void addShopCartReq(final int position) throws Exception {
-        final ProgressHUD mProgressHUD = ProgressHUD.show(getActivity(), getResources().getString(R.string.prompt_progress_loading), true, false,
+        final ProgressHUD mProgressHUD = ProgressHUD.show(getActivity(), "", true, false,
                 null);
         String url = NetInterface.HOST + NetInterface.METHON_ADD_SHOPCART_BY_ID;
         PostEntity postEntity = new PostEntity();

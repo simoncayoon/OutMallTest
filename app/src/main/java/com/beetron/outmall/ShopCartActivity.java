@@ -51,8 +51,7 @@ import java.util.List;
  */
 public class ShopCartActivity extends Activity {
 
-    private static final String TAG = ShopCartActivity.class.getSimpleName()
-            ;
+    private static final String TAG = ShopCartActivity.class.getSimpleName() ;
     private CusNaviView navigationView;
     private ListView lvShopcart;
     private CheckBox checkSelectAll;

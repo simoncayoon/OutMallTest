@@ -117,6 +117,8 @@ public class BadgeView extends TextView {
         badgeColor = DEFAULT_BADGE_COLOR;
 
         setTypeface(Typeface.DEFAULT_BOLD);
+        int paddingPixels = dipToPixels(DEFAULT_LR_PADDING_DIP);
+//        setPadding(paddingPixels, paddingPixels, paddingPixels, paddingPixels);
         setTextColor(DEFAULT_TEXT_COLOR);
         this.setBackground(getResources().getDrawable(R.drawable.shape_dot_bg));
         this.setHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, getResources().getDisplayMetrics()));
@@ -173,12 +175,8 @@ public class BadgeView extends TextView {
             FrameLayout.LayoutParams contentLP = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
                     FrameLayout.LayoutParams.MATCH_PARENT);
             int padding = dipToPixels(5);
-            if (badgePosition == POSITION_TOP_RIGHT) {
-                contentLP.setMargins(0, padding, padding, 0);
-            } else if (badgePosition == POSITION_TOP_LEFT){
-                contentLP.setMargins(0, padding, padding, 0);
-            }
-            contentLP.gravity = Gravity.LEFT;
+//            contentLP.setMargins(0, padding, padding, 0);
+            contentLP.gravity = Gravity.CENTER;
             target.setLayoutParams(contentLP);
             container.addView(target);
 
