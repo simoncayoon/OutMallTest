@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.util.AttributeSet;
@@ -24,12 +23,12 @@ import android.widget.TextView;
 import com.beetron.outmall.R;
 
 /**
- * Created by Eteng with IntelliJ IDEA.
- * Author: DKY email: losemanshoe@gmail.com
- * Date: 15/7/6
- * Time: 下午2:36
+ * Created by DKY with IntelliJ IDEA.
+ * Author: DKY email: losemanshoe@gmail.com.
+ * Date: 2016/3/7.
+ * Time: 19:23.
  */
-public class BadgeView extends TextView {
+public class BadgeViewLeft extends TextView{
 
     public static final int POSITION_TOP_LEFT = 1;
     public static final int POSITION_TOP_RIGHT = 2;
@@ -40,7 +39,7 @@ public class BadgeView extends TextView {
     private static final int DEFAULT_MARGIN_DIP = 5;
     private static final int DEFAULT_LR_PADDING_DIP = 5;
     private static final int DEFAULT_CORNER_RADIUS_DIP = 8;
-    private static final int DEFAULT_POSITION = POSITION_TOP_RIGHT;
+    private static final int DEFAULT_POSITION = POSITION_TOP_LEFT;
     private static final int DEFAULT_BADGE_COLOR = Color.parseColor("#FE3425"); //Color.RED;
     private static final int DEFAULT_TEXT_COLOR = Color.WHITE;
 
@@ -61,11 +60,11 @@ public class BadgeView extends TextView {
 
     private int targetTabIndex;
 
-    public BadgeView(Context context) {
+    public BadgeViewLeft(Context context) {
         this(context, (AttributeSet) null, android.R.attr.textViewStyle);
     }
 
-    public BadgeView(Context context, AttributeSet attrs) {
+    public BadgeViewLeft(Context context, AttributeSet attrs) {
         this(context, attrs, android.R.attr.textViewStyle);
     }
 
@@ -77,7 +76,7 @@ public class BadgeView extends TextView {
      * @param context context for this view.
      * @param target  the View to attach the badge to.
      */
-    public BadgeView(Context context, View target) {
+    public BadgeViewLeft(Context context, View target) {
         this(context, null, android.R.attr.textViewStyle, target, 0);
     }
 
@@ -91,15 +90,15 @@ public class BadgeView extends TextView {
      * @param target  the TabWidget to attach the badge to.
      * @param index   the position of the tab within the target.
      */
-    public BadgeView(Context context, TabWidget target, int index) {
+    public BadgeViewLeft(Context context, TabWidget target, int index) {
         this(context, null, android.R.attr.textViewStyle, target, index);
     }
 
-    public BadgeView(Context context, AttributeSet attrs, int defStyle) {
+    public BadgeViewLeft(Context context, AttributeSet attrs, int defStyle) {
         this(context, attrs, defStyle, null, 0);
     }
 
-    public BadgeView(Context context, AttributeSet attrs, int defStyle, View target, int tabIndex) {
+    public BadgeViewLeft(Context context, AttributeSet attrs, int defStyle, View target, int tabIndex) {
         super(context, attrs, defStyle);
         init(context, target, tabIndex);
     }
@@ -176,7 +175,7 @@ public class BadgeView extends TextView {
             if (badgePosition == POSITION_TOP_RIGHT) {
                 contentLP.setMargins(0, padding, padding, 0);
             } else if (badgePosition == POSITION_TOP_LEFT){
-                contentLP.setMargins(0, padding, padding, 0);
+                contentLP.setMargins(dipToPixels(10), dipToPixels(10), 0, 0);
             }
             contentLP.gravity = Gravity.LEFT;
             target.setLayoutParams(contentLP);

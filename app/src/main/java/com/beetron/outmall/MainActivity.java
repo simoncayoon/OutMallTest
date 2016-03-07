@@ -19,10 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.beetron.outmall.adapter.ProSummaryAdapter;
 import com.beetron.outmall.customview.BadgeView;
 import com.beetron.outmall.customview.CusNaviView;
+import com.beetron.outmall.customview.CustomBadgeView;
 import com.beetron.outmall.customview.CustomDialog;
 import com.beetron.outmall.customview.ViewWithBadge;
 import com.beetron.outmall.models.UserInfoModel;
@@ -232,10 +234,22 @@ public class MainActivity extends AppCompatActivity
          * 3、更新产品列表状态
          */
         try {
-            ViewWithBadge shapCartTabView = (ViewWithBadge) (mIndicatorViewPager.getIndicatorView().
-                    getItemView(2).findViewById(R.id.tab_text_view));//获取到购物车tabbar的视图
-            shapCartTabView.setBadge(BadgeView.POSITION_TOP_RIGHT,
-                    DBHelper.getInstance(MainActivity.this).getShopCartCount(), 6, 0);
+            TextView countView = (TextView) (mIndicatorViewPager.getIndicatorView().
+                    getItemView(2).findViewById(R.id.tv_badge_view_top_right));//获取到购物车tabbar的视图
+            try {
+                int localCount = DBHelper.getInstance(MainActivity.this).getShopCartCount();
+                if (localCount == 0){
+                    countView.setVisibility(View.GONE);
+                } else {
+                    countView.setVisibility(View.VISIBLE);
+                    countView.setText(String.valueOf(localCount));
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+//            shapCartTabView.setBadge(BadgeView.POSITION_TOP_RIGHT,
+//                    DBHelper.getInstance(MainActivity.this).getShopCartCount(), 6, 0);
 
             //更新首页菜单视图
             HomeFragment homeFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
@@ -330,16 +344,19 @@ public class MainActivity extends AppCompatActivity
         @Override
         public View getViewForTab(int position, View convertView, ViewGroup container) {
             if (convertView == null) {
-                convertView = inflater.inflate(R.layout.tab_main, container, false);
+                convertView = inflater.inflate(R.layout.badge_view_top_right, container, false);
             }
-            ViewWithBadge textView = (ViewWithBadge) convertView.findViewById(R.id.tab_text_view);
-            textView.setText(tabNames[position]);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
+            TextView tvContent = (TextView) convertView.findViewById(R.id.tv_badge_view_content);
+            TextView tvBadge = (TextView) convertView.findViewById(R.id.tv_badge_view_top_right);
+            tvBadge.setVisibility(View.GONE);
+            tvContent.setText(tabNames[position]);
+            tvContent.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10);
             Drawable top = getResources().getDrawable(tabIcons[position]);
             if (position < 2) {
                 top.setBounds(new Rect(0, 0, DisplayMetrics.dip2px(
                         MainActivity.this, 22), DisplayMetrics.dip2px(
                         MainActivity.this, 22)));
+
             } else if (position == 3) {
                 top.setBounds(new Rect(0, 0, DisplayMetrics.dip2px(
                         MainActivity.this, 22), DisplayMetrics.dip2px(
@@ -353,7 +370,7 @@ public class MainActivity extends AppCompatActivity
                         MainActivity.this, 22), DisplayMetrics.dip2px(
                         MainActivity.this, 22)));
             }
-            textView.setCompoundDrawables(null, top, null, null);
+            tvContent.setCompoundDrawables(null, top, null, null);
             return convertView;
         }
 

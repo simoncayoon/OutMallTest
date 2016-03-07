@@ -227,6 +227,7 @@ public class HomeFragment extends BaseFragment {
                 try {
                     index = 1;
                     isAppend = false;
+                    llProList.getRefreshableView().setSelection(0);
                     refreshProByFid(currentFid);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -411,7 +412,6 @@ public class HomeFragment extends BaseFragment {
      */
     void refreshProByFid(String currentFid) throws Exception {
 
-        llProList.setRefreshing(true);
         String url = NetInterface.HOST + NetInterface.METHON_GET_PRO_BY_CATEGORY;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);

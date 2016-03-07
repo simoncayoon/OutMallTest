@@ -5,11 +5,15 @@
     android:layout_height="match_parent"
     android:background="@color/general_activity_bg"
     android:orientation="vertical">
-    
-    <com.beetron.outmall.customview.CusNaviView
-        android:id="@+id/general_navi_id"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/general_navi_height"></com.beetron.outmall.customview.CusNaviView>
+
+    <!--<com.beetron.outmall.customview.CusNaviView-->
+        <!--android:id="@+id/general_navi_id"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="@dimen/general_navi_height">-->
+
+    <!--</com.beetron.outmall.customview.CusNaviView>-->
+
+    <include android:layout_width="match_parent" android:layout_height="wrap_content" layout="@layout/personcenterheader"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -53,13 +57,13 @@
 
             <Button
                 android:id="@+id/btn_add_addr_info"
+                style="@style/BtnStyle"
                 android:layout_width="110dp"
                 android:layout_height="45dp"
                 android:layout_marginTop="30.5dp"
                 android:text="@string/addr_manage_add_addr_info"
                 android:textColor="@color/general_main_title_color"
-                android:textSize="14sp"
-                style="@style/BtnStyle"/>
+                android:textSize="14sp" />
         </LinearLayout>
 
     </FrameLayout>

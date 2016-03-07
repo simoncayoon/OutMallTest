@@ -3,11 +3,10 @@ package com.beetron.outmall;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,7 +44,7 @@ import java.util.List;
  * Date: 2016/2/22.
  * Time: 18:04.
  */
-public class AddrManager extends Activity {
+public class AddrManager extends Activity implements View.OnClickListener {
 
     public static final int ADDR_REQUEST_CODE = 0x1122;
     public static final String RESULT_DATA = "RESULT_DATA";
@@ -59,6 +58,23 @@ public class AddrManager extends Activity {
     private AddrAdapter addrAdapter;
     private CusNaviView cusNaviView;
 
+    private Button btnLeft, btnRight;
+    private TextView titleView;
+    private ImageView backImage;
+
+    private void initHeader() {
+        btnLeft = (Button) findViewById(R.id.btn_left);
+        btnRight = (Button) findViewById(R.id.btn_right);
+        titleView = (TextView) findViewById(R.id.tv_center);
+        backImage = (ImageView) findViewById(R.id.iv_back);
+        btnLeft.setText(getResources().getString(R.string.navi_title_order_fix));
+        btnRight.setText(getResources().getString(R.string.navi_title_right_manage));
+        titleView.setText(getResources().getString(R.string.navi_title_addr_select));
+        btnLeft.setOnClickListener(this);
+        btnRight.setOnClickListener(this);
+        backImage.setOnClickListener(this);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +86,7 @@ public class AddrManager extends Activity {
 
     private void initView() {
 
-        initNavi();
+        initHeader();
         llAddrList = (ListView) findViewById(R.id.shop_cart_detail_list);
 
         llEmpty = (LinearLayout) findViewById(R.id.addr_manage_empty_layout);
@@ -95,31 +111,6 @@ public class AddrManager extends Activity {
                     setResult(RESULT_OK, intent);
                     finish();
                 }
-            }
-        });
-    }
-
-    private void initNavi() {
-        cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
-        cusNaviView.setNaviTitle(getResources().getString(R.string.navi_title_addr_select));
-        cusNaviView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
-        ((Button) cusNaviView.getLeftBtn()).setText(getResources().getString(R.string.navi_title_order_fix));//设置返回标题
-
-        cusNaviView.setBtnView(CusNaviView.PUT_RIGHT, new TextView(this), 50, 30);
-        ((TextView) cusNaviView.getRightBtn()).setText(getResources().getString(R.string.navi_title_right_manage));//初始化
-        ((TextView) cusNaviView.getRightBtn()).setGravity(Gravity.CENTER);
-        ((TextView) cusNaviView.getRightBtn()).setTextColor(getResources().getColor(R.color.general_main_title_color));
-        ((TextView) cusNaviView.getRightBtn()).setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
-        cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
-            @Override
-            public void leftBtnListener() {
-                finish();
-            }
-
-            @Override
-            public void rightBtnListener() {
-                //去地址管理
-                startActivity(new Intent(AddrManager.this, AddrConsole.class));
             }
         });
     }
@@ -195,6 +186,22 @@ public class AddrManager extends Activity {
             reqAddr();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_left:
+            case R.id.tv_center:
+                finish();
+                break;
+            case R.id.btn_right:
+                //去地址管理
+                startActivity(new Intent(AddrManager.this, AddrConsole.class));
+                break;
+            default:
+                break;
         }
     }
 }

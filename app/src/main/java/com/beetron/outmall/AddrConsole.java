@@ -187,8 +187,8 @@ public class AddrConsole extends Activity {
         String url = NetInterface.HOST + NetInterface.METHON_GET_ADDR_LIST;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
-        postEntity.setUid(Constants.POST_UID_TEST);
-        postEntity.setIsLogin("1");
+        postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
+        postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
         String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
         }.getType());
         JSONObject postJson = new JSONObject(postString);

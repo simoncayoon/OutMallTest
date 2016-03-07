@@ -19,7 +19,7 @@
     <dimen name="pro_summary_content_size">11sp</dimen>
     <dimen name="pro_summary_shop_cart_margin">10dp</dimen>
     <dimen name="pro_price_text_size">20sp</dimen>
-    <dimen name="ib_shop_cart_size">30dp</dimen>
+    <dimen name="ib_shop_cart_size">35dp</dimen>
     <dimen name="product_detail_botton_btn_hight">50dp</dimen>
     <dimen name="pro_detail_title_size">16sp</dimen>
     <dimen name="pro_detail_margin_title">8dp</dimen>
@@ -59,5 +59,5 @@
     <dimen name="about_me_content_padding">15dp</dimen>
     <dimen name="user_info_portait_size">56dp</dimen>
     <dimen name="sign_btn_margin">16dp</dimen>
-    <dimen name="badge_view_size">12dp</dimen>
+    <dimen name="badge_view_size">18dp</dimen>
 </resources>

@@ -69,7 +69,8 @@
                 android:background="@mipmap/list_ic_shopping"
                 android:backgroundTint="@color/home_page_general_red"
                 android:backgroundTintMode="src_in"
-                android:gravity="right"/>
+                android:gravity="right"
+                android:padding="10dp"/>
         </RelativeLayout>
 
         <LinearLayout
