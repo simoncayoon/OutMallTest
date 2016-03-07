@@ -55,7 +55,7 @@ public class ProSummaryAdapter extends BaseAdapter {
         }
 
         @Override
-        public void addShopCart(int positon) throws Exception {
+        public void addShopCart(int positon, Boolean isLimit) throws Exception {
 
         }
     };
@@ -139,7 +139,7 @@ public class ProSummaryAdapter extends BaseAdapter {
 
     public interface ShopCartCountListener {
         public void notifyCountChange() throws Exception;
-        public void addShopCart(int positon) throws Exception;
+        public void addShopCart(int positon, Boolean isLimit) throws Exception;
     }
 
     class ViewHolder {
@@ -160,7 +160,7 @@ public class ProSummaryAdapter extends BaseAdapter {
         public void onClick(View v) {
 
             try {
-                countListener.addShopCart(position);
+                countListener.addShopCart(position, proSummaryList.get(position).getIsLimit());
             } catch (Exception e) {
                 e.printStackTrace();
             }

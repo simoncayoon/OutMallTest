@@ -19,13 +19,6 @@ import com.beetron.outmall.models.UserInfoModelDao;
 public class DaoMaster extends AbstractDaoMaster {
     public static final int SCHEMA_VERSION = 20160124;
 
-    public DaoMaster(SQLiteDatabase db) {
-        super(db, SCHEMA_VERSION);
-        registerDaoClass(ProCategoryDao.class);
-        registerDaoClass(ProSummaryDao.class);
-        registerDaoClass(UserInfoModelDao.class);
-    }
-    
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(SQLiteDatabase db, boolean ifNotExists) {
         ProCategoryDao.createTable(db, ifNotExists);
@@ -38,14 +31,6 @@ public class DaoMaster extends AbstractDaoMaster {
         ProCategoryDao.dropTable(db, ifExists);
         ProSummaryDao.dropTable(db, ifExists);
         UserInfoModelDao.dropTable(db, ifExists);
-    }
-    
-    public DaoSession newSession() {
-        return new DaoSession(db, IdentityScopeType.Session, daoConfigMap);
-    }
-
-    public DaoSession newSession(IdentityScopeType type) {
-        return new DaoSession(db, type, daoConfigMap);
     }
     
     public static abstract class OpenHelper extends SQLiteOpenHelper {
@@ -73,6 +58,21 @@ public class DaoMaster extends AbstractDaoMaster {
             dropAllTables(db, true);
             onCreate(db);
         }
+    }
+
+    public DaoMaster(SQLiteDatabase db) {
+        super(db, SCHEMA_VERSION);
+        registerDaoClass(ProCategoryDao.class);
+        registerDaoClass(ProSummaryDao.class);
+        registerDaoClass(UserInfoModelDao.class);
+    }
+    
+    public DaoSession newSession() {
+        return new DaoSession(db, IdentityScopeType.Session, daoConfigMap);
+    }
+    
+    public DaoSession newSession(IdentityScopeType type) {
+        return new DaoSession(db, type, daoConfigMap);
     }
     
 }

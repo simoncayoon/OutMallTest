@@ -76,6 +76,9 @@ public class HomeFragment extends BaseFragment {
     private Indicator filterIndicator;
     private PullToRefreshListView llProList;
     private LayoutInflater inflater;
+    //滚动图片
+    private View scrollView;
+
 
     private CategoryMenuAdapter menuAdapter;
     private ProSummaryAdapter proAdapter;
@@ -90,51 +93,24 @@ public class HomeFragment extends BaseFragment {
     private PageEntity pageEntity;
     private Boolean isUpdate = false;
 
-    /**
-     * 幻灯片适配
-     */
-    private IndicatorViewPager.IndicatorPagerAdapter adapter = new IndicatorViewPager.IndicatorViewPagerAdapter() {
-
-        @Override
-        public View getViewForTab(int position, View convertView, ViewGroup container) {
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.image_scan_tab_guide, container, false);
-            }
-            return convertView;
-        }
-
-        @Override
-        public View getViewForPage(int position, View convertView, ViewGroup container) {
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.home_page_image_scan_content, container, false);
-                convertView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            }
-            try {
-                ((NetworkImageView) convertView).setImageUrl(imgList.get(position), NetController.getInstance(getActivity()).getImageLoader());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return convertView;
-        }
-
-        @Override
-        public int getCount() {
-            return imgList.size();
-        }
-    };
-
     @Override
     protected void onCreateView(Bundle savedInstanceState) {
         super.onCreateView(savedInstanceState);
         setContentView(R.layout.home_page_layout);
         initView();
         initData();
+        llProList.getRefreshableView().addHeaderView(scrollView);
     }
 
     /**
      * 获取数据
      */
     private void initData() {
+        proList = new ArrayList<ProSummary>();
+        categories = new ArrayList<ProCategory>();
+        fidCache = new ArrayList<String>();
+        proAdapter = new ProSummaryAdapter(getActivity(), proList);
+        llProList.getRefreshableView().setAdapter(proAdapter);
         try {
             getMenu();
             getImageScan();
@@ -207,7 +183,6 @@ public class HomeFragment extends BaseFragment {
                         categoryAll.setId("");
                         categoryAll.setName(getResources().getString(R.string.all_product));
                         categories.add(0, categoryAll);
-                        fidCache = new ArrayList<String>();
                         for (ProCategory item : categories) {
                             fidCache.add(item.getId());//保存当前分类ID列表，避免多次循环查找fid
                         }
@@ -268,6 +243,8 @@ public class HomeFragment extends BaseFragment {
 
             }
         });
+        scrollView=LayoutInflater.from(getActivity()).inflate(R.layout.general_banner_layout,null);
+
         initImageScanView();
 
         initFilterView();
@@ -278,7 +255,7 @@ public class HomeFragment extends BaseFragment {
     private void initFilterView() {
         filterTitle = new String[]{"默认", "销量", "价格"};
 //        SViewPager viewPager = (SViewPager) findViewById(R.id.home_filter_viewpager);
-        filterIndicator = (Indicator) findViewById(R.id.home_filter_tab_indicator);
+        filterIndicator = (Indicator) scrollView.findViewById(R.id.home_filter_tab_indicator);
         filterIndicator.setAdapter(new Indicator.IndicatorAdapter() {
             @Override
             public int getCount() {
@@ -378,8 +355,8 @@ public class HomeFragment extends BaseFragment {
             public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
                 DebugFlags.logD(TAG, "onPullUpToRefresh");
                 if (index > pageEntity.getPage()) {
-                    Toast.makeText(getActivity(), "已经到最后一页了", Toast.LENGTH_SHORT).show();
                     refreshView.onRefreshComplete();
+                    isAppend = false;//设置追加状态为false
                     return;
                 }
                 index++;
@@ -396,8 +373,8 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initImageScanView() {
-        ViewPager viewPager = (ViewPager) findViewById(R.id.svp_scan_image_content);
-        Indicator indicator = (Indicator) findViewById(R.id.svp_scan_image_indicator);
+        ViewPager viewPager = (ViewPager) scrollView.findViewById(R.id.svp_scan_image_content);
+        Indicator indicator = (Indicator) scrollView.findViewById(R.id.svp_scan_image_indicator);
         imageScanner = new IndicatorViewPager(indicator, viewPager);
         inflater = LayoutInflater.from(getApplicationContext());
     }
@@ -407,16 +384,17 @@ public class HomeFragment extends BaseFragment {
 
         proAdapter.notifyDataSetChanged();
 
-        Map<String, String> fids = DBHelper.getInstance(getApplicationContext()).getFidCache();
-        if (fids.size() == 0){
-            for (int index = 0; index < categories.size(); index ++){
+        Map<String, String> fids = DBHelper.getInstance(getApplicationContext()).getFidCache(true);
+        if (fids.size() == 0) {//目前没有商品
+            for (int index = 0; index < categories.size(); index++) {
                 categories.get(index).setCount(0);
             }
         } else {
             for (Map.Entry<String, String> entry : fids.entrySet()) {
-                System.out.println("key= " + entry.getKey());
-                ProCategory menuItem = categories.get(fidCache.indexOf(entry.getKey()));
-                menuItem.setCount(DBHelper.getInstance(getApplicationContext()).getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID, entry.getKey()));
+                int index = fidCache.indexOf(entry.getKey());//找到存在购物车信息的那一项
+                int count = DBHelper.getInstance(getApplicationContext()).
+                        getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID, entry.getKey());
+                categories.get(index).setCount(count);
             }
         }
 
@@ -449,7 +427,7 @@ public class HomeFragment extends BaseFragment {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
-                        initData(jsonObject, "");
+                        setProContent(jsonObject, "");
                         if (llProList.isRefreshing()) {
                             llProList.onRefreshComplete();//停止刷新
                         }
@@ -471,7 +449,7 @@ public class HomeFragment extends BaseFragment {
         NetController.getInstance(getActivity()).addToRequestQueue(getCategoryReq, TAG);
     }
 
-    void initData(JSONObject responData, String flag) {
+    void setProContent(JSONObject responData, String flag) {
         DebugFlags.logD(TAG, responData.toString());
         Gson gson = new Gson();
 
@@ -480,6 +458,10 @@ public class HomeFragment extends BaseFragment {
                     new TypeToken<PageEntity<ProSummary>>() {
                     }.getType());
             List<ProSummary> dataRefresh = pageEntity.getList();
+
+            for(int index = 0; index < dataRefresh.size(); index ++){
+                dataRefresh.get(index).setIsLimit(!Constants.PRO_IS_LIMIT);//添加数据标志，区分首页还是限时购
+            }
 
             if (filterIndicator.getCurrentItem() > 0) {
                 try {
@@ -494,12 +476,15 @@ public class HomeFragment extends BaseFragment {
             }
 
             if (!isAppend) {
-                proList = dataRefresh;
+                proList.clear();
+                proList.addAll(dataRefresh);
             } else {
+                if (dataRefresh.size() == 0) {
+                    Toast.makeText(getActivity(), getResources().getString(R.string.prompt_the_last_page), Toast.LENGTH_SHORT).show();
+                }
                 proList.addAll(dataRefresh);
             }
-            proAdapter = new ProSummaryAdapter(getActivity(), proList);
-            llProList.getRefreshableView().setAdapter(proAdapter);
+            proAdapter.notifyDataSetChanged();
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -580,7 +565,7 @@ public class HomeFragment extends BaseFragment {
 
     }
 
-    void addShopCartReq(final int position) throws Exception{
+    void addShopCartReq(final int position) throws Exception {
         final ProgressHUD mProgressHUD = ProgressHUD.show(getActivity(), getResources().getString(R.string.prompt_progress_loading), true, false,
                 null);
         String url = NetInterface.HOST + NetInterface.METHON_ADD_SHOPCART_BY_ID;
@@ -598,14 +583,14 @@ public class HomeFragment extends BaseFragment {
                     public void onResponse(JSONObject jsonObject) {
                         DebugFlags.logD(TAG, jsonObject.toString());
                         try {
-                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)){//返回成功
+                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)) {//返回成功
                                 try {
                                     ProSummary clickItem = proList.get(position);
                                     JSONObject countJSON = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
                                     clickItem.setCount(countJSON.getInt("count"));
                                     if (DBHelper.getInstance(getActivity().getApplicationContext()).addShopCart(clickItem) != -1L) {
                                         //通知更新数据
-                                        ((MainActivity)getActivity()).notifyCountChange();
+                                        ((MainActivity) getActivity()).notifyCountChange();
                                     } else {
                                         DebugFlags.logD(TAG, "添加购物车数据库失败！");
                                     }
@@ -630,4 +615,37 @@ public class HomeFragment extends BaseFragment {
         });
         NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
     }
+
+    /**
+     * 幻灯片适配
+     */
+    private IndicatorViewPager.IndicatorPagerAdapter adapter = new IndicatorViewPager.IndicatorViewPagerAdapter() {
+
+        @Override
+        public View getViewForTab(int position, View convertView, ViewGroup container) {
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.image_scan_tab_guide, container, false);
+            }
+            return convertView;
+        }
+
+        @Override
+        public View getViewForPage(int position, View convertView, ViewGroup container) {
+            if (convertView == null) {
+                convertView = inflater.inflate(R.layout.home_page_image_scan_content, container, false);
+                convertView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            }
+            try {
+                ((NetworkImageView) convertView).setImageUrl(imgList.get(position), NetController.getInstance(getActivity()).getImageLoader());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return convertView;
+        }
+
+        @Override
+        public int getCount() {
+            return imgList.size();
+        }
+    };
 }

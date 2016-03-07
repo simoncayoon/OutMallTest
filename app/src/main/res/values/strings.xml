@@ -130,4 +130,5 @@
     <string name="all_product">全部商品</string>
     <string name="prompt_delete_succeed">删除成功</string>
     <string name="prompt_order_delete_confirm">确定要取消此订单吗？</string>
+    <string name="prompt_the_last_page">没有更多的数据了</string>
 </resources>

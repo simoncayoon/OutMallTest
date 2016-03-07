@@ -5,7 +5,6 @@ package com.beetron.outmall.models;
 // KEEP INCLUDES - put your custom includes here
 import java.io.Serializable;
 // KEEP INCLUDES END
-
 /**
  * Entity mapped to table "PRO_SUMMARY".
  */
@@ -19,7 +18,8 @@ public class ProSummary implements Serializable{
     private Double price1;
     private Double price2;
     private Integer xl;
-    private Integer count = 0;
+    private Integer count;
+    private Boolean isLimit;
 
     // KEEP FIELDS - put your custom fields here
     private Boolean isSelect = false;
@@ -32,7 +32,7 @@ public class ProSummary implements Serializable{
         this.sid = sid;
     }
 
-    public ProSummary(String sid, String fid, String title, String jianshu, String img, Double price1, Double price2, Integer xl, Integer count) {
+    public ProSummary(String sid, String fid, String title, String jianshu, String img, Double price1, Double price2, Integer xl, Integer count, Boolean isLimit) {
         this.sid = sid;
         this.fid = fid;
         this.title = title;
@@ -42,6 +42,7 @@ public class ProSummary implements Serializable{
         this.price2 = price2;
         this.xl = xl;
         this.count = count;
+        this.isLimit = isLimit;
     }
 
     public String getSid() {
@@ -116,6 +117,14 @@ public class ProSummary implements Serializable{
         this.count = count;
     }
 
+    public Boolean getIsLimit() {
+        return isLimit;
+    }
+
+    public void setIsLimit(Boolean isLimit) {
+        this.isLimit = isLimit;
+    }
+
     // KEEP METHODS - put your custom methods here
 
     public Boolean getIsSelect() {
@@ -125,6 +134,6 @@ public class ProSummary implements Serializable{
     public void setIsSelect(Boolean isSelect) {
         this.isSelect = isSelect;
     }
-// KEEP METHODS END
+    // KEEP METHODS END
 
 }

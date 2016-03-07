@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -84,6 +85,7 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
     UserInfoModel userInfoSummary;
     private CusNaviView cusNaviView;
     private ProgressHUD mProgressHUD;
+    private Boolean isFirst=true;
 
     private void initNavi() {
         cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
@@ -154,9 +156,10 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 if (convertView == null) {
-                    convertView = getLayoutInflater().inflate(R.layout.tab_main, parent, false);
+                    convertView = getLayoutInflater().inflate(R.layout.table_item, parent, false);
                 }
                 ViewWithBadge textView = (ViewWithBadge) convertView.findViewById(R.id.tab_text_view);
+                TextView tv_line = (TextView) convertView.findViewById(R.id.tv_line);
                 textView.setText(scanTabName[position]);
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
                 textView.setTextColor(getResources().getColor(R.color.general_tab_text_color));
@@ -168,6 +171,9 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
 //                if (position != 4) {
 //                    textView.setCompoundDrawables(null, null, top, null);
 //                }
+                if (position == 4) {
+                    tv_line.setVisibility(View.GONE);
+                }
                 textView.setCompoundDrawablePadding(1);
                 if (position == currueNum) {
                     textView.setTextColor(getResources().getColor(R.color.menu_yellow_color));
@@ -358,7 +364,7 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
         Intent intent = new Intent(this, OrderDetailActivity.class);
         intent.putExtra(OrderDetailActivity.INTENT_KEY_ADDR_INFO, addrInfoModel);
         intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_DATA, orderPostModel);
-        intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_MODEL,  orderInfoModel);
+        intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_MODEL, orderInfoModel);
         startActivity(intent);
     }
 
@@ -487,5 +493,15 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
             }
         });
         NetController.getInstance(this).addToRequestQueue(getCategoryReq, TAG);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isFirst) {
+            isFirst=false;
+        }else {
+            getData();//重新加载数据
+        }
     }
 }

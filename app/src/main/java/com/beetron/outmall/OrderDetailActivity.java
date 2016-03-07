@@ -68,7 +68,6 @@ public class OrderDetailActivity extends Activity {
     private TextView orderNum;
     private TextView addrTitle, addrDetail;
     private TextView payType, proAmount;
-    //    private TextView payType, proAmount, serviceFee, freeFee;
     private TextView actualPay, orderDate, leaveMsg;
     private ListView lvProScan;
     private Button btnCancel, btnPayment;
@@ -99,20 +98,17 @@ public class OrderDetailActivity extends Activity {
 
         payType.setText(orderInfo.getPayment().equals(Constants.PAYMENT_TYPE_ONLINE) ?
                 getResources().getString(R.string.pay_online) : getResources().getString(R.string.pay_delivery));
-        if (orderInfo.getStatus().equals("1")||
+        if (!orderInfo.getStatus().equals("1") ||
                 orderInfo.getPayment().equals(Constants.PAYMENT_TYPE_DELIVERY)) {
             llBtnZone.setVisibility(View.GONE);
         }
         proAmount.setText("￥" + orderInfo.getZongjia());
-//        serviceFee.setText("￥" + orderInfo.getFuwufei());
-//        freeFee.setText("-￥" + orderInfo.getJianmian());
 
         actualPay.setText("实付款 ￥" + orderInfo.getZongjia());
         orderDate.setText("下单时间：" + orderInfo.getDate());
         leaveMsg.setText(orderInfo.getRemark());
 
         lvProScan.setAdapter(new OrderProAdapter());
-//        ListViewUtil.setListViewHeightBasedOnChildren(lvProScan);
         ListViewUtil.setListViewHeightBasedOnChildrenT(lvProScan);
         btnCancel = (Button) findViewById(R.id.order_detail_order_cancel);
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -171,8 +167,6 @@ public class OrderDetailActivity extends Activity {
 
         payType = (TextView) findViewById(R.id.tv_order_payment_type);
         proAmount = (TextView) findViewById(R.id.tv_order_product_amount);
-//        serviceFee = (TextView) findViewById(R.id.tv_order_service_fee);
-//        freeFee = (TextView) findViewById(R.id.tv_order_service_fee_minus);
         actualPay = (TextView) findViewById(R.id.order_detail_pay_actually);
         orderDate = (TextView) findViewById(R.id.order_detail_order_date);
         leaveMsg = (TextView) findViewById(R.id.order_detail_leave_msg);

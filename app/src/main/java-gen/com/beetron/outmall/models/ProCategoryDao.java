@@ -18,15 +18,25 @@ public class ProCategoryDao extends AbstractDao<ProCategory, Void> {
 
     public static final String TABLENAME = "PRO_CATEGORY";
 
-        public ProCategoryDao(DaoConfig config) {
-        super(config);
+    /**
+     * Properties of entity ProCategory.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
+    public static class Properties {
+        public final static Property Id = new Property(0, String.class, "id", false, "ID");
+        public final static Property Name = new Property(1, String.class, "name", false, "NAME");
+        public final static Property Stank = new Property(2, String.class, "stank", false, "STANK");
     };
 
 
+    public ProCategoryDao(DaoConfig config) {
+        super(config);
+    }
+    
     public ProCategoryDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
     }
-    
+
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
@@ -46,17 +56,17 @@ public class ProCategoryDao extends AbstractDao<ProCategory, Void> {
     @Override
     protected void bindValues(SQLiteStatement stmt, ProCategory entity) {
         stmt.clearBindings();
-
+ 
         String id = entity.getId();
         if (id != null) {
             stmt.bindString(1, id);
         }
-
+ 
         String name = entity.getName();
         if (name != null) {
             stmt.bindString(2, name);
         }
-
+ 
         String stank = entity.getStank();
         if (stank != null) {
             stmt.bindString(3, stank);
@@ -67,7 +77,7 @@ public class ProCategoryDao extends AbstractDao<ProCategory, Void> {
     @Override
     public Void readKey(Cursor cursor, int offset) {
         return null;
-    }
+    }    
 
     /** @inheritdoc */
     @Override
@@ -79,7 +89,7 @@ public class ProCategoryDao extends AbstractDao<ProCategory, Void> {
         );
         return entity;
     }
-
+     
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, ProCategory entity, int offset) {
@@ -87,7 +97,7 @@ public class ProCategoryDao extends AbstractDao<ProCategory, Void> {
         entity.setName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setStank(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
      }
-     
+    
     /** @inheritdoc */
     @Override
     protected Void updateKeyAfterInsert(ProCategory entity, long rowId) {
@@ -100,21 +110,11 @@ public class ProCategoryDao extends AbstractDao<ProCategory, Void> {
     public Void getKey(ProCategory entity) {
         return null;
     }
-    
+
     /** @inheritdoc */
-    @Override
+    @Override    
     protected boolean isEntityUpdateable() {
         return true;
-    }
-
-/**
-     * Properties of entity ProCategory.<br/>
-     * Can be used for QueryBuilder and for referencing column names.
-    */
-    public static class Properties {
-        public final static Property Id = new Property(0, String.class, "id", false, "ID");
-        public final static Property Name = new Property(1, String.class, "name", false, "NAME");
-        public final static Property Stank = new Property(2, String.class, "stank", false, "STANK");
     }
     
 }

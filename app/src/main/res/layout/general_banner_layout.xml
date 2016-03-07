@@ -1,20 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?><!-- 顶部Banner广告-->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/product_list_top_banner_layout"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/svp_scan_image_content"
+    <FrameLayout
+        android:id="@+id/product_list_top_banner_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white" />
+        android:layout_height="@dimen/product_list_top_banner_height">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/svp_scan_image_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white" />
+
+        <com.shizhefei.view.indicator.FixedIndicatorView
+            android:id="@+id/svp_scan_image_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_marginBottom="10dp" />
+    </FrameLayout>
 
     <com.shizhefei.view.indicator.FixedIndicatorView
-        android:id="@+id/svp_scan_image_indicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/home_filter_tab_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/general_tab_height"
         android:layout_alignParentBottom="true"
-        android:layout_gravity="center_horizontal|bottom"
-        android:layout_marginBottom="10dp" />
-</FrameLayout>
+        android:background="@android:color/white" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="@color/general_boundary_color" />
+</LinearLayout>

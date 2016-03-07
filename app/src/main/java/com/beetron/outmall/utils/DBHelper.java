@@ -130,8 +130,9 @@ public class DBHelper {
         return result;
     }
 
-    public Map<String, String> getFidCache() {
+    public Map<String, String> getFidCache(boolean isLimit) {
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
+//        qb.where(ProSummaryDao.Properties.IsLimit.eq(isLimit));//目前商品的种类没有分开
 
         HashMap<String, String> map = new HashMap<String, String>();
         for (ProSummary proSummary : qb.list()) {

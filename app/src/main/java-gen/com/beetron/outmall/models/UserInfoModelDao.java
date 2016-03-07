@@ -18,15 +18,40 @@ public class UserInfoModelDao extends AbstractDao<UserInfoModel, String> {
 
     public static final String TABLENAME = "USER_INFO_MODEL";
 
-        public UserInfoModelDao(DaoConfig config) {
-        super(config);
+    /**
+     * Properties of entity UserInfoModel.<br/>
+     * Can be used for QueryBuilder and for referencing column names.
+    */
+    public static class Properties {
+        public final static Property Uid = new Property(0, String.class, "uid", true, "UID");
+        public final static Property Mail = new Property(1, String.class, "mail", false, "MAIL");
+        public final static Property Sex = new Property(2, String.class, "sex", false, "SEX");
+        public final static Property Nickname = new Property(3, String.class, "nickname", false, "NICKNAME");
+        public final static Property Headimg = new Property(4, String.class, "headimg", false, "HEADIMG");
+        public final static Property Uname = new Property(5, String.class, "uname", false, "UNAME");
+        public final static Property Dengji = new Property(6, String.class, "dengji", false, "DENGJI");
+        public final static Property Tel = new Property(7, String.class, "tel", false, "TEL");
+        public final static Property Upass = new Property(8, String.class, "upass", false, "UPASS");
+        public final static Property City = new Property(9, String.class, "city", false, "CITY");
+        public final static Property Unid = new Property(10, String.class, "unid", false, "UNID");
+        public final static Property Area = new Property(11, String.class, "area", false, "AREA");
+        public final static Property Refer = new Property(12, String.class, "refer", false, "REFER");
+        public final static Property Address = new Property(13, String.class, "address", false, "ADDRESS");
+        public final static Property Province = new Property(14, String.class, "province", false, "PROVINCE");
+        public final static Property Openid = new Property(15, String.class, "openid", false, "OPENID");
+        public final static Property Jifen = new Property(16, String.class, "jifen", false, "JIFEN");
+        public final static Property Cunkuan = new Property(17, String.class, "cunkuan", false, "CUNKUAN");
     };
 
 
+    public UserInfoModelDao(DaoConfig config) {
+        super(config);
+    }
+    
     public UserInfoModelDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
     }
-    
+
     /** Creates the underlying database table. */
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
@@ -62,87 +87,87 @@ public class UserInfoModelDao extends AbstractDao<UserInfoModel, String> {
     protected void bindValues(SQLiteStatement stmt, UserInfoModel entity) {
         stmt.clearBindings();
         stmt.bindString(1, entity.getUid());
-
+ 
         String mail = entity.getMail();
         if (mail != null) {
             stmt.bindString(2, mail);
         }
-
+ 
         String sex = entity.getSex();
         if (sex != null) {
             stmt.bindString(3, sex);
         }
-
+ 
         String nickname = entity.getNickname();
         if (nickname != null) {
             stmt.bindString(4, nickname);
         }
-
+ 
         String headimg = entity.getHeadimg();
         if (headimg != null) {
             stmt.bindString(5, headimg);
         }
-
+ 
         String uname = entity.getUname();
         if (uname != null) {
             stmt.bindString(6, uname);
         }
-
+ 
         String dengji = entity.getDengji();
         if (dengji != null) {
             stmt.bindString(7, dengji);
         }
-
+ 
         String tel = entity.getTel();
         if (tel != null) {
             stmt.bindString(8, tel);
         }
-
+ 
         String upass = entity.getUpass();
         if (upass != null) {
             stmt.bindString(9, upass);
         }
-
+ 
         String city = entity.getCity();
         if (city != null) {
             stmt.bindString(10, city);
         }
-
+ 
         String unid = entity.getUnid();
         if (unid != null) {
             stmt.bindString(11, unid);
         }
-
+ 
         String area = entity.getArea();
         if (area != null) {
             stmt.bindString(12, area);
         }
-
+ 
         String refer = entity.getRefer();
         if (refer != null) {
             stmt.bindString(13, refer);
         }
-
+ 
         String address = entity.getAddress();
         if (address != null) {
             stmt.bindString(14, address);
         }
-
+ 
         String province = entity.getProvince();
         if (province != null) {
             stmt.bindString(15, province);
         }
-
+ 
         String openid = entity.getOpenid();
         if (openid != null) {
             stmt.bindString(16, openid);
         }
-
+ 
         String jifen = entity.getJifen();
         if (jifen != null) {
             stmt.bindString(17, jifen);
         }
-
+ 
         String cunkuan = entity.getCunkuan();
         if (cunkuan != null) {
             stmt.bindString(18, cunkuan);
@@ -153,7 +178,7 @@ public class UserInfoModelDao extends AbstractDao<UserInfoModel, String> {
     @Override
     public String readKey(Cursor cursor, int offset) {
         return cursor.getString(offset + 0);
-    }
+    }    
 
     /** @inheritdoc */
     @Override
@@ -180,7 +205,7 @@ public class UserInfoModelDao extends AbstractDao<UserInfoModel, String> {
         );
         return entity;
     }
-
+     
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, UserInfoModel entity, int offset) {
@@ -203,7 +228,7 @@ public class UserInfoModelDao extends AbstractDao<UserInfoModel, String> {
         entity.setJifen(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
         entity.setCunkuan(cursor.isNull(offset + 17) ? null : cursor.getString(offset + 17));
      }
-     
+    
     /** @inheritdoc */
     @Override
     protected String updateKeyAfterInsert(UserInfoModel entity, long rowId) {
@@ -219,36 +244,11 @@ public class UserInfoModelDao extends AbstractDao<UserInfoModel, String> {
             return null;
         }
     }
-    
+
     /** @inheritdoc */
-    @Override
+    @Override    
     protected boolean isEntityUpdateable() {
         return true;
-    }
-
-/**
-     * Properties of entity UserInfoModel.<br/>
-     * Can be used for QueryBuilder and for referencing column names.
-    */
-    public static class Properties {
-        public final static Property Uid = new Property(0, String.class, "uid", true, "UID");
-        public final static Property Mail = new Property(1, String.class, "mail", false, "MAIL");
-        public final static Property Sex = new Property(2, String.class, "sex", false, "SEX");
-        public final static Property Nickname = new Property(3, String.class, "nickname", false, "NICKNAME");
-        public final static Property Headimg = new Property(4, String.class, "headimg", false, "HEADIMG");
-        public final static Property Uname = new Property(5, String.class, "uname", false, "UNAME");
-        public final static Property Dengji = new Property(6, String.class, "dengji", false, "DENGJI");
-        public final static Property Tel = new Property(7, String.class, "tel", false, "TEL");
-        public final static Property Upass = new Property(8, String.class, "upass", false, "UPASS");
-        public final static Property City = new Property(9, String.class, "city", false, "CITY");
-        public final static Property Unid = new Property(10, String.class, "unid", false, "UNID");
-        public final static Property Area = new Property(11, String.class, "area", false, "AREA");
-        public final static Property Refer = new Property(12, String.class, "refer", false, "REFER");
-        public final static Property Address = new Property(13, String.class, "address", false, "ADDRESS");
-        public final static Property Province = new Property(14, String.class, "province", false, "PROVINCE");
-        public final static Property Openid = new Property(15, String.class, "openid", false, "OPENID");
-        public final static Property Jifen = new Property(16, String.class, "jifen", false, "JIFEN");
-        public final static Property Cunkuan = new Property(17, String.class, "cunkuan", false, "CUNKUAN");
     }
     
 }

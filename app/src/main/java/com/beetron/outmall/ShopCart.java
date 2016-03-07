@@ -73,7 +73,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
     private ShopCartResult shopcartResult;
     private ShopCartFragment shopCartAdapter;
     private Double currentAmount = 0.00;
-    private boolean isUpdate = false;
+    private ProgressHUD mProgressHUD;
 
     @Override
     protected void onCreateView(Bundle savedInstanceState) {
@@ -81,11 +81,9 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
         setContentView(R.layout.shop_cart_layout);
         initView();
         selectCache = new LinkedHashMap<>();
-//        try {
-//            reqShopcart(true);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        dataLocalList = new ArrayList<ProSummary>();
+        shopCartAdapter = new ShopCartFragment(ShopCart.this, dataLocalList);
+        lvShopcart.setAdapter(shopCartAdapter);
     }
 
     private void initData() {
@@ -102,13 +100,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
         } catch (Exception e) {
             e.printStackTrace();
         }
-        shopCartAdapter = new ShopCartFragment(ShopCart.this, dataLocalList);
-        lvShopcart.setAdapter(shopCartAdapter);
-    }
-
-
-
-    private void notifyShopCartChange() {
 
     }
 
@@ -121,59 +112,51 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
     public void reqShopcart(Boolean reqRemote) throws Exception {
 
         if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
-            if (reqRemote) {
-                String url = NetInterface.HOST + NetInterface.METHON_GET_SHOPCART;
-                PostEntity postEntity = new PostEntity();
-                postEntity.setToken(Constants.TOKEN_VALUE);
-                postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
-                postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
-                String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
-                }.getType());
-                JSONObject postJson = new JSONObject(postString);
-                JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject jsonObject) {
-                                DebugFlags.logD(TAG, jsonObject.toString());
-                                Gson gson = new Gson();
-                                ResultEntity<ShopCartResult> resultEntity = gson.fromJson(jsonObject.toString(),
-                                        new TypeToken<ResultEntity<ShopCartResult>>() {
-                                        }.getType());
-                                dataLocalList = new ArrayList<ProSummary>();
-                                shopcartResult = resultEntity.getResult();
-
-                                convertProSummary();
-                                DBHelper.getInstance(getApplicationContext()).saveShopLocal(dataLocalList);
-                                isUpdate = true;//状态更新为已更新内容
-                                initData();
-                            }
-                        }, new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        volleyError.printStackTrace();
-
-                    }
-                }) {
-                    @Override
-                    public Request<?> setRetryPolicy(RetryPolicy retryPolicy) {
-                        return super.setRetryPolicy(retryPolicy);
-                    }
-                };
-                NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
-            } else {
-                dataLocalList = DBHelper.getInstance(getApplicationContext()).getShopCartList();
-                for (int index = 0; index < dataLocalList.size(); index++) {
-                    selectCache.put(dataLocalList.get(index).getSid(), index);
-                }
-
-                try {
-                    updateAmount(FLAG_UPDATE_SELECT_ALL, true, FLAG_UPDATE_SELECT_ONE_KEY);//初始化总价，默认全部选择
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                shopCartAdapter = new ShopCartFragment(ShopCart.this, dataLocalList);
-                lvShopcart.setAdapter(shopCartAdapter);
+            if (isFirstReq) {
+                mProgressHUD = ProgressHUD.show(getActivity(), getResources().getString(R.string.prompt_progress_loading), true, false,
+                        null);
             }
+            String url = NetInterface.HOST + NetInterface.METHON_GET_SHOPCART;
+            PostEntity postEntity = new PostEntity();
+            postEntity.setToken(Constants.TOKEN_VALUE);
+            postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
+            postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
+            String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
+            }.getType());
+            JSONObject postJson = new JSONObject(postString);
+            JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject jsonObject) {
+                            DebugFlags.logD(TAG, jsonObject.toString());
+                            Gson gson = new Gson();
+                            ResultEntity<ShopCartResult> resultEntity = gson.fromJson(jsonObject.toString(),
+                                    new TypeToken<ResultEntity<ShopCartResult>>() {
+                                    }.getType());
+                            shopcartResult = resultEntity.getResult();
+                            convertProSummary();
+                            DBHelper.getInstance(getApplicationContext()).saveShopLocal(dataLocalList);
+//                                isUpdate = true;//状态更新为已更新内容
+                            initData();
+                            if (mProgressHUD != null) {
+                                mProgressHUD.dismiss();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    volleyError.printStackTrace();
+                    if (mProgressHUD != null) {
+                        mProgressHUD.dismiss();
+                    }
+                }
+            }) {
+                @Override
+                public Request<?> setRetryPolicy(RetryPolicy retryPolicy) {
+                    return super.setRetryPolicy(retryPolicy);
+                }
+            };
+            NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
         }
     }
 
@@ -181,6 +164,8 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
      * 将远程数据结构转换成本地数据库数据结构
      */
     private void convertProSummary() {
+
+        dataLocalList.clear();
         for (int index = 0; index < shopcartResult.getList().size(); index++) {
 
             ShopCartModel shopCartModel = shopcartResult.getList().get(index);
@@ -257,6 +242,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                         ProSummary proSummary = dataLocalList.get(entry.getValue());//获取列表中对应位置的对象
                         commitProList.add(proSummary);
                     }
+                    selectCache.clear();//清除选择状态
                     intentData.setProDetail(commitProList);
                     intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_MODEL, intentData);
                 } catch (Exception e) {
@@ -382,7 +368,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
     void updateAmount(String flag, Boolean status, int position) throws Exception {
 
 
-
         if (flag.equals(FLAG_UPDATE_SELECT_ALL)) {//点击了全选按钮
             if (status) {
                 currentAmount = 0.00;
@@ -429,6 +414,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
             checkSelectAll.setChecked(false);
         }
 
+        shopCartAdapter.notifyDataSetChanged();
         SpannableString spannableString = new SpannableString("总价：￥" + currentAmount);
         spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.home_page_general_red)),
                 3, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);//设置颜色
@@ -437,19 +423,15 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
         tvAmount.setText(spannableString);
     }
 
-    public List<ProSummary> getDataShopCart() {
-        return dataLocalList;
-    }
 
-
-    public void notifyDelete() throws Exception{
+    public void notifyDelete() throws Exception {
         if (generateDot().equals("")) {//没有选择内容
             Toast.makeText(getActivity(), getResources().getString(R.string.prompt_at_least_one), Toast.LENGTH_SHORT).show();
             return;
         }
         final CustomDialog.Builder builder = new CustomDialog.Builder(getActivity());
         builder.setTitle(R.string.prompt);
-        builder.setMessage(R.string.shop_cart_login_prompt);
+        builder.setMessage(R.string.prompt_shop_cart_product_delete);
         builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -509,8 +491,8 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                                 dataLocalList.removeAll(cacheList);
                                 selectCache.clear();//清空当前选择的内容
                                 updateAmount(FLAG_UPDATE_SELECT_ALL, false, FLAG_UPDATE_SELECT_ONE_KEY);
-                                shopCartAdapter.notifyDataSetChanged();
-                                ((MainActivity)getActivity()).notifyCountChange();
+
+                                ((MainActivity) getActivity()).notifyCountChange();
                                 //通知更新
                                 try {
                                     ((MainActivity) getActivity()).notifyCountChange();
@@ -541,7 +523,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
     }
 
 
-
     /**
      * 生成逗号分隔的字符串
      *
@@ -569,10 +550,16 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
         return sb.toString();
     }
 
+    boolean isFromBroadcast = false;
+    boolean isFirstReq = true;
+
     @Override
     public void shopCartDataChange() {
         try {
-            reqShopcart(true);
+            isFromBroadcast = true;
+            reqShopcart(false);
+            isFirstReq = false;
+            isFromBroadcast = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -581,12 +568,14 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
     @Override
     public void onResume() {
         super.onResume();
-        if (isUpdate) {
-            try {
-                reqShopcart(false);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        if (isFromBroadcast) {
+            return;
+        }
+        try {
+            reqShopcart(true);
+            isFirstReq = false;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

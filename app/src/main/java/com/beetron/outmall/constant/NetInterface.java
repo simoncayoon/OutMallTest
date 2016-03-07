@@ -49,6 +49,11 @@ public class NetInterface {
     public static final String METHON_GET_PRO_BY_CATEGORY = "?m=Home&c=App&a=good_list";
 
     /**
+     * 限时购接口
+     */
+    public static final String METHON_GET_PRO_BY_CATEGORY_LIMIT = "?m=home&c=app&a=gxgood_list";
+
+    /**
      * 获取商品详细信息
      */
     public static final String METHON_GET_PRO_BY_SID = "?m=home&c=app&a=goods";

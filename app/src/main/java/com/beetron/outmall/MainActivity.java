@@ -41,10 +41,12 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final String ACTION_STR = "com.chulai.mai.datachange";
     private static final int RESULT_LOGIN = 0x256;
+    public static final int RESULT_ADD_SHOPCART = 0x213;
     DrawerLayout drawer;
     private IndicatorViewPager mIndicatorViewPager;
     private SViewPager viewPager;
     private CusNaviView cusNaviView;
+    private ShopCartChangReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,16 +147,16 @@ public class MainActivity extends AppCompatActivity
             });
             builder.create().show();
         }
-//        else {
-//            //更新购物车菜单视图
-//            ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
-//                    instantiateItem(mIndicatorViewPager.getViewPager(), 2);
-//            try {
-//                shopCart.reqShopcart(false);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
+        else {
+            //更新购物车菜单视图
+            ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                    instantiateItem(mIndicatorViewPager.getViewPager(), 2);
+            try {
+                shopCart.reqShopcart(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -224,9 +226,13 @@ public class MainActivity extends AppCompatActivity
                     instantiateItem(mIndicatorViewPager.getViewPager(), 0);
             homeFragment.updateMenuItem();
 
-            ShopCart shopcart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
-                    instantiateItem(mIndicatorViewPager.getViewPager(), 2);
-            shopcart.reqShopcart(false);
+            ShopLimit shopLimit = (ShopLimit) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                    instantiateItem(mIndicatorViewPager.getViewPager(), 1);
+            shopLimit.updateMenuItem();
+
+//            ShopCart shopcart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
+//                    instantiateItem(mIndicatorViewPager.getViewPager(), 2);
+//            shopcart.reqShopcart(false);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -234,10 +240,28 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void addShopCart(int positon) throws Exception {
-        HomeFragment homeFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
-                instantiateItem(mIndicatorViewPager.getViewPager(), 0);
-        homeFragment.addShopCart(positon);
+    public void addShopCart(int positon, Boolean isLimit) throws Exception {
+
+        if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
+            if (isLimit) {
+
+                ShopLimit shopLimit = (ShopLimit) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                        instantiateItem(mIndicatorViewPager.getViewPager(), 1);
+                shopLimit.addShopCart(positon);
+
+            } else {
+
+                HomeFragment homeFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                        instantiateItem(mIndicatorViewPager.getViewPager(), 0);
+                homeFragment.addShopCart(positon);
+            }
+
+        } else {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.putExtra(LoginActivity.FLAG_NAVI_ROOT, getResources().getString(R.string.framework_navi_home_page));
+            startActivityForResult(intent, RESULT_ADD_SHOPCART);
+        }
+
     }
 
     @Override
@@ -256,7 +280,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 return ;
             }
-            if (requestCode == HomeFragment.RESULT_ADD_SHOPCART){
+            if (requestCode == RESULT_ADD_SHOPCART){
                 DebugFlags.logD(TAG, "点击添加商品购物车登陆返回");
             }
 
@@ -330,7 +354,7 @@ public class MainActivity extends AppCompatActivity
                 case 2:
                     fragment = new ShopCart();
                     try {
-                        ShopCartChangReceiver receiver;
+
                         receiver = new ShopCartChangReceiver((ShopCartChangReceiver.ShopCartChange)fragment);
                         IntentFilter intentFilter = new IntentFilter(ACTION_STR);
                         registerReceiver(receiver, intentFilter);
@@ -351,5 +375,11 @@ public class MainActivity extends AppCompatActivity
             fragment.setArguments(bundle);
             return fragment;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
     }
 }

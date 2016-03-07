@@ -151,9 +151,18 @@ public class UserInfo extends Activity implements View.OnClickListener {
                                 userInfoSummary.setHeadimg(jsonObject.getString("headimg"));
                                 dbHelper.saveUserInfo(userInfoSummary);
                                 Toast.makeText(UserInfo.this, "保存成功！", Toast.LENGTH_SHORT).show();
-//                                Intent mIntent = new Intent();
-//                                setResult(RESULT_OK, mIntent);
-//                                finish();
+//
+                                userInfoSummary.setArea(tvArea.getText().toString());
+                                userInfoSummary.setAddress(tvStreet.getText().toString());
+                                userInfoSummary.setCity(tvCity.getText().toString());
+                                userInfoSummary.setProvince(tvProvince.getText().toString());
+                                userInfoSummary.setNickname(tvNickName.getText().toString());
+                                userInfoSummary.setMail(tvEmail.getText().toString());
+                                if (tvGender.getText().equals("男")) {
+                                    userInfoSummary.setSex("1");
+                                } else {
+                                    userInfoSummary.setSex("0");
+                                }
                             } else {
                                 Toast.makeText(UserInfo.this, "提交失败！", Toast.LENGTH_SHORT).show();
                             }
@@ -362,36 +371,25 @@ public class UserInfo extends Activity implements View.OnClickListener {
                     String backSring = data.getStringExtra(UserInfoFix.RETURN_BACK_STRING_KEY);
                     if (requestCode == UserInfoFix.INTENT_FLAG_NICKNAME_REQ) {
                         tvNickName.setText(backSring);
-                        userInfoSummary.setNickname(backSring);
                     }
                     if (requestCode == UserInfoFix.INTENT_FLAG_EMAIL_REQ) {
                         TempDataManager.getInstance(UserInfo.this).setUserSig(backSring);
                         tvEmail.setText(backSring);
-                        userInfoSummary.setMail(backSring);
                     }
                     if (requestCode == UserInfoFix.INTENT_FLAG_GENDER_REQ) {
                         tvGender.setText(backSring);
-                        if (backSring.equals("男")) {
-                            userInfoSummary.setSex("1");
-                        } else {
-                            userInfoSummary.setSex("0");
-                        }
                     }
                     if (requestCode == UserInfoFix.INTENT_FLAG_PROVINCE_REQ) {
                         tvProvince.setText(backSring);
-                        userInfoSummary.setProvince(backSring);
                     }
                     if (requestCode == UserInfoFix.INTENT_FLAG_CITY_REQ) {
                         tvCity.setText(backSring);
-                        userInfoSummary.setCity(backSring);
                     }
                     if (requestCode == UserInfoFix.INTENT_FLAG_AREA_REQ) {
                         tvArea.setText(backSring);
-                        userInfoSummary.setArea(backSring);
                     }
                     if (requestCode == UserInfoFix.INTENT_FLAG_STREET_REQ) {
                         tvStreet.setText(backSring);
-                        userInfoSummary.setAddress(backSring);
                     }
                 }
             }

@@ -21,6 +21,8 @@ import android.widget.FrameLayout;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
+import com.beetron.outmall.R;
+
 /**
  * Created by Eteng with IntelliJ IDEA.
  * Author: DKY email: losemanshoe@gmail.com
@@ -110,15 +112,18 @@ public class BadgeView extends TextView {
 
         // apply defaults
         badgePosition = DEFAULT_POSITION;
-        badgeMarginH = dipToPixels(DEFAULT_MARGIN_DIP);
+        badgeMarginH = dipToPixels(100);
         badgeMarginV = badgeMarginH;
         badgeColor = DEFAULT_BADGE_COLOR;
 
         setTypeface(Typeface.DEFAULT_BOLD);
         int paddingPixels = dipToPixels(DEFAULT_LR_PADDING_DIP);
-        setPadding(paddingPixels, 0, paddingPixels, 0);
+//        setPadding(paddingPixels, paddingPixels, paddingPixels, paddingPixels);
         setTextColor(DEFAULT_TEXT_COLOR);
-
+        this.setBackground(getResources().getDrawable(R.drawable.shape_dot_bg));
+        this.setHeight((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, getResources().getDisplayMetrics()));
+        this.setWidth((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, getResources().getDisplayMetrics()));
+        this.setGravity(Gravity.CENTER);
         fadeIn = new AlphaAnimation(0, 1);
         fadeIn.setInterpolator(new DecelerateInterpolator());
         fadeIn.setDuration(200);
@@ -142,6 +147,8 @@ public class BadgeView extends TextView {
         ViewGroup.LayoutParams lp = target.getLayoutParams();
         ViewParent parent = target.getParent();
         FrameLayout container = new FrameLayout(context);
+        container.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT));
 
         if (target instanceof TabWidget) {
 
@@ -164,11 +171,17 @@ public class BadgeView extends TextView {
             group.removeView(target);
             group.addView(container, index, lp);
 
+
+            FrameLayout.LayoutParams contentLP = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT);
+            int padding = dipToPixels(5);
+//            contentLP.setMargins(0, padding, padding, 0);
+            contentLP.gravity = Gravity.CENTER;
+            target.setLayoutParams(contentLP);
             container.addView(target);
 
             this.setVisibility(View.GONE);
             container.addView(this);
-
             group.invalidate();
 
         }
@@ -257,15 +270,6 @@ public class BadgeView extends TextView {
                 badgeBg = getDefaultBackground();
             }
             setBackground(badgeBg);
-
-//            Drawable promptDraw = getResources().getDrawable(R.drawable.direct_prompt_icon);
-//            promptDraw.setBounds(new Rect(DisplayMetrics.dip2px(
-//                    context, 5), DisplayMetrics.dip2px(
-//                    context, 5), DisplayMetrics.dip2px(
-//                    context, 5), DisplayMetrics.dip2px(
-//                    context, 5)));
-//            setBackgroundDrawable(promptDraw);
-//            setBackground(promptDraw);
         }
         applyLayoutParams();
 

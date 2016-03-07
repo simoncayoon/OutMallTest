@@ -363,7 +363,9 @@ public class OrderFixActivity extends Activity {
                                 resultOrder = gson.fromJson(jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD).getString("order"),
                                         new TypeToken<OrderPostModel>() {
                                         }.getType());
-                                DBHelper.getInstance(getApplicationContext()).clearShopCart();//清空本地购物车
+                                for (ProSummary selectItem : orderInfoModel.getProDetail()) {
+                                    DBHelper.getInstance(getApplicationContext()).deleteShopById(selectItem.getSid());//清空本地购物车
+                                }
                                 Intent intent = new Intent(OrderFixActivity.this, OrderDetailActivity.class);
                                 intent.putExtra(OrderDetailActivity.INTENT_KEY_ADDR_INFO, addrInfo);
                                 intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_DATA, resultOrder);
