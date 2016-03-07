@@ -181,4 +181,8 @@ public class DBHelper {
     public void clearShopCart() {
         proSummaryDao.deleteAll();
     }
+
+    public void clearUserInfo() {
+        userInfoModelDao.deleteAll();
+    }
 }

@@ -196,13 +196,29 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra("title","社区");
             intent.putExtra("url","http://chulai-mai.com");
         } else if (id == R.id.nav_manage) {
-            finish();
+            try {
+                clearLocalData();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            drawer.openDrawer(GravityCompat.START);
+            return true;
         }
 
         startActivity(intent);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void clearLocalData() throws Exception{
+        TempDataManager.getInstance(getApplicationContext()).clearCurrentTemp();//清除sharepreference缓存数据
+
+        DBHelper.getInstance(getApplicationContext()).clearShopCart();
+
+        DBHelper.getInstance(getApplicationContext()).clearUserInfo();
+
+        notifyCountChange();
     }
 
     @Override
