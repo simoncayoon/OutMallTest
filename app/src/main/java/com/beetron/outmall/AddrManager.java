@@ -88,7 +88,8 @@ public class AddrManager extends Activity implements View.OnClickListener {
 
         initHeader();
         llAddrList = (ListView) findViewById(R.id.shop_cart_detail_list);
-
+        addrAdapter = new AddrAdapter(AddrManager.this, addrList);
+        llAddrList.setAdapter(addrAdapter);
         llEmpty = (LinearLayout) findViewById(R.id.addr_manage_empty_layout);
         btnToadd = (Button) findViewById(R.id.btn_add_addr_info);
         btnToadd.setOnClickListener(new View.OnClickListener() {
@@ -142,8 +143,9 @@ public class AddrManager extends Activity implements View.OnClickListener {
                                     new TypeToken<ResultEntity<PageEntity<AddrInfoModel>>>() {
                                     }.getType());
                             if (resultEntity.isSuccess()) {
-                                addrList = resultEntity.getResult().getList();
-                                addrAdapter = new AddrAdapter(AddrManager.this, addrList);
+                                addrList.clear();
+                                addrList.addAll(resultEntity.getResult().getList());
+//                                addrList = resultEntity.getResult().getList();
                                 initData();
                             } else {
                                 try {
@@ -169,11 +171,9 @@ public class AddrManager extends Activity implements View.OnClickListener {
 
     private void initData() {
         addrAdapter.notifyDataSetChanged();
-        if (addrList.size() > 0) {
-            llAddrList.setAdapter(addrAdapter);
-            if (llEmpty.isShown()) {
-                llEmpty.setVisibility(View.GONE);
-            }
+        if (addrAdapter.getCount() > 0) {
+            llAddrList.setVisibility(View.VISIBLE);
+            llEmpty.setVisibility(View.GONE);
         } else {
             llEmpty.setVisibility(View.VISIBLE);
         }
