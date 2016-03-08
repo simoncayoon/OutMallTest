@@ -40,6 +40,7 @@ import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
 import com.beetron.outmall.utils.TempDataManager;
+import com.beetron.outmall.wxapi.WXPayEntryActivity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -94,7 +95,7 @@ public class OrderFixActivity extends Activity {
 
     private void initData() {
         try {
-            orderInfoModel = (OrderInfoModel) getIntent().getSerializableExtra(OrderDetailActivity.INTENT_KEY_ORDER_MODEL);
+            orderInfoModel = (OrderInfoModel) getIntent().getSerializableExtra(WXPayEntryActivity.INTENT_KEY_ORDER_MODEL);
             orderPostModel.setPayment(FLAG_PAYMENT_ONLINE);
             proScanner.setAdapter(new Indicator.IndicatorAdapter() {
                 @Override
@@ -366,10 +367,10 @@ public class OrderFixActivity extends Activity {
                                 for (ProSummary selectItem : orderInfoModel.getProDetail()) {
                                     DBHelper.getInstance(getApplicationContext()).deleteShopById(selectItem.getSid());//清空本地购物车
                                 }
-                                Intent intent = new Intent(OrderFixActivity.this, OrderDetailActivity.class);
-                                intent.putExtra(OrderDetailActivity.INTENT_KEY_ADDR_INFO, addrInfo);
-                                intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_DATA, resultOrder);
-                                intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_MODEL, orderInfoModel);
+                                Intent intent = new Intent(OrderFixActivity.this, WXPayEntryActivity.class);
+                                intent.putExtra(WXPayEntryActivity.INTENT_KEY_ADDR_INFO, addrInfo);
+                                intent.putExtra(WXPayEntryActivity.INTENT_KEY_ORDER_DATA, resultOrder);
+                                intent.putExtra(WXPayEntryActivity.INTENT_KEY_ORDER_MODEL, orderInfoModel);
                                 startActivity(intent);
                             } else {
                                 Toast.makeText(OrderFixActivity.this, getResources().getString(R.string.prompt_order_commit_faild),

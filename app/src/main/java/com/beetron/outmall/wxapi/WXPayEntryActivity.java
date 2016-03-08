@@ -1,7 +1,9 @@
-package com.beetron.outmall;
+package com.beetron.outmall.wxapi;
+
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -20,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
+import com.beetron.outmall.R;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
@@ -43,25 +46,25 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.tencent.mm.sdk.constants.Build;
+import com.tencent.mm.sdk.constants.ConstantsAPI;
+import com.tencent.mm.sdk.modelbase.BaseReq;
+import com.tencent.mm.sdk.modelbase.BaseResp;
 import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by DKY with IntelliJ IDEA.
- * Author: DKY email: losemanshoe@gmail.com.
- * Date: 2016/2/26.
- * Time: 16:59.
- */
-public class OrderDetailActivity extends Activity {
+public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
+
+    private IWXAPI api;
 
     public static final String INTENT_KEY_ORDER_MODEL = "INTENT_KEY_ORDER_MODEL";
     public static final String INTENT_KEY_ORDER_DATA = "INTENT_KEY_ORDER_DATA";
     public static final String INTENT_KEY_ADDR_INFO = "INTENT_KEY_ADDR_INFO";
-    private static final String TAG = OrderDetailActivity.class.getSimpleName();
+    private static final String TAG = WXPayEntryActivity.class.getSimpleName();
     public static final String INTENT_KEY_BACK_TITLE_FLAG = "INTENT_KEY_FORM_FLAG";
     private static int MAX_ITEM_LINES = 3;
 
@@ -72,20 +75,85 @@ public class OrderDetailActivity extends Activity {
     private ListView lvProScan;
     private Button btnCancel, btnPayment;
     private LinearLayout llBtnZone;
-
     private OrderPostModel orderInfo;
     private AddrInfoModel addrInfo;
     private OrderInfoModel orderModel;
     private CusNaviView cusNaviView;
+    private ProgressHUD mProgressHUD;
+    private String orderId;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_detail_layout);
+
+        api = WXAPIFactory.createWXAPI(this, Constants.APP_ID);
+        api.handleIntent(getIntent(), this);
 
         initView();
 
         initData();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        api.handleIntent(intent, this);
+    }
+
+    @Override
+    public void onReq(BaseReq req) {
+    }
+
+    @Override
+    public void onResp(BaseResp resp) {
+//        Log.d(TAG, "onPayFinish, errCode = " + resp.errCode);
+
+        if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setTitle(R.string.app_tip);
+//            builder.setMessage(getString(R.string.pay_result_callback_msg, String.valueOf(resp.errCode)));
+//            builder.show();
+            switch (resp.errCode) {
+//                0	成功	展示成功页面
+//                -1	错误	可能的原因：签名错误、未注册APPID、项目设置APPID不正确、注册的APPID与设置的不匹配、其他异常等。
+//                -2	用户取消	无需处理。发生场景：用户不支付了，点击取消，返回APP。
+                case 0:
+                    //Toast.makeText(this, "支付成功！", Toast.LENGTH_LONG).show();
+                    upPayState(orderId);
+                    break;
+                case -1:
+                    Toast.makeText(this, "发生错误！", Toast.LENGTH_LONG).show();
+                    break;
+                case -2:
+                    Toast.makeText(this, "取消支付！", Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void cancelOrder(final String msg) {
+        final CustomDialog.Builder builder = new CustomDialog.Builder(this);
+        builder.setTitle(R.string.prompt);
+        builder.setMessage(msg);
+        builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     private void initData() {
@@ -115,7 +183,7 @@ public class OrderDetailActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                final CustomDialog.Builder builder = new CustomDialog.Builder(OrderDetailActivity.this);
+                final CustomDialog.Builder builder = new CustomDialog.Builder(WXPayEntryActivity.this);
                 builder.setTitle(R.string.prompt);
                 builder.setMessage(R.string.prompt_order_delete_confirm);
                 builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
@@ -147,7 +215,7 @@ public class OrderDetailActivity extends Activity {
         btnPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(OrderDetailActivity.this, "正在开发中...", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(WXPayEntryActivity.this, "正在开发中...", Toast.LENGTH_SHORT).show();
                 try {
                     payOrder(orderInfo.getId());
                 } catch (Exception e) {
@@ -213,7 +281,6 @@ public class OrderDetailActivity extends Activity {
     }
 
     void orderCancel() throws Exception {
-        final ProgressHUD mProgressHUD;
         mProgressHUD = ProgressHUD.show(this, getResources().getString(R.string.prompt_progress_loading), true, false,
                 null);
         String url = NetInterface.HOST + NetInterface.METHON_ORDER_CANCEL;
@@ -239,14 +306,14 @@ public class OrderDetailActivity extends Activity {
                         mProgressHUD.dismiss();
                         if (resultEntity.isSuccess()) {
                             try {
-                                Toast.makeText(OrderDetailActivity.this, getResources().getString(R.string.prompt_order_cancel),
+                                Toast.makeText(WXPayEntryActivity.this, getResources().getString(R.string.prompt_order_cancel),
                                         Toast.LENGTH_SHORT).show();
                                 finish();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         } else {
-                            Toast.makeText(OrderDetailActivity.this, getResources().getString(R.string.prompt_order_cancel_failed),
+                            Toast.makeText(WXPayEntryActivity.this, getResources().getString(R.string.prompt_order_cancel_failed),
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -291,7 +358,7 @@ public class OrderDetailActivity extends Activity {
             viewHolder = (ViewHolder) convertView.getTag();
             ProSummary shopCartModel = orderModel.getProDetail().get(position);
             viewHolder.proImg.setImageUrl(shopCartModel.getImg(),
-                    NetController.getInstance(OrderDetailActivity.this).getImageLoader());
+                    NetController.getInstance(WXPayEntryActivity.this).getImageLoader());
             viewHolder.proName.setText(shopCartModel.getTitle());
             viewHolder.proPrice.setText("￥ " + shopCartModel.getPrice2());
             viewHolder.proCount.setText("x " + shopCartModel.getCount());
@@ -305,20 +372,21 @@ public class OrderDetailActivity extends Activity {
     }
 
     public String payOrder(final String orderID) {
-        final ProgressHUD mProgressHUD = ProgressHUD.show(this, "正在处理...", true, false,
+        orderId = orderID;
+        mProgressHUD = ProgressHUD.show(this, "正在处理...", true, false,
                 null);
         PayHelper payHelper = new PayHelper(new PayHelper.PayListenner() {
             @Override
             public void payInfo(int status, PayInfoModel payInfoModel) {
                 mProgressHUD.dismiss();
                 if (status != 1) {
-                    Toast.makeText(OrderDetailActivity.this, "生成订单失败！！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WXPayEntryActivity.this, "生成订单失败！！", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
-                        final IWXAPI msgApi = WXAPIFactory.createWXAPI(OrderDetailActivity.this, null);
+                        final IWXAPI msgApi = WXAPIFactory.createWXAPI(WXPayEntryActivity.this, null);
                         // 将该app注册到微信
                         msgApi.registerApp(payInfoModel.getAppid());
-                        IWXAPI api = WXAPIFactory.createWXAPI(OrderDetailActivity.this, payInfoModel.getAppid());
+                        IWXAPI api = WXAPIFactory.createWXAPI(WXPayEntryActivity.this, payInfoModel.getAppid());
 
                         boolean isPaySupported = api.getWXAppSupportAPI() >= Build.PAY_SUPPORTED_SDK_INT;
                         if (isPaySupported) {
@@ -332,29 +400,52 @@ public class OrderDetailActivity extends Activity {
                             req.packageValue = payInfoModel.getPackageName();
                             req.sign = payInfoModel.getSign();
                             req.extData = orderID; // optional
-                            Toast.makeText(OrderDetailActivity.this, "正常调起支付", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(WXPayEntryActivity.this, "正常调起支付", Toast.LENGTH_SHORT).show();
                             // 在支付之前，如果应用没有注册到微信，应该先调用IWXMsg.registerApp将应用注册到微信
                             if (api.sendReq(req)) {
-                                Toast.makeText(OrderDetailActivity.this, "请求成功！", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(WXPayEntryActivity.this, "请求成功！", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(OrderDetailActivity.this, "请求失败！", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(WXPayEntryActivity.this, "请求失败！", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(OrderDetailActivity.this, "该微信版本不支持微信支付！", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(WXPayEntryActivity.this, "该微信版本不支持微信支付！", Toast.LENGTH_SHORT).show();
                         }
                     } catch (Exception e) {
                         Log.e("PAY_GET", "异常：" + e.getMessage());
-                        Toast.makeText(OrderDetailActivity.this, "异常：" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(WXPayEntryActivity.this, "异常：" + e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
             }
         });
         try {
-            payHelper.getPayInfo(OrderDetailActivity.this, orderID);
+            payHelper.getPayInfo(WXPayEntryActivity.this, orderID);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void upPayState(String orderId) {
+        mProgressHUD = ProgressHUD.show(this, "订单处理中...", true, false,
+                null);
+        PayHelper payHelper = new PayHelper(new PayHelper.PayListenner() {
+            @Override
+            public void payInfo(int status, PayInfoModel payInfoModel) {
+                mProgressHUD.dismiss();
+                ;
+                if (status == 1) {
+                    cancelOrder("支付成功！");
+                } else {
+                    Toast.makeText(WXPayEntryActivity.this, "更新订单状态失败！请联系管理员！", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        try {
+            //更新订单状态
+            payHelper.upPayInfo(WXPayEntryActivity.this, orderId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

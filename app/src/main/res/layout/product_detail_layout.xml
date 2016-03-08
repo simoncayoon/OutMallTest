@@ -20,7 +20,7 @@
 
         <include
             android:id="@+id/product_detail_top_banner"
-            layout="@layout/general_banner_layout"
+            layout="@layout/pro_detail_top_banner_layout"
             android:layout_width="match_parent"
             android:layout_height="180dp" />
 
@@ -118,10 +118,12 @@
                 android:layout_height="@dimen/pro_detail_tab_height"
                 android:background="@android:color/white"/>
 
-            <WebView
-                android:id="@+id/pro_detail_descript"
+            <android.support.v4.view.ViewPager
+                android:id="@+id/svp_pro_detal_web_content"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:background="@android:color/white" />
+
         </LinearLayout>
     </LinearLayout>
 

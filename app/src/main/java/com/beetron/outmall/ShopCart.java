@@ -39,6 +39,7 @@ import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
 import com.beetron.outmall.utils.ShopCartChangReceiver;
 import com.beetron.outmall.utils.TempDataManager;
+import com.beetron.outmall.wxapi.WXPayEntryActivity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -244,7 +245,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                     }
                     selectCache.clear();//清除选择状态
                     intentData.setProDetail(commitProList);
-                    intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_MODEL, intentData);
+                    intent.putExtra(WXPayEntryActivity.INTENT_KEY_ORDER_MODEL, intentData);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

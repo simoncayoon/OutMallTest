@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
  */
 public class Constants {
 
+    public static final String APP_ID = "wx3eb102aff53e1896";
     public static final String TOKEN_VALUE = "71583E074D967903000B5618E4693918";
     public static final String POST_UID_TEST = "774";
     public static final String SP_GENERAL_PROFILE_NAME = "sp_chulai_mai";

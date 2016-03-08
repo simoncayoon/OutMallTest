@@ -23,13 +23,13 @@ public class CustomDialog extends Dialog {
 	}
 
 	public static class Builder {
-		private Context context; //�����Ķ���
-		private String title; //�Ի������
-		private String message; //�Ի�������
-		private String confirm_btnText; //��ť��ơ�ȷ����
-		private String cancel_btnText; //��ť��ơ�ȡ��
-		private View contentView; //�Ի����м���ص�����ֽ���
-		/*��ť��ͦ�¼�*/
+		private Context context; //上下文
+		private String title; //提示语
+		private String message; //提示内容
+		private String confirm_btnText; //确认文字
+		private String cancel_btnText; //取消文字
+		private View contentView; //内容视图
+		/* 点击事件 */
 		private OnClickListener confirm_btnClickListener;
 		private OnClickListener cancel_btnClickListener;
 
@@ -193,16 +193,15 @@ public class CustomDialog extends Dialog {
 			} else if (contentView != null) {
 				// if no message set
 				// add the contentView to the dialog body
-				((LinearLayout) layout.findViewById(R.id.message))
-						.removeAllViews();
-				((LinearLayout) layout.findViewById(R.id.message)).addView(
-						contentView, new LayoutParams(
-								LayoutParams.WRAP_CONTENT,
-								LayoutParams.WRAP_CONTENT));
+//				((LinearLayout) layout.findViewById(R.id.message))
+//						.removeAllViews();
+//				((LinearLayout) layout.findViewById(R.id.message)).addView(
+//						contentView, new LayoutParams(
+//								LayoutParams.WRAP_CONTENT,
+//								LayoutParams.WRAP_CONTENT));
 			}
 			dialog.setContentView(layout);
 			return dialog;
 		}
-
 	}
 }

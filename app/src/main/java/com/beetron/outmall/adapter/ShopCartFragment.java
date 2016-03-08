@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class ShopCartFragment extends BaseAdapter {
 
-    private static final String TAG = ShopCartAdapter.class.getSimpleName();
+    private static final String TAG = ShopCartFragment.class.getSimpleName();
     private Context mContext;
     private List<ProSummary> dataShopcart;
     private LayoutInflater inflater;

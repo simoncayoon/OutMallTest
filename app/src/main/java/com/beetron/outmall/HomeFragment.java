@@ -75,6 +75,7 @@ public class HomeFragment extends BaseFragment {
     private IndicatorViewPager imageScanner;
     private Indicator filterIndicator;
     private PullToRefreshListView llProList;
+    private ListView lvProContent;
     private LayoutInflater inflater;
     //滚动图片
     private View scrollView;
@@ -111,6 +112,8 @@ public class HomeFragment extends BaseFragment {
         fidCache = new ArrayList<String>();
         proAdapter = new ProSummaryAdapter(getActivity(), proList);
         llProList.getRefreshableView().setAdapter(proAdapter);
+
+        menuAdapter = new CategoryMenuAdapter(getActivity(), categories);
         try {
             getMenu();
             getImageScan();
@@ -332,12 +335,17 @@ public class HomeFragment extends BaseFragment {
 
     void initLvRefresh() {
         llProList = (PullToRefreshListView) findViewById(R.id.product_pull_refresh_list);
-        llProList.getRefreshableView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvProContent = llProList.getRefreshableView();
+        lvProContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent toDetailIntent = new Intent(getActivity(), ProductDetail.class);
-                toDetailIntent.putExtra(ProductDetail.KEY_PRODUCT_ID, proList.get(position).getSid());
-                startActivity(toDetailIntent);
+                try {
+                    toDetailIntent.putExtra(ProductDetail.KEY_PRODUCT_ID, proList.get(position - 2).getSid());
+                    startActivity(toDetailIntent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         llProList.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
@@ -664,4 +672,10 @@ public class HomeFragment extends BaseFragment {
             return imgList.size();
         }
     };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        menuAdapter.notifyDataSetChanged();
+    }
 }

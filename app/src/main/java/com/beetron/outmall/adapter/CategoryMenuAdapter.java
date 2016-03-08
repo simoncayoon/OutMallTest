@@ -64,7 +64,7 @@ public class CategoryMenuAdapter extends BaseAdapter {
         viewHolder.menuTitle.setText(menuItem.getName());
         viewHolder.menuTitle.setSelected(menuItem.isSelected());
         try {
-            viewHolder.menuTitle.setBadge(BadgeView.POSITION_TOP_LEFT, menuItem.getCount(), 6, 3);
+//            viewHolder.menuTitle.setBadge(BadgeView.POSITION_TOP_LEFT, menuItem.getCount(), 6, 3);
         } catch (Exception e) {
             e.printStackTrace();
         }

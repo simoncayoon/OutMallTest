@@ -53,11 +53,6 @@ public class TempDataManager {
         mEditor.commit();
     }
 
-    public String getUserSig() {
-        return sp.getString(SP_USER_SIGNATURE, "添加签名，展示您的个性！");
-    }
-
-
     public void setUserSig(String backSring) {
         mEditor.putString(SP_USER_SIGNATURE, backSring);
     }

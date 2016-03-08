@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OutMall</string>
+    <string name="app_name">出来mai</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -131,4 +131,12 @@
     <string name="prompt_delete_succeed">删除成功</string>
     <string name="prompt_order_delete_confirm">确定要取消此订单吗？</string>
     <string name="prompt_the_last_page">没有更多的数据了</string>
+    <string name="pro_detail_tab_tuwen_info">图文详情</string>
+
+    <string name="errcode_success">发送成功</string>
+    <string name="errcode_cancel">发送取消</string>
+    <string name="errcode_deny">发送被拒绝</string>
+    <string name="errcode_unknown">发送返回</string>
+    <string name="launch_from_wx">Launch From Weixin</string>
+
 </resources>

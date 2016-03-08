@@ -60,7 +60,48 @@ public class PayHelper {
                                 payInfoModel.setNoncestr(object.getString("noncestr"));
                                 payInfoModel.setTimestamp(object.getString("timestamp"));
                                 payInfoModel.setSign(object.getString("sign"));
-                                listenner.payInfo(0, payInfoModel);
+                                listenner.payInfo(1, payInfoModel);
+                            } else {
+                                listenner.payInfo(0, null);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                listenner.payInfo(0, null);
+            }
+        });
+        NetController.getInstance(c).addToRequestQueue(getCategoryReq, TAG);
+    }
+
+    /***
+     * 获取微信支付接口信息
+     * @param c
+     * @param orderid
+     * @throws JSONException
+     */
+    public void upPayInfo(Context c,String orderid) throws JSONException {
+
+        String url = NetInterface.HOST + NetInterface.METHON_WEIXIN_PAY_NOTICE;
+        PayRequestModel postEntity = new PayRequestModel();
+        postEntity.setToken(Constants.TOKEN_VALUE);
+        postEntity.setOrderid(orderid);
+
+        String postString = new Gson().toJson(postEntity, new TypeToken<PayRequestModel>() {
+        }.getType());
+        JSONObject postJson = new JSONObject(postString);
+        JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        DebugFlags.logD(TAG, jsonObject.toString());
+                        try {
+                            if (jsonObject.getString("isSuccess").equals("1")) {
+                                listenner.payInfo(1, null);
                             } else {
                                 listenner.payInfo(0, null);
                             }

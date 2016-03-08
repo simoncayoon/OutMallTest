@@ -1,12 +1,13 @@
 package com.beetron.outmall;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -17,7 +18,6 @@ import android.view.animation.AnimationSet;
 import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
-import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
@@ -60,21 +60,20 @@ import org.json.JSONObject;
  * Date: 2016/2/15.
  * Time: 12:47.
  */
-public class ProductDetail extends Activity {
+public class ProductDetail extends FragmentActivity {
 
     public static final String KEY_PRODUCT_ID = "KEY_PRODUCT_ID";
     private static final String TAG = ProductDetail.class.getSimpleName();
-    private final String HTML_ENCODING = "UTF-8";
-    private final String HTML_MIME_TYPE = "text/html";
     private CusNaviView navigationView;
     private IndicatorViewPager bannerViewPager;
     private ScrollIndicatorView descTab;
     private ProDetail proDetail;
     private TextView tvTitle, tvSalePrice, tvPrimaryPrice, tvSalesVolume;
-    private WebView tvProDesc;
+    //    private WebView tvProDesc;
     private CheckBox collectBox;
     private Button btnAddShopCart, btnBuyImmediately;
     private int inShopCart = 0;
+    private IndicatorViewPager proWebView;
 
     // 动画时间
     private int AnimationDuration = 1000;
@@ -103,52 +102,11 @@ public class ProductDetail extends Activity {
         }
     };
 
-    /**
-     * 幻灯片适配
-     */
-    private IndicatorViewPager.IndicatorPagerAdapter imgAdapter = new IndicatorViewPager.IndicatorViewPagerAdapter() {
-
-        @Override
-        public View getViewForTab(int position, View convertView, ViewGroup container) {
-            if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.image_scan_tab_guide, container, false);
-            }
-            return convertView;
-        }
-
-        @Override
-        public View getViewForPage(int position, View convertView, ViewGroup container) {
-            if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.home_page_image_scan_content, container, false);
-                convertView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            }
-            try {
-                ((NetworkImageView) convertView).setImageUrl(proDetail.getImg().get(position).getPic(), NetController.getInstance(ProductDetail.this).getImageLoader());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return convertView;
-        }
-
-        @Override
-        public int getCount() {
-            try {
-                return proDetail.getImg().size();
-            } catch (Exception e) {
-                return 0;
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.product_detail_layout);
-        try {
-            inShopCart = DBHelper.getInstance(this).getShopCartCount();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+
         initView();
         try {
             requestProDetail();
@@ -163,14 +121,44 @@ public class ProductDetail extends Activity {
         tvPrimaryPrice.setText("原价 ￥" + proDetail.getPrice1());
         tvSalesVolume.setText("已销" + proDetail.getXiaoliang() + " 笔");
 
-        try {
-            final String miaoshu = proDetail.getMiaoshu();
-            tvProDesc.loadDataWithBaseURL("file://", miaoshu, HTML_MIME_TYPE, HTML_ENCODING, "about:blank");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         bannerViewPager.setAdapter(imgAdapter);
+
+
+        final String[] tabTitle = new String[]{getResources().getString(R.string.pro_detail_tab_pro_info),
+                getResources().getString(R.string.pro_detail_tab_tuwen_info)};
+
+        proWebView.setAdapter(new IndicatorViewPager.IndicatorFragmentPagerAdapter(getSupportFragmentManager()) {
+            @Override
+            public int getCount() {
+                return tabTitle.length;
+            }
+
+            @Override
+            public View getViewForTab(int position, View convertView, ViewGroup container) {
+                if (convertView == null) {
+                    convertView = getLayoutInflater().inflate(R.layout.condition_filter_tab_layout, container, false);
+                }
+                TextView textView = (TextView) convertView.findViewById(R.id.tab_text_view);
+                textView.setText(tabTitle[position]);
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
+                return convertView;
+            }
+
+            @Override
+            public Fragment getFragmentForPage(int position) {
+                BaseFragment fragment;
+                fragment = new ProWebFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt(BaseFragment.INTENT_INT_INDEX, position);
+                if (position == 0) {
+                    bundle.putString(BaseFragment.INTENT_STRING_TABNAME, proDetail.getMiaoshu());
+                } else if (position == 1) {
+                    bundle.putString(BaseFragment.INTENT_STRING_TABNAME, proDetail.getTuwen());
+                }
+                fragment.setArguments(bundle);
+                return fragment;
+            }
+        });
     }
 
     private void requestProDetail() throws Exception {
@@ -217,73 +205,41 @@ public class ProductDetail extends Activity {
         tvSalePrice = (TextView) findViewById(R.id.pro_detail_sale_price);
         tvPrimaryPrice = (TextView) findViewById(R.id.pro_detail_primary_price);
         tvSalesVolume = (TextView) findViewById(R.id.pro_detail_sales_volume);
-        tvProDesc = (WebView) findViewById(R.id.pro_detail_descript);
+//        tvProDesc = (WebView) findViewById(R.id.pro_detail_descript);
 
         descTab = (ScrollIndicatorView) findViewById(R.id.pro_detail_tab_indicator);
         descTab.setScrollBar(new ColorBar(this, R.color.home_page_general_red, 3));
-
-        descTab.setOnItemSelectListener(new Indicator.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(View selectItemView, int select, int preSelect) {
-                if (select == 0) {//商品信息
-                    try {
-                        final String miaoshu = proDetail.getMiaoshu();
-                        tvProDesc.loadDataWithBaseURL("file://", miaoshu, HTML_MIME_TYPE, HTML_ENCODING, "about:blank");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else if (select == 1) {//图文详情
-                    try {
-                        final String tuwen = proDetail.getTuwen();
-                        tvProDesc.loadDataWithBaseURL("file://", tuwen, HTML_MIME_TYPE, HTML_ENCODING, "about:blank");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        final String[] tabTitle = new String[]{getResources().getString(R.string.pro_detail_tab_pro_info),
-                getResources().getString(R.string.pro_detail_tab_pro_info)};
-        descTab.setAdapter(new Indicator.IndicatorAdapter() {
-            @Override
-            public int getCount() {
-                return tabTitle.length;
-            }
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                if (convertView == null) {
-                    convertView = getLayoutInflater().inflate(R.layout.condition_filter_tab_layout, parent, false);
-                }
-                TextView textView = (TextView) convertView.findViewById(R.id.tab_text_view);
-                textView.setText(tabTitle[position]);
-                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-                return convertView;
-            }
-        });
+        ViewPager viewPager = (ViewPager) findViewById(R.id.svp_pro_detal_web_content);
+        proWebView = new IndicatorViewPager(descTab, viewPager);
 
         btnAddShopCart = (Button) findViewById(R.id.btn_product_detail_add_shop_cart);
         btnAddShopCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                ProSummary proSummary = new ProSummary();
-                proSummary.setFid(getIntent().getStringExtra(KEY_PRODUCT_ID));
-                try {
-                    proSummary.setImg(proDetail.getImg().get(0).getPic());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                proSummary.setJianshu(proDetail.getMiaoshu());
-                proSummary.setPrice1(proDetail.getPrice1());
-                proSummary.setPrice2(proDetail.getPrice2());
-                proSummary.setSid(proDetail.getSid());
-                proSummary.setTitle(proDetail.getTitle());
-                proSummary.setXl(proSummary.getXl());
-                try {
-                    addShopCart(proSummary);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                //购买页面
+                if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
+                    ProSummary proSummary = new ProSummary();
+                    proSummary.setFid(getIntent().getStringExtra(KEY_PRODUCT_ID));
+                    try {
+                        proSummary.setImg(proDetail.getImg().get(0).getPic());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    proSummary.setJianshu(proDetail.getMiaoshu());
+                    proSummary.setPrice1(proDetail.getPrice1());
+                    proSummary.setPrice2(proDetail.getPrice2());
+                    proSummary.setSid(proDetail.getSid());
+                    proSummary.setTitle(proDetail.getTitle());
+                    proSummary.setXl(proSummary.getXl());
+                    try {
+                        addShopCart(proSummary);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Intent intent = new Intent(ProductDetail.this, LoginActivity.class);
+                    intent.putExtra(LoginActivity.FLAG_NAVI_ROOT, getResources().getString(R.string.framework_navi_shope_cart));
+                    startActivity(intent);
                 }
             }
         });
@@ -292,6 +248,13 @@ public class ProductDetail extends Activity {
             @Override
             public void onClick(View v) {
                 //购买页面
+                if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
+                    startActivity(new Intent(ProductDetail.this, ShopCartActivity.class));
+                } else {
+                    Intent intent = new Intent(ProductDetail.this, LoginActivity.class);
+                    intent.putExtra(LoginActivity.FLAG_NAVI_ROOT, getResources().getString(R.string.framework_navi_shope_cart));
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -310,8 +273,7 @@ public class ProductDetail extends Activity {
 
         navigationView.setBtnView(CusNaviView.PUT_RIGHT, new ViewWithBadge(this), 23, 23);
         navigationView.getRightBtn().setBackgroundResource(R.mipmap.nav_ic_shopping);
-        ((ViewWithBadge) navigationView.getRightBtn()).setBadge(BadgeView.POSITION_TOP_RIGHT, inShopCart
-                , 6, 0);//初始化
+
         navigationView.setGravity(Gravity.CENTER);
         navigationView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
             @Override
@@ -322,7 +284,13 @@ public class ProductDetail extends Activity {
             @Override
             public void rightBtnListener() {
                 //去购物车
-                startActivity(new Intent(ProductDetail.this, ShopCartActivity.class));
+                if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
+                    startActivity(new Intent(ProductDetail.this, ShopCartActivity.class));
+                } else {
+                    Intent intent = new Intent(ProductDetail.this, LoginActivity.class);
+                    intent.putExtra(LoginActivity.FLAG_NAVI_ROOT, getResources().getString(R.string.framework_navi_shope_cart));
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -398,10 +366,10 @@ public class ProductDetail extends Activity {
     }
 
     /**
-     * @Description: 创建动画层
      * @param
      * @return void
      * @throws
+     * @Description: 创建动画层
      */
     private FrameLayout createAnimLayout() {
         ViewGroup rootView = (ViewGroup) this.getWindow().getDecorView();
@@ -417,14 +385,11 @@ public class ProductDetail extends Activity {
     }
 
     /**
-     * @deprecated 将要执行动画的view 添加到动画层
-     * @param vg
-     *            动画运行的层 这里是frameLayout
-     * @param view
-     *            要运行动画的View
-     * @param location
-     *            动画的起始位置
+     * @param vg       动画运行的层 这里是frameLayout
+     * @param view     要运行动画的View
+     * @param location 动画的起始位置
      * @return
+     * @deprecated 将要执行动画的view 添加到动画层
      */
     private View addViewToAnimLayout(ViewGroup vg, View view, int[] location) {
         int x = location[0];
@@ -455,10 +420,8 @@ public class ProductDetail extends Activity {
     /**
      * 动画效果设置
      *
-     * @param drawable
-     *            将要加入购物车的商品
-     * @param start_location
-     *            起始位置
+     * @param drawable       将要加入购物车的商品
+     * @param start_location 起始位置
      */
     private void setAnim(Drawable drawable, int[] start_location) {
 
@@ -540,4 +503,54 @@ public class ProductDetail extends Activity {
         isClean = false;
         super.onLowMemory();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        try {
+            inShopCart = DBHelper.getInstance(this).getShopCartCount();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ((ViewWithBadge) navigationView.getRightBtn()).setBadge(BadgeView.POSITION_TOP_RIGHT, inShopCart
+                , 6, 0);//初始化
+    }
+
+    /**
+     * 幻灯片适配
+     */
+    private IndicatorViewPager.IndicatorPagerAdapter imgAdapter = new IndicatorViewPager.IndicatorViewPagerAdapter() {
+
+        @Override
+        public View getViewForTab(int position, View convertView, ViewGroup container) {
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.image_scan_tab_guide, container, false);
+            }
+            return convertView;
+        }
+
+        @Override
+        public View getViewForPage(int position, View convertView, ViewGroup container) {
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.pro_detail_top_banner_fitcenter, container, false);
+                convertView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+            }
+            try {
+                ((NetworkImageView) convertView).setImageUrl(proDetail.getImg().get(position).getPic(), NetController.getInstance(ProductDetail.this).getImageLoader());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return convertView;
+        }
+
+        @Override
+        public int getCount() {
+            try {
+                return proDetail.getImg().size();
+            } catch (Exception e) {
+                return 0;
+            }
+        }
+    };
+
 }

@@ -42,6 +42,7 @@ import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
 import com.beetron.outmall.utils.PayHelper;
 import com.beetron.outmall.utils.TempDataManager;
+import com.beetron.outmall.wxapi.WXPayEntryActivity;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -85,7 +86,7 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
     UserInfoModel userInfoSummary;
     private CusNaviView cusNaviView;
     private ProgressHUD mProgressHUD;
-    private Boolean isFirst=true;
+    private Boolean isFirst = true;
 
     private void initNavi() {
         cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
@@ -361,15 +362,16 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
 
     @Override
     public void showDetail(OrderInfoModel orderInfoModel, OrderPostModel orderPostModel, AddrInfoModel addrInfoModel) {
-        Intent intent = new Intent(this, OrderDetailActivity.class);
-        intent.putExtra(OrderDetailActivity.INTENT_KEY_ADDR_INFO, addrInfoModel);
-        intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_DATA, orderPostModel);
-        intent.putExtra(OrderDetailActivity.INTENT_KEY_ORDER_MODEL, orderInfoModel);
+        Intent intent = new Intent(this, WXPayEntryActivity.class);
+        intent.putExtra(WXPayEntryActivity.INTENT_KEY_ADDR_INFO, addrInfoModel);
+        intent.putExtra(WXPayEntryActivity.INTENT_KEY_ORDER_DATA, orderPostModel);
+        intent.putExtra(WXPayEntryActivity.INTENT_KEY_ORDER_MODEL, orderInfoModel);
         startActivity(intent);
     }
 
     @Override
     public String payOrder(final String orderID) {
+        Toast.makeText(this, "orderID:" + orderID, Toast.LENGTH_LONG).show();
         mProgressHUD = ProgressHUD.show(this, "正在处理...", true, false,
                 null);
         PayHelper payHelper = new PayHelper(new PayHelper.PayListenner() {
@@ -397,12 +399,14 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
                             req.packageValue = payInfoModel.getPackageName();
                             req.sign = payInfoModel.getSign();
                             req.extData = orderID; // optional
-                            Toast.makeText(OrderMineScan.this, "正常调起支付", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(OrderMineScan.this, "正常调起支付", Toast.LENGTH_SHORT).show();
                             // 在支付之前，如果应用没有注册到微信，应该先调用IWXMsg.registerApp将应用注册到微信
                             if (api.sendReq(req)) {
-                                Toast.makeText(OrderMineScan.this, "请求成功！", Toast.LENGTH_SHORT).show();
+                                Log.d("OrderMineScan", "请求成功");
+                                //Toast.makeText(OrderMineScan.this, "请求成功！", Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(OrderMineScan.this, "请求失败！", Toast.LENGTH_SHORT).show();
+                                //Toast.makeText(OrderMineScan.this, "请求失败！", Toast.LENGTH_SHORT).show();
+                                Log.d("OrderMineScan", "请求失败");
                             }
                         } else {
                             Toast.makeText(OrderMineScan.this, "该微信版本不支持微信支付！", Toast.LENGTH_SHORT).show();
@@ -499,9 +503,10 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
     protected void onResume() {
         super.onResume();
         if (isFirst) {
-            isFirst=false;
-        }else {
+            isFirst = false;
+        } else {
             getData();//重新加载数据
         }
     }
+
 }
