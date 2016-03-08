@@ -1,6 +1,7 @@
 package com.beetron.outmall;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -8,7 +9,6 @@ import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -25,8 +25,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
-import com.beetron.outmall.customview.BadgeView;
 import com.beetron.outmall.customview.CusNaviView;
+import com.beetron.outmall.customview.CustomDialog;
 import com.beetron.outmall.customview.ProgressHUD;
 import com.beetron.outmall.models.AddrInfoModel;
 import com.beetron.outmall.models.OrderFixInfo;
@@ -174,8 +174,6 @@ public class OrderFixActivity extends Activity {
         });
 
         tvTotalPrice = (TextView) findViewById(R.id.tv_order_product_amount);
-//        tvServiceFee = (TextView) findViewById(R.id.tv_order_service_fee);
-//        tvFree = (TextView) findViewById(R.id.tv_order_service_fee_minus);
         tvActuallyPay = (TextView) findViewById(R.id.tv_order_pay_actually);
         etLeaveMsg = (EditText) findViewById(R.id.order_fix_leave_message);
         tvBottomTotal = (TextView) findViewById(R.id.tv_order_fix_payment_total);
@@ -185,8 +183,29 @@ public class OrderFixActivity extends Activity {
             @Override
             public void onClick(View v) {
                 try {
-                    if (checkInfo())
-                        toSettleAccounts();
+                    if (checkInfo()) {
+                        final CustomDialog.Builder builder = new CustomDialog.Builder(OrderFixActivity.this);
+                        builder.setTitle(R.string.prompt);
+                        builder.setMessage(R.string.order_confirm);
+                        builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                try {
+                                    toSettleAccounts();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                dialog.dismiss();
+                            }
+                        });
+                        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        builder.create().show();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -196,11 +215,13 @@ public class OrderFixActivity extends Activity {
 
     private boolean checkInfo() {
 
-        if (TextUtils.isEmpty(addrInfo.getId())){
+        if (TextUtils.isEmpty(addrInfo.getId())) {
             Toast.makeText(OrderFixActivity.this, getResources().getString(R.string.addr_info_empty),
                     Toast.LENGTH_SHORT).show();
             return false;
         }
+
+
         return true;
     }
 

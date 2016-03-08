@@ -140,5 +140,6 @@
     <string name="launch_from_wx">Launch From Weixin</string>
     <string name="shop_cart_product_empty">还没有商品</string>
     <string name="go_shopping">去购物</string>
+    <string name="order_confirm">确认提交订单？</string>
 
 </resources>
