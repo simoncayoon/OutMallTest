@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity
     private void initNavi() {
         cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
         cusNaviView.setBtn(CusNaviView.PUT_LEFT, 28, 28);
-        cusNaviView.setNaviTitle("首页");
+        cusNaviView.setNaviTitle(getResources().getString(R.string.framework_navi_home_page));
         ((Button) cusNaviView.getLeftBtn()).setBackgroundResource(R.mipmap.nav_ic_menu);
 
         cusNaviView.setBtn(CusNaviView.PUT_RIGHT, 23, 23);
