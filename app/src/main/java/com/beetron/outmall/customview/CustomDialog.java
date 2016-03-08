@@ -3,6 +3,8 @@ package com.beetron.outmall.customview;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -29,6 +31,7 @@ public class CustomDialog extends Dialog {
 		private String confirm_btnText; //确认文字
 		private String cancel_btnText; //取消文字
 		private View contentView; //内容视图
+		private Boolean isCancelable = true;//默认为真
 		/* 点击事件 */
 		private OnClickListener confirm_btnClickListener;
 		private OnClickListener cancel_btnClickListener;
@@ -40,6 +43,11 @@ public class CustomDialog extends Dialog {
 		/*���öԻ�����Ϣ*/
 		public Builder setMessage(String message) {
 			this.message = message;
+			return this;
+		}
+
+		public Builder setCancelAble(Boolean cancelAble){
+			this.isCancelable = cancelAble;
 			return this;
 		}
 
@@ -145,6 +153,7 @@ public class CustomDialog extends Dialog {
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			// instantiate the dialog with the custom Theme
 			final CustomDialog dialog = new CustomDialog(context, R.style.mystyle);
+			dialog.setCancelable(isCancelable);
 			View layout = inflater.inflate(R.layout.custom_dialog_layout, null);
 			dialog.addContentView(layout, new LayoutParams(
 					LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));

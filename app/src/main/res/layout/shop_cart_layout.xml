@@ -5,17 +5,31 @@
     android:background="@color/general_activity_bg"
     android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/shop_cart_detail_list"
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="1"
-        android:cacheColorHint="#00000000"
-        android:fadingEdge="none"
-        android:fastScrollEnabled="false"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
-        android:smoothScrollbar="true"></ListView>
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/shop_cart_detail_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="#00000000"
+            android:fadingEdge="none"
+            android:fastScrollEnabled="false"
+            android:footerDividersEnabled="false"
+            android:headerDividersEnabled="false"
+            android:smoothScrollbar="true"
+            ></ListView>
+
+        <include android:id="@+id/shop_cart_empty"
+            layout="@layout/shop_cart_emptr_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,7 +41,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:background="@color/general_boundary_color"/>
+            android:background="@color/general_boundary_color" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -41,12 +55,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="15dp"
+                android:background="@android:color/transparent"
                 android:button="@drawable/btn_check_press_selector"
                 android:paddingLeft="5dp"
                 android:text="@string/shop_cart_select_all"
                 android:textColor="@color/general_tab_text_color"
-                android:textSize="@dimen/shop_cart_select_all_text_size"
-                android:background="@android:color/transparent"/>
+                android:textSize="@dimen/shop_cart_select_all_text_size" />
 
             <TextView
                 android:id="@+id/tv_shop_cart_amount"

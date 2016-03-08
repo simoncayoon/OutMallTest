@@ -22,11 +22,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.beetron.outmall.adapter.ProSummaryAdapter;
-import com.beetron.outmall.customview.BadgeView;
 import com.beetron.outmall.customview.CusNaviView;
-import com.beetron.outmall.customview.CustomBadgeView;
 import com.beetron.outmall.customview.CustomDialog;
-import com.beetron.outmall.customview.ViewWithBadge;
 import com.beetron.outmall.models.UserInfoModel;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
@@ -44,7 +41,8 @@ public class MainActivity extends AppCompatActivity
     public static final String ACTION_STR = "com.chulai.mai.datachange";
     private static final int RESULT_LOGIN = 0x256;
     public static final int RESULT_ADD_SHOPCART = 0x213;
-    DrawerLayout drawer;
+    private DrawerLayout drawer;
+    private NavigationView navigationView;
     private IndicatorViewPager mIndicatorViewPager;
     private SViewPager viewPager;
     private CusNaviView cusNaviView;
@@ -64,8 +62,7 @@ public class MainActivity extends AppCompatActivity
         initDrawable();
         initIndicator();
 
-        UserInfoModel userInfoModel =  DBHelper.getInstance(getApplicationContext()).getUserInfo();
-        DebugFlags.logD(TAG, "oooxoxoxoxoxoxo " + userInfoModel.getUid());
+        UserInfoModel userInfoModel = DBHelper.getInstance(getApplicationContext()).getUserInfo();
     }
 
     private void initNavi() {
@@ -148,8 +145,7 @@ public class MainActivity extends AppCompatActivity
                 }
             });
             builder.create().show();
-        }
-        else {
+        } else {
             //更新购物车菜单视图
             ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
                     instantiateItem(mIndicatorViewPager.getViewPager(), 2);
@@ -167,7 +163,7 @@ public class MainActivity extends AppCompatActivity
     private void initDrawable() {
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -186,24 +182,25 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        Intent intent=new Intent(MainActivity.this,WebViewActivity.class);
+        Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
         if (id == R.id.nav_camera) {
             // Handle the camera action
-            intent.putExtra("title","商城");
-            intent.putExtra("url","http://chulai-mai.com");
+            intent.putExtra("title", "商城");
+            intent.putExtra("url", "http://chulai-mai.com");
         } else if (id == R.id.nav_gallery) {
-            intent.putExtra("title","蚤市");
-            intent.putExtra("url","http://chulai-mai.com");
+            intent.putExtra("title", "蚤市");
+            intent.putExtra("url", "http://chulai-mai.com");
         } else if (id == R.id.nav_slideshow) {
-            intent.putExtra("title","社区");
-            intent.putExtra("url","http://chulai-mai.com");
+            intent.putExtra("title", "社区");
+            intent.putExtra("url", "http://chulai-mai.com");
         } else if (id == R.id.nav_manage) {
             try {
                 clearLocalData();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            drawer.openDrawer(GravityCompat.START);
+            drawer.closeDrawer(GravityCompat.START);
+            item.setVisible(false);
             return true;
         }
 
@@ -213,7 +210,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    private void clearLocalData() throws Exception{
+    private void clearLocalData() throws Exception {
         TempDataManager.getInstance(getApplicationContext()).clearCurrentTemp();//清除sharepreference缓存数据
 
         DBHelper.getInstance(getApplicationContext()).clearShopCart();
@@ -238,7 +235,7 @@ public class MainActivity extends AppCompatActivity
                     getItemView(2).findViewById(R.id.tv_badge_view_top_right));//获取到购物车tabbar的视图
             try {
                 int localCount = DBHelper.getInstance(MainActivity.this).getShopCartCount();
-                if (localCount == 0){
+                if (localCount == 0) {
                     countView.setVisibility(View.GONE);
                 } else {
                     countView.setVisibility(View.VISIBLE);
@@ -298,8 +295,9 @@ public class MainActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (RESULT_OK == resultCode) {
-            if (requestCode == RESULT_LOGIN){
+            if (requestCode == RESULT_LOGIN) {
                 DebugFlags.logD(TAG, "点击购物车的Fragment 返回");
+
                 try {
                     ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
                             instantiateItem(mIndicatorViewPager.getViewPager(), 2);
@@ -308,9 +306,9 @@ public class MainActivity extends AppCompatActivity
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                return ;
+                return;
             }
-            if (requestCode == RESULT_ADD_SHOPCART){
+            if (requestCode == RESULT_ADD_SHOPCART) {
                 DebugFlags.logD(TAG, "点击添加商品购物车登陆返回");
             }
 
@@ -321,6 +319,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
+            navigationView.getMenu().getItem(3).setVisible(true);//设置退出menu
+        }
     }
 
     private class MyAdapter extends IndicatorViewPager.IndicatorFragmentPagerAdapter {
@@ -388,7 +389,7 @@ public class MainActivity extends AppCompatActivity
                     fragment = new ShopCart();
                     try {
 
-                        receiver = new ShopCartChangReceiver((ShopCartChangReceiver.ShopCartChange)fragment);
+                        receiver = new ShopCartChangReceiver((ShopCartChangReceiver.ShopCartChange) fragment);
                         IntentFilter intentFilter = new IntentFilter(ACTION_STR);
                         registerReceiver(receiver, intentFilter);
                     } catch (Exception e) {
@@ -414,5 +415,9 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(receiver);
+    }
+
+    public IndicatorViewPager getIndicatorView(){
+            return mIndicatorViewPager;
     }
 }

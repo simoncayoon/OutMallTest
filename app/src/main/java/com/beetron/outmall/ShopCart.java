@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -75,6 +76,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
     private ShopCartFragment shopCartAdapter;
     private Double currentAmount = 0.00;
     private ProgressHUD mProgressHUD;
+    private View viewEmpty;
 
     @Override
     protected void onCreateView(Bundle savedInstanceState) {
@@ -85,6 +87,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
         dataLocalList = new ArrayList<ProSummary>();
         shopCartAdapter = new ShopCartFragment(ShopCart.this, dataLocalList);
         lvShopcart.setAdapter(shopCartAdapter);
+        lvShopcart.setEmptyView(viewEmpty);
     }
 
     private void initData() {
@@ -252,6 +255,19 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                 startActivity(intent);
             }
         });
+
+        viewEmpty = findViewById(R.id.shop_cart_empty);
+        Button goShopping = (Button) viewEmpty.findViewById(R.id.btn_shopping_add);
+        goShopping.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    ((MainActivity)getActivity()).getIndicatorView().setCurrentItem(0, true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -332,6 +348,11 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                                         try {
                                             selectCache.remove(dataLocalList.get(position).getSid());
                                             dataLocalList.remove(position);
+                                            if (shopCartAdapter.getCount() > 0){
+                                                viewEmpty.setVisibility(View.GONE);
+                                            } else {
+                                                viewEmpty.setVisibility(View.VISIBLE);
+                                            }
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -416,6 +437,12 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
         }
 
         shopCartAdapter.notifyDataSetChanged();
+
+        if (shopCartAdapter.getCount() > 0){
+            viewEmpty.setVisibility(View.GONE);
+        } else {
+            viewEmpty.setVisibility(View.VISIBLE);
+        }
         SpannableString spannableString = new SpannableString("总价：￥" + currentAmount);
         spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.home_page_general_red)),
                 3, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);//设置颜色

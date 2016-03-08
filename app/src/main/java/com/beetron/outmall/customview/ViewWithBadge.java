@@ -36,15 +36,16 @@ public class ViewWithBadge extends TextView {
     }
 
     private void init() {
-
+        
     }
 
     /**
      * 设置气泡
+     *
      * @param position 气泡位置
-     * @param count 气泡显示内容
+     * @param count    气泡显示内容
      * @param textSize 气泡字体大小
-     * @param margin 气泡边界
+     * @param margin   气泡边界
      */
     public void setBadge(int position, Integer count, int textSize, int margin) {
         if (badgeView == null) {
@@ -62,9 +63,10 @@ public class ViewWithBadge extends TextView {
             badgeView.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, getResources().getDisplayMetrics()));
             badgeView.setBadgePosition(position);//设置气泡位置
             badgeView.setBadgeMargin(margin);//
+
             badgeView.show();
         } else if (count == 0) {
-            if (badgeView.isShown()){
+            if (badgeView.isShown()) {
                 badgeView.setVisibility(View.GONE);//
                 badgeView = null;//回收
             }
@@ -73,9 +75,10 @@ public class ViewWithBadge extends TextView {
 
     /**
      * 设置气泡的数量
+     *
      * @param count
      */
-    public void setBadgeEnable(Integer count) throws Exception{
+    public void setBadgeEnable(Integer count) throws Exception {
 
         if (badgeView == null) {
             badgeView = new BadgeView(context, this);//物候绑定数量气泡
@@ -88,7 +91,7 @@ public class ViewWithBadge extends TextView {
             badgeView.setBadgeMargin(0);//
             badgeView.show();
         } else if (count == 0) {
-            if (badgeView.isShown()){
+            if (badgeView.isShown()) {
                 badgeView.setVisibility(View.GONE);//
                 badgeView = null;//回收
             }

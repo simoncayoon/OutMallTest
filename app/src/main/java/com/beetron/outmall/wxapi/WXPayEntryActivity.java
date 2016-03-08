@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -81,6 +82,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     private CusNaviView cusNaviView;
     private ProgressHUD mProgressHUD;
     private String orderId;
+    private ImageView arrowRight;
 
 
     @Override
@@ -140,17 +142,12 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         final CustomDialog.Builder builder = new CustomDialog.Builder(this);
         builder.setTitle(R.string.prompt);
         builder.setMessage(msg);
+        builder.setCancelAble(false);
         builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 finish();
-            }
-        });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
             }
         });
         builder.create().show();
@@ -228,7 +225,8 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     private void initView() {
 
         initNavi();
-
+        arrowRight = (ImageView) findViewById(R.id.addr_right_arrow);
+        arrowRight.setVisibility(View.GONE);
         addrTitle = (TextView) findViewById(R.id.addr_info_item_title);
         addrDetail = (TextView) findViewById(R.id.addr_info_item_detail);
         orderNum = (TextView) findViewById(R.id.order_detail_order_num);
