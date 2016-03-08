@@ -111,23 +111,25 @@ public class OrderFixActivity extends Activity {
                         convertView = getLayoutInflater().inflate(R.layout.order_pro_scan_item_layout, parent, false);
                         viewHolder.scanImg = (NetworkImageView) convertView.findViewById(R.id.niv_order_pro_scan_img);
                         viewHolder.proPrice = (TextView) convertView.findViewById(R.id.order_pro_scan_price);
-                        viewHolder.countView = new BadgeView(OrderFixActivity.this, viewHolder.scanImg);
-                        viewHolder.countView.setBadgePosition(BadgeView.POSITION_TOP_RIGHT);
+                        viewHolder.countView = (TextView) convertView.findViewById(R.id.tv_badge_view_top_right);
                         convertView.setTag(R.id.order_scanner_id, viewHolder);
                     }
                     viewHolder = (ViewHolder) convertView.getTag(R.id.order_scanner_id);
                     ProSummary shopCartModel = orderInfoModel.getProDetail().get(position);
                     viewHolder.scanImg.setImageUrl(shopCartModel.getImg(), NetController.getInstance(getApplicationContext()).getImageLoader());
                     viewHolder.proPrice.setText("￥" + shopCartModel.getPrice2());
-                    viewHolder.countView.setText(String.valueOf(shopCartModel.getCount()));
-                    viewHolder.countView.show();
+                    if (shopCartModel.getCount() == 0) {
+                        viewHolder.countView.setVisibility(View.GONE);
+                    } else {
+                        viewHolder.countView.setText(String.valueOf(shopCartModel.getCount()));
+                    }
                     return convertView;
                 }
 
                 class ViewHolder {
                     NetworkImageView scanImg;
                     TextView proPrice;
-                    BadgeView countView;
+                    TextView countView;
                 }
             });
 

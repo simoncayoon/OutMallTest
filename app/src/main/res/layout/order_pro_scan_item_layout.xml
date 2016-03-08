@@ -1,32 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingBottom="10dp"
-    android:paddingLeft="15dp"
-    android:paddingTop="10dp">
+    android:layout_height="match_parent">
 
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/niv_order_pro_scan_img"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:scaleType="fitXY"/>
-
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/content_view"
         android:layout_width="match_parent"
-        android:layout_height="16dp"
-        android:layout_gravity="bottom"
-        android:background="#aa333333"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
+        android:paddingLeft="15dp"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp">
+
+
+        <com.android.volley.toolbox.NetworkImageView
+            android:id="@+id/niv_order_pro_scan_img"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="fitXY" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="16dp"
+            android:layout_gravity="bottom"
+            android:background="#aa333333"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/order_pro_scan_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_badge_view_top_right"
+        android:layout_width="@dimen/badge_view_size"
+        android:layout_height="@dimen/badge_view_size"
+        android:layout_gravity="right|top"
+        android:layout_marginRight="5dp"
+        android:layout_toRightOf="@+id/content_view"
+        android:background="@drawable/shape_dot_bg"
         android:gravity="center"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/order_pro_scan_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="11sp"
-            />
-    </LinearLayout>
+        android:singleLine="true"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
 
 </FrameLayout>
