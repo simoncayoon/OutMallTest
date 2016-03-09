@@ -22,4 +22,5 @@ public class Constants {
     public static final String PAYMENT_TYPE_DELIVERY = "2";
     public static final boolean PRO_IS_LIMIT = true;
     public static Bitmap mBitmap = null;// 用于上传头像
+    public static int SELECT_MENU = 1;//用于设置选择菜单位置
 }

@@ -1,6 +1,7 @@
 package com.beetron.outmall;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -75,6 +76,7 @@ public class ShopLimit extends BaseFragment{
     private IndicatorViewPager imageScanner;
     private Indicator filterIndicator;
     private PullToRefreshListView llProList;
+    private ListView lvProContent;
     private LayoutInflater inflater;
     //滚动图片
     private View scrollView;
@@ -111,6 +113,8 @@ public class ShopLimit extends BaseFragment{
         fidCache = new ArrayList<String>();
         proAdapter = new ProSummaryAdapter(getActivity(), proList);
         llProList.getRefreshableView().setAdapter(proAdapter);
+
+        menuAdapter = new CategoryMenuAdapter(getActivity(), categories);
         try {
             getMenu();
             getImageScan();
@@ -225,6 +229,9 @@ public class ShopLimit extends BaseFragment{
 
                 //根据不同分类ID， 刷新商品列表
                 try {
+                    index = 1;
+                    isAppend = false;
+                    llProList.getRefreshableView().setSelection(0);
                     refreshProByFid(currentFid);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -243,7 +250,7 @@ public class ShopLimit extends BaseFragment{
 
             }
         });
-        scrollView=LayoutInflater.from(getActivity()).inflate(R.layout.general_banner_layout,null);
+        scrollView = LayoutInflater.from(getActivity()).inflate(R.layout.general_banner_layout, null);
 
         initImageScanView();
 
@@ -293,13 +300,36 @@ public class ShopLimit extends BaseFragment{
                 if (select == 1) {
                     if (selectItemView.getTag(R.id.step1) == null) {
                         selectItemView.setTag(R.id.step1, true);
+
                     } else if ((Boolean) selectItemView.getTag(R.id.step1)) {
                         selectItemView.setTag(R.id.step2, true);
                         selectItemView.setTag(R.id.step1, false);
+                        try {
+                            TextView textView = (TextView) selectItemView.findViewById(R.id.tab_text_view);
+                            Drawable right = getResources().getDrawable(R.mipmap.up_ic_arrow);//排序箭头
+                            right.setBounds(new Rect(0, 0, DisplayMetrics.dip2px(
+                                    getActivity(), 15), DisplayMetrics.dip2px(
+                                    getActivity(), 15)));
+                            textView.setCompoundDrawables(null, null, right, null);
+                        } catch (Resources.NotFoundException e) {
+                            e.printStackTrace();
+                        }
 
                     } else if ((Boolean) selectItemView.getTag(R.id.step2)) {
                         selectItemView.setTag(R.id.step1, true);
                         selectItemView.setTag(R.id.step2, false);
+
+                        try {
+                            TextView textView = (TextView) selectItemView.findViewById(R.id.tab_text_view);
+                            Drawable right = getResources().getDrawable(R.mipmap.product_filter_down_arrow);//排序箭头
+                            right.setBounds(new Rect(0, 0, DisplayMetrics.dip2px(
+                                    getActivity(), 15), DisplayMetrics.dip2px(
+                                    getActivity(), 15)));
+                            textView.setCompoundDrawables(null, null, right, null);
+                        } catch (Resources.NotFoundException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 } else if (select == 2) {
                     if (selectItemView.getTag(R.id.step1) == null) {
@@ -307,10 +337,30 @@ public class ShopLimit extends BaseFragment{
                     } else if ((Boolean) selectItemView.getTag(R.id.step1)) {
                         selectItemView.setTag(R.id.step2, true);
                         selectItemView.setTag(R.id.step1, false);
+                        try {
+                            TextView textView = (TextView) selectItemView.findViewById(R.id.tab_text_view);
+                            Drawable right = getResources().getDrawable(R.mipmap.up_ic_arrow);//排序箭头
+                            right.setBounds(new Rect(0, 0, DisplayMetrics.dip2px(
+                                    getActivity(), 15), DisplayMetrics.dip2px(
+                                    getActivity(), 15)));
+                            textView.setCompoundDrawables(null, null, right, null);
+                        } catch (Resources.NotFoundException e) {
+                            e.printStackTrace();
+                        }
 
                     } else if ((Boolean) selectItemView.getTag(R.id.step2)) {
                         selectItemView.setTag(R.id.step1, true);
                         selectItemView.setTag(R.id.step2, false);
+                        try {
+                            TextView textView = (TextView) selectItemView.findViewById(R.id.tab_text_view);
+                            Drawable right = getResources().getDrawable(R.mipmap.product_filter_down_arrow);//排序箭头
+                            right.setBounds(new Rect(0, 0, DisplayMetrics.dip2px(
+                                    getActivity(), 15), DisplayMetrics.dip2px(
+                                    getActivity(), 15)));
+                            textView.setCompoundDrawables(null, null, right, null);
+                        } catch (Resources.NotFoundException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else if (select == 0) {
                     filterIndicator.getItemView(1).setTag(R.id.step1, true);
@@ -329,12 +379,17 @@ public class ShopLimit extends BaseFragment{
 
     void initLvRefresh() {
         llProList = (PullToRefreshListView) findViewById(R.id.product_pull_refresh_list);
-        llProList.getRefreshableView().setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvProContent = llProList.getRefreshableView();
+        lvProContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent toDetailIntent = new Intent(getActivity(), ProductDetail.class);
-                toDetailIntent.putExtra(ProductDetail.KEY_PRODUCT_ID, proList.get(position).getSid());
-                startActivity(toDetailIntent);
+                try {
+                    toDetailIntent.putExtra(ProductDetail.KEY_PRODUCT_ID, proList.get(position - 2).getSid());
+                    startActivity(toDetailIntent);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         llProList.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener2<ListView>() {
@@ -409,7 +464,6 @@ public class ShopLimit extends BaseFragment{
      */
     void refreshProByFid(String currentFid) throws Exception {
 
-        llProList.setRefreshing(true);
         String url = NetInterface.HOST + NetInterface.METHON_GET_PRO_BY_CATEGORY_LIMIT;
         PostEntity postEntity = new PostEntity();
         postEntity.setToken(Constants.TOKEN_VALUE);
@@ -427,15 +481,29 @@ public class ShopLimit extends BaseFragment{
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject jsonObject) {
-                        setProContent(jsonObject, "");
+                        try {
+                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)) {
+                                setProContent(jsonObject, "");
+                                if (!isUpdate) {
+                                    Intent intent = new Intent(MainActivity.ACTION_STR);
+                                    getActivity().sendBroadcast(intent);
+                                    isUpdate = true;//状态更新为已更新
+                                }
+                            }
+                        } catch (JSONException e) {
+                            try {
+                                Toast.makeText(getActivity(), jsonObject.getString(Constants.RESULT_ERROR_FIELD),
+                                        Toast.LENGTH_SHORT).show();
+                            } catch (Exception e1) {
+                                e1.printStackTrace();
+                            }
+                            e.printStackTrace();
+                        }
+
                         if (llProList.isRefreshing()) {
                             llProList.onRefreshComplete();//停止刷新
                         }
-                        if (!isUpdate) {
-                            Intent intent = new Intent(MainActivity.ACTION_STR);
-                            getActivity().sendBroadcast(intent);
-                            isUpdate = true;//状态更新为已更新
-                        }
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -459,8 +527,8 @@ public class ShopLimit extends BaseFragment{
                     }.getType());
             List<ProSummary> dataRefresh = pageEntity.getList();
 
-            for(int index = 0; index < dataRefresh.size(); index ++){
-                dataRefresh.get(index).setIsLimit(Constants.PRO_IS_LIMIT);//添加数据标志，区分首页还是限时购
+            for (int index = 0; index < dataRefresh.size(); index++) {
+                dataRefresh.get(index).setIsLimit(!Constants.PRO_IS_LIMIT);//添加数据标志，区分首页还是限时购
             }
 
             if (filterIndicator.getCurrentItem() > 0) {
@@ -566,7 +634,7 @@ public class ShopLimit extends BaseFragment{
     }
 
     void addShopCartReq(final int position) throws Exception {
-        final ProgressHUD mProgressHUD = ProgressHUD.show(getActivity(), getResources().getString(R.string.prompt_progress_loading), true, false,
+        final ProgressHUD mProgressHUD = ProgressHUD.show(getActivity(), "", true, false,
                 null);
         String url = NetInterface.HOST + NetInterface.METHON_ADD_SHOPCART_BY_ID;
         PostEntity postEntity = new PostEntity();
@@ -648,4 +716,10 @@ public class ShopLimit extends BaseFragment{
             return imgList.size();
         }
     };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        menuAdapter.notifyDataSetChanged();
+    }
 }

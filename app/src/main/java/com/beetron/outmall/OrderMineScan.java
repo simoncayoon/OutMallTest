@@ -79,7 +79,7 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
     private ArrayList<HashMap<String, Object>> completeList = new ArrayList<>();
     private ListView mListView;
     private OrderInfoAdapter mAdapter;
-    private int select = 1;
+    //private static int select = 1;
     private float density;
     private LinearLayout ll_shop_car;
     private FixedIndicatorView scanTab;
@@ -112,8 +112,8 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.order_mine_scan_layout);
-        select = getIntent().getExtras().getInt("select");
-        mAdapter = new OrderInfoAdapter(this, orderList, select, this);
+        //select = getIntent().getExtras().getInt("select");
+        mAdapter = new OrderInfoAdapter(this, orderList, Constants.SELECT_MENU, this);
         userInfoSummary = DBHelper.getInstance(this).getUserInfo();
         initNavi();
         initView();
@@ -131,12 +131,13 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
         final String[] scanTabName = new String[]{getResources().getString(R.string.order_waiting_pay), getResources().getString(R.string.order_waiting_grab),
                 getResources().getString(R.string.order_have_accept), getResources().getString(R.string.order_delivery),
                 getResources().getString(R.string.order_have_done)};
-        Indicator.IndicatorAdapter adapter = getAdapter(scanTabName, select);
+        Indicator.IndicatorAdapter adapter = getAdapter(scanTabName, Constants.SELECT_MENU);
         scanTab.setAdapter(adapter);
 
         scanTab.setOnItemSelectListener(new Indicator.OnItemSelectedListener() {
             @Override
             public void onItemSelected(View selectItemView, int select, int preSelect) {
+                Constants.SELECT_MENU=select;
                 //设置菜单的点击事件
                 scanTab.setAdapter(getAdapter(scanTabName, select));
                 updateData(select);
@@ -301,7 +302,8 @@ public class OrderMineScan extends Activity implements CannelOrderListenner {
 //                                    } catch (Exception e) {
 //                                    }
                                 }
-                                updateData(select);//更新数据
+                                Log.d("OrderMineScan","选择菜单："+Constants.SELECT_MENU);
+                                updateData(Constants.SELECT_MENU);//更新数据
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

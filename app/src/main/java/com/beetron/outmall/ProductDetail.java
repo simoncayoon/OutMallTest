@@ -271,15 +271,12 @@ public class ProductDetail extends FragmentActivity {
         navigationView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
         ((Button) navigationView.getLeftBtn()).setText(getResources().getString(R.string.framework_navi_home_page));//设置返回标题
 
-        View rightView = getLayoutInflater().inflate(R.layout.badge_view_top_right, null);
-        TextView content = (TextView) rightView.findViewById(R.id.tv_badge_view_content);
-        content.setBackgroundResource(R.mipmap.nav_ic_shopping);
-        navigationView.setBtnView(CusNaviView.PUT_RIGHT, rightView, 30, 30);
-//        navigationView.getRightBtn().setBackgroundResource(R.mipmap.nav_ic_shopping);
-//        int padding = TypedValue.complexToDimensionPixelSize(10, getResources().getDisplayMetrics());
-//        navigationView.getRightBtn().setPadding(padding, padding, padding, padding);
-//
-//        navigationView.setGravity(Gravity.CENTER);
+        navigationView.setBtnView(CusNaviView.PUT_RIGHT, new ViewWithBadge(this), 30, 30);
+        navigationView.getRightBtn().setBackgroundResource(R.mipmap.nav_ic_shopping);
+        int padding = TypedValue.complexToDimensionPixelSize(10, getResources().getDisplayMetrics());
+        navigationView.getRightBtn().setPadding(padding, padding, padding, padding);
+        ((ViewWithBadge) navigationView.getRightBtn()).setBadge(BadgeView.POSITION_TOP_RIGHT, inShopCart, 6, 0);
+        navigationView.setGravity(Gravity.CENTER);
         navigationView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
             @Override
             public void leftBtnListener() {
@@ -327,7 +324,7 @@ public class ProductDetail extends FragmentActivity {
                                     JSONObject countJSON = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
                                     inShopCart++;
                                     DBHelper.getInstance(ProductDetail.this).addShopCart(proSummary);
-                                    //((ViewWithBadge) navigationView.getRightBtn()).setBadge(BadgeView.POSITION_TOP_RIGHT, inShopCart, 6, 0);//初始化
+                                    ((ViewWithBadge) navigationView.getRightBtn()).setBadge(BadgeView.POSITION_TOP_RIGHT, inShopCart, 6, 0);//初始化
                                     //加入购物车动画
                                     int[] start_location = new int[2];
                                     btnAddShopCart.getLocationInWindow(start_location);
@@ -472,8 +469,8 @@ public class ProductDetail extends FragmentActivity {
             public void onAnimationEnd(Animation animation) {
                 // TODO Auto-generated method stub
 
-//                ((ViewWithBadge) navigationView.getRightBtn()).setBadge(BadgeView.POSITION_TOP_RIGHT, inShopCart
-//                        , 6, 0);//初始化
+                ((ViewWithBadge) navigationView.getRightBtn()).setBadge(BadgeView.POSITION_TOP_RIGHT, inShopCart
+                        , 6, 0);//初始化
                 number--;
                 if (number == 0) {
                     isClean = true;
@@ -517,8 +514,8 @@ public class ProductDetail extends FragmentActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        ((ViewWithBadge) navigationView.getRightBtn()).setBadge(BadgeView.POSITION_TOP_RIGHT, inShopCart
-//                , 6, 0);//初始化
+        ((ViewWithBadge) navigationView.getRightBtn()).setBadge(BadgeView.POSITION_TOP_RIGHT, inShopCart
+                , 6, 0);//初始化
     }
 
     /**

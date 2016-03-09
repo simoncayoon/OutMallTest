@@ -194,13 +194,7 @@ public class MainActivity extends AppCompatActivity
             intent.putExtra("title", "社区");
             intent.putExtra("url", "http://chulai-mai.com");
         } else if (id == R.id.nav_manage) {
-            try {
-                clearLocalData();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            drawer.closeDrawer(GravityCompat.START);
-            item.setVisible(false);
+            showLoginOut(item);
             return true;
         }
 
@@ -208,6 +202,32 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    void showLoginOut(final MenuItem item) {
+        final CustomDialog.Builder builder = new CustomDialog.Builder(this);
+        builder.setTitle(R.string.prompt);
+        builder.setMessage(R.string.login_out_confirm);
+        builder.setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    clearLocalData();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                drawer.closeDrawer(GravityCompat.START);
+                item.setVisible(false);
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     private void clearLocalData() throws Exception {
@@ -417,7 +437,7 @@ public class MainActivity extends AppCompatActivity
         unregisterReceiver(receiver);
     }
 
-    public IndicatorViewPager getIndicatorView(){
-            return mIndicatorViewPager;
+    public IndicatorViewPager getIndicatorView() {
+        return mIndicatorViewPager;
     }
 }

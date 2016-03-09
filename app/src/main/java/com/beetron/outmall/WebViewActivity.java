@@ -18,17 +18,18 @@ import com.beetron.outmall.customview.ProgressHUD;
 /**
  * Created by luomaozhong on 16/3/2.
  */
-public class WebViewActivity extends Activity{
+public class WebViewActivity extends Activity {
     private CustomWebView wv;
     private ProgressHUD mProgressHUD;
-    private String tag="WebViewActivity";
-    private String title="";
-    private String url="";
+    private String tag = "WebViewActivity";
+    private String title = "";
+    private String url = "";
 
     private CusNaviView cusNaviView;
+
     private void initNavi() {
-         title=getIntent().getExtras().getString("title");
-        url=getIntent().getExtras().getString("url");
+        title = getIntent().getExtras().getString("title");
+        url = getIntent().getExtras().getString("url");
         cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
         cusNaviView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
         cusNaviView.setBtn(CusNaviView.PUT_RIGHT, CusNaviView.NAVI_WRAP_CONTENT, 56);
@@ -56,7 +57,7 @@ public class WebViewActivity extends Activity{
         initNavi();
         mProgressHUD = ProgressHUD.show(this, "正在加载...", true, false,
                 null);
-		/*
+        /*
 		 * // 生成水平进度条 progressBar = new ProgressBar(this,
 		 * null,android.R.attr.progressBarStyleHorizontal);
 		 * progressBar.setProgressDrawable
@@ -122,7 +123,7 @@ public class WebViewActivity extends Activity{
 
                 Log.d(tag, "调用onReceivedError");
                 wv.setVisibility(View.GONE);
-                Toast.makeText(WebViewActivity.this,"加载出错！",Toast.LENGTH_LONG).show();
+                Toast.makeText(WebViewActivity.this, "加载出错！", Toast.LENGTH_LONG).show();
                 super.onReceivedError(view, errorCode, description, failingUrl);
             }
 
@@ -135,7 +136,8 @@ public class WebViewActivity extends Activity{
                 // 这里将textView换成你的progress来设置进度
 
                 if (newProgress == 100) {
-                    mProgressHUD.hide();;
+                    mProgressHUD.hide();
+                    ;
                 }
             }
         });

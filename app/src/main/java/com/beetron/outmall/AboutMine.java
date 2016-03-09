@@ -150,9 +150,10 @@ public class AboutMine extends BaseFragment implements View.OnClickListener {
             @Override
             public void onItemSelected(View selectItemView, int select, int preSelect) {
                 if (tempDataManager.isLogin()) {
+                    Constants.SELECT_MENU=select;
                     scanTab.setAdapter(getAdapter(scanTabName, drawableTop, select));
                     Intent intent = new Intent(getActivity(), OrderMineScan.class);
-                    intent.putExtra("select", select);
+                    //intent.putExtra("select", select);
                     startActivity(intent);
                 } else {
                     //跳转到登陆

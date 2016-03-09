@@ -11,7 +11,7 @@ import android.util.Log;
  */
 public class DebugFlags {
 
-	private static final boolean flag = true;
+	private static final boolean flag = false;
 
 //	private static final String TAG = "Eteng";
 

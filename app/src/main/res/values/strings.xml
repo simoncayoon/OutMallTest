@@ -141,5 +141,7 @@
     <string name="shop_cart_product_empty">还没有商品</string>
     <string name="go_shopping">去购物</string>
     <string name="order_confirm">确认提交订单？</string>
+    <string name="login_out_confirm">真的要退出吗？</string>
+    <string name="gender_male">男</string>
 
 </resources>

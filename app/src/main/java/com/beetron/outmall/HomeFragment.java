@@ -1,6 +1,7 @@
 package com.beetron.outmall;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -299,13 +300,36 @@ public class HomeFragment extends BaseFragment {
                 if (select == 1) {
                     if (selectItemView.getTag(R.id.step1) == null) {
                         selectItemView.setTag(R.id.step1, true);
+
                     } else if ((Boolean) selectItemView.getTag(R.id.step1)) {
                         selectItemView.setTag(R.id.step2, true);
                         selectItemView.setTag(R.id.step1, false);
+                        try {
+                            TextView textView = (TextView) selectItemView.findViewById(R.id.tab_text_view);
+                            Drawable right = getResources().getDrawable(R.mipmap.up_ic_arrow);//排序箭头
+                            right.setBounds(new Rect(0, 0, DisplayMetrics.dip2px(
+                                    getActivity(), 15), DisplayMetrics.dip2px(
+                                    getActivity(), 15)));
+                            textView.setCompoundDrawables(null, null, right, null);
+                        } catch (Resources.NotFoundException e) {
+                            e.printStackTrace();
+                        }
 
                     } else if ((Boolean) selectItemView.getTag(R.id.step2)) {
                         selectItemView.setTag(R.id.step1, true);
                         selectItemView.setTag(R.id.step2, false);
+
+                        try {
+                            TextView textView = (TextView) selectItemView.findViewById(R.id.tab_text_view);
+                            Drawable right = getResources().getDrawable(R.mipmap.product_filter_down_arrow);//排序箭头
+                            right.setBounds(new Rect(0, 0, DisplayMetrics.dip2px(
+                                    getActivity(), 15), DisplayMetrics.dip2px(
+                                    getActivity(), 15)));
+                            textView.setCompoundDrawables(null, null, right, null);
+                        } catch (Resources.NotFoundException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 } else if (select == 2) {
                     if (selectItemView.getTag(R.id.step1) == null) {
@@ -313,10 +337,30 @@ public class HomeFragment extends BaseFragment {
                     } else if ((Boolean) selectItemView.getTag(R.id.step1)) {
                         selectItemView.setTag(R.id.step2, true);
                         selectItemView.setTag(R.id.step1, false);
+                        try {
+                            TextView textView = (TextView) selectItemView.findViewById(R.id.tab_text_view);
+                            Drawable right = getResources().getDrawable(R.mipmap.up_ic_arrow);//排序箭头
+                            right.setBounds(new Rect(0, 0, DisplayMetrics.dip2px(
+                                    getActivity(), 15), DisplayMetrics.dip2px(
+                                    getActivity(), 15)));
+                            textView.setCompoundDrawables(null, null, right, null);
+                        } catch (Resources.NotFoundException e) {
+                            e.printStackTrace();
+                        }
 
                     } else if ((Boolean) selectItemView.getTag(R.id.step2)) {
                         selectItemView.setTag(R.id.step1, true);
                         selectItemView.setTag(R.id.step2, false);
+                        try {
+                            TextView textView = (TextView) selectItemView.findViewById(R.id.tab_text_view);
+                            Drawable right = getResources().getDrawable(R.mipmap.product_filter_down_arrow);//排序箭头
+                            right.setBounds(new Rect(0, 0, DisplayMetrics.dip2px(
+                                    getActivity(), 15), DisplayMetrics.dip2px(
+                                    getActivity(), 15)));
+                            textView.setCompoundDrawables(null, null, right, null);
+                        } catch (Resources.NotFoundException e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else if (select == 0) {
                     filterIndicator.getItemView(1).setTag(R.id.step1, true);

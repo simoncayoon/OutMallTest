@@ -1,10 +1,12 @@
 package com.beetron.outmall;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -83,6 +85,15 @@ public class AddrEdit extends Activity {
         etName = (EditText) findViewById(R.id.et_addr_edit_name);
         etPhone = (EditText) findViewById(R.id.et_addr_edit_phone_num);
         etGender = (EditText) findViewById(R.id.et_addr_edit_gender);
+        etGender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AddrEdit.this, UserInfoFix.class);
+                intent.putExtra(UserInfoFix.INTENT_KEY, UserInfoFix.INTENT_FLAG_GENDER_REQ);
+                intent.putExtra(UserInfoFix.INTENT_VALUE, etGender.getText().toString());
+                startActivityForResult(intent, UserInfoFix.INTENT_FLAG_GENDER_REQ);
+            }
+        });
         etAddr = (EditText) findViewById(R.id.et_addr_edit_addr);
     }
 
@@ -167,7 +178,11 @@ public class AddrEdit extends Activity {
         postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
         postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
         postEntity.setName(etName.getText().toString());
-        postEntity.setSex("1");
+        if (etGender.getText().toString().equals(getResources().getString(R.string.gender_male))) {
+            postEntity.setSex("1");
+        } else {
+            postEntity.setSex("2");
+        }
         postEntity.setAddress(etAddr.getText().toString());
         postEntity.setMobile(etPhone.getText().toString());
         postEntity.setShenfen("1");
@@ -209,5 +224,16 @@ public class AddrEdit extends Activity {
             }
         });
         NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK){
+            if (requestCode == UserInfoFix.INTENT_FLAG_GENDER_REQ) {
+                String backSring = data.getStringExtra(UserInfoFix.RETURN_BACK_STRING_KEY);
+                etGender.setText(backSring);
+            }
+        }
     }
 }
