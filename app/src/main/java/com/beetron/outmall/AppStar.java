@@ -30,4 +30,9 @@ public class AppStar extends Activity {
             finish();
         }
     };
+
+
+    void nothing(){
+
+    }
 }
