@@ -62,7 +62,7 @@ import java.util.Map;
 public class ShopLimit extends BaseFragment{
 
     public static final int PAGE_SIZE = 10;//分页查询每页数量
-    private static final String TAG = HomeFragment.class.getSimpleName();
+    private static final String TAG = ShopLimit.class.getSimpleName();
     private static final String FLAG_FILTER_BY_SALES = "flag_filter_by_sales";
     private static final String FLAG_FILTER_BY_PRICE = "flag_filter_by_PRICE";
     public static final int RESULT_ADD_SHOPCART = 0x213;

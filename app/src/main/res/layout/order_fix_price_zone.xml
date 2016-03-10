@@ -132,6 +132,7 @@
         android:hint="@string/hint_text_leave_msg_prompt"
         android:padding="@dimen/order_fix_content_padding"
         android:textColorHint="@color/hint_color"
-        android:textSize="@dimen/order_fix_text_size"/>
+        android:textSize="@dimen/order_fix_text_size"
+        android:layout_marginBottom="@dimen/order_fix_layout_boundary_size"/>
 
 </LinearLayout>

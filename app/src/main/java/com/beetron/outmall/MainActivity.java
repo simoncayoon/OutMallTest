@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.beetron.outmall.adapter.ProSummaryAdapter;
+import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.customview.CustomDialog;
 import com.beetron.outmall.models.UserInfoModel;
@@ -30,6 +31,7 @@ import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.DisplayMetrics;
 import com.beetron.outmall.utils.ShopCartChangReceiver;
 import com.beetron.outmall.utils.TempDataManager;
+import com.beetron.outmall.utils.UpdateHelper;
 import com.shizhefei.view.indicator.Indicator;
 import com.shizhefei.view.indicator.IndicatorViewPager;
 import com.shizhefei.view.viewpager.SViewPager;
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         initView();
-
+        checkUpdate();
     }
 
     private void initView() {
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity
         initIndicator();
 
         UserInfoModel userInfoModel = DBHelper.getInstance(getApplicationContext()).getUserInfo();
+
     }
 
     private void initNavi() {
@@ -265,21 +268,23 @@ public class MainActivity extends AppCompatActivity
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//            shapCartTabView.setBadge(BadgeView.POSITION_TOP_RIGHT,
-//                    DBHelper.getInstance(MainActivity.this).getShopCartCount(), 6, 0);
 
-            //更新首页菜单视图
-            HomeFragment homeFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
-                    instantiateItem(mIndicatorViewPager.getViewPager(), 0);
-            homeFragment.updateMenuItem();
+            try {
+                //更新首页菜单视图
+                HomeFragment homeFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                        instantiateItem(mIndicatorViewPager.getViewPager(), 0);
+                homeFragment.updateMenuItem();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-            ShopLimit shopLimit = (ShopLimit) mIndicatorViewPager.getAdapter().getPagerAdapter().
-                    instantiateItem(mIndicatorViewPager.getViewPager(), 1);
-            shopLimit.updateMenuItem();
-
-//            ShopCart shopcart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
-//                    instantiateItem(mIndicatorViewPager.getViewPager(), 2);
-//            shopcart.reqShopcart(false);
+            try {
+                ShopLimit shopLimit = (ShopLimit) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                        instantiateItem(mIndicatorViewPager.getViewPager(), 1);
+                shopLimit.updateMenuItem();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -439,5 +444,18 @@ public class MainActivity extends AppCompatActivity
 
     public IndicatorViewPager getIndicatorView() {
         return mIndicatorViewPager;
+    }
+
+    /**
+     * 检查更新
+     * .checkUrl("http://chulai-mai.com/index.php?m=home&c=app&a=update")
+     */
+    void checkUpdate() {
+        UpdateHelper updateHelper = new UpdateHelper.Builder(MainActivity.this)
+                .checkUrl(NetInterface.HOST + NetInterface.METHON_UPDATE_CHECK)
+                .isAutoInstall(false) //设置为false需在下载完手动点击安装;默认值为true，下载后自动安装。
+                .build();
+        DebugFlags.logD(TAG, "完整的更新URL时 ：" + NetInterface.HOST + NetInterface.METHON_UPDATE_CHECK);
+        updateHelper.check();
     }
 }

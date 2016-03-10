@@ -172,4 +172,9 @@ public class NetInterface {
      * 微信支付成功通知接口
      */
     public static final String METHON_WEIXIN_PAY_NOTICE = "?m=home&c=app&a=update_order";
+
+    /**
+     * 升级接口
+     */
+    public static final String METHON_UPDATE_CHECK = "?m=home&c=app&a=update";
 }

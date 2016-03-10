@@ -23,4 +23,9 @@ public class Constants {
     public static final boolean PRO_IS_LIMIT = true;
     public static Bitmap mBitmap = null;// 用于上传头像
     public static int SELECT_MENU = 1;//用于设置选择菜单位置
+    public static final String RESPON_STATUS = "status";
+
+    public static final String RESPON_RESULT = "result";
+
+    public static final String FLAG_RESPON_SUCCEED = "0";
 }

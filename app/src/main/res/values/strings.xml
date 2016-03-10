@@ -143,5 +143,12 @@
     <string name="order_confirm">确认提交订单？</string>
     <string name="login_out_confirm">真的要退出吗？</string>
     <string name="gender_male">男</string>
+    <string name="prompt_download_title">下载提示</string>
+    <string name="prompt_no_wifi_download">您在目前的网络环境下继续下载将可能会消耗手机流量，请确认是否继续下载？</string>
+    <string name="prompt_continue_download">继续下载</string>
+    <string name="prompt_cancel_download">取消下载</string>
+    <string name="prompt_update_download_next_time">下次再说</string>
+    <string name="prompt_download">下载</string>
+    <string name="notification_downloading">正在下载...</string>
 
 </resources>
