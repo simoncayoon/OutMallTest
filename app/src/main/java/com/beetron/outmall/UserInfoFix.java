@@ -93,9 +93,9 @@ public class UserInfoFix extends Activity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     if (position == 0) {
-                        value = "男";
+                        value = getResources().getString(R.string.gender_male);
                     } else {
-                        value = "女";
+                        value = getResources().getString(R.string.gender_femal);
                     }
                     initDataSex();
                     adapter.upData(mlist);

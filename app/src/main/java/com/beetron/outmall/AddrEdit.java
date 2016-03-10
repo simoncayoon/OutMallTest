@@ -154,6 +154,12 @@ public class AddrEdit extends Activity {
                     Toast.LENGTH_SHORT).show();
             return false;
         }
+
+        if (TextUtils.isEmpty(etGender.getText().toString())){
+            Toast.makeText(AddrEdit.this, getResources().getString(R.string.prompt_no_gender_select),
+                    Toast.LENGTH_SHORT).show();
+            return false;
+        }
         if (TextUtils.isEmpty(etAddr.getText().toString())) {
             Toast.makeText(AddrEdit.this, getResources().getString(R.string.prompt_addr_addr_empty),
                     Toast.LENGTH_SHORT).show();

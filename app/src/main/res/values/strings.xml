@@ -150,5 +150,7 @@
     <string name="prompt_update_download_next_time">下次再说</string>
     <string name="prompt_download">下载</string>
     <string name="notification_downloading">正在下载...</string>
+    <string name="gender_femal">女</string>
+    <string name="prompt_no_gender_select">请选择性别！</string>
 
 </resources>
