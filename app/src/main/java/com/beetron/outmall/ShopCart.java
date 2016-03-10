@@ -606,4 +606,14 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
             e.printStackTrace();
         }
     }
+
+    public void clearList() {
+        dataLocalList.clear();
+        selectCache.clear();
+        try {
+            updateAmount(FLAG_UPDATE_SELECT_ALL, false, FLAG_UPDATE_SELECT_ONE_KEY);//初始化总价，默认全部选择
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

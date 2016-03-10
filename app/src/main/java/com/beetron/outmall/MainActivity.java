@@ -233,6 +233,10 @@ public class MainActivity extends AppCompatActivity
         builder.create().show();
     }
 
+    /**
+     * 清楚本地缓存，更新UI
+     * @throws Exception
+     */
     private void clearLocalData() throws Exception {
         TempDataManager.getInstance(getApplicationContext()).clearCurrentTemp();//清除sharepreference缓存数据
 
@@ -241,6 +245,15 @@ public class MainActivity extends AppCompatActivity
         DBHelper.getInstance(getApplicationContext()).clearUserInfo();
 
         notifyCountChange();
+
+        try {
+            //更新首页菜单视图
+            ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                    instantiateItem(mIndicatorViewPager.getViewPager(), 2);
+            shopCart.clearList();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
