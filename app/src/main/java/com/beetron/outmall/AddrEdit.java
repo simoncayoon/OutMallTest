@@ -107,11 +107,11 @@ public class AddrEdit extends Activity {
         cusNaviView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
         ((Button) cusNaviView.getLeftBtn()).setText(getResources().getString(R.string.navi_title_addr_manage));//设置返回标题
 
-        cusNaviView.setBtnView(CusNaviView.PUT_RIGHT, new TextView(this), 50, 30);
+        cusNaviView.setBtnView(CusNaviView.PUT_RIGHT, new TextView(this), 60, 35);
         ((TextView) cusNaviView.getRightBtn()).setText(getResources().getString(R.string.complete));//初始化
         ((TextView) cusNaviView.getRightBtn()).setGravity(Gravity.CENTER);
         ((TextView) cusNaviView.getRightBtn()).setTextColor(getResources().getColor(R.color.general_main_title_color));
-        ((TextView) cusNaviView.getRightBtn()).setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, getResources().getDisplayMetrics()));
+        ((TextView) cusNaviView.getRightBtn()).setTextSize(TypedValue.COMPLEX_UNIT_SP, CusNaviView.NAVI_TEXT_SIZE);
         cusNaviView.setNaviBtnListener(new CusNaviView.NaviBtnListener() {
             @Override
             public void leftBtnListener() {

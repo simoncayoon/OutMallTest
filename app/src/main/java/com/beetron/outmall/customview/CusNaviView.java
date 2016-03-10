@@ -28,6 +28,7 @@ public class CusNaviView extends RelativeLayout {
     public static final String PUT_RIGHT = "RIGHT_FLAG";
     public static final String PUT_BACK_ENABLE = "BACK_FLAG";
     public static final int NAVI_WRAP_CONTENT = 0;
+    public static final int NAVI_TEXT_SIZE = 18;
     private static final String TAG = CusNaviView.class.getSimpleName();
     private Context mContext;
 
@@ -99,7 +100,7 @@ public class CusNaviView extends RelativeLayout {
                 }
             });
         }
-        newButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        newButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, NAVI_TEXT_SIZE);
 
         // set button drawable
         newButton.setBackgroundColor(Color.parseColor("#00000000"));
