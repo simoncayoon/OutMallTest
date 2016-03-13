@@ -1,8 +1,10 @@
 package com.beetron.outmall.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 
+import com.beetron.outmall.ObserveUtil.CountReciver;
 import com.beetron.outmall.OutMallApp;
 import com.beetron.outmall.models.DaoSession;
 import com.beetron.outmall.models.ProSummary;
@@ -54,19 +56,17 @@ public class DBHelper {
      * @param proSummary
      * @return
      */
-    public Long addShopCart(ProSummary proSummary) {
-//        QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
-//        qb.where(ProSummaryDao.Properties.Sid.eq(proSummary.getSid()));
-//
-//        if (proSummaryDao.load(proSummary.getSid()) != null){//该选项已存在购物车
-//            proSummary = proSummaryDao.load(proSummary.getSid());
-//            int currCount = proSummary.getCount();
-//            proSummary.setCount(currCount ++);
-//        } else {
-//            proSummary.setCount(1);//初始化该商品的数量
-//        }
+    public boolean addShopCart(ProSummary proSummary) {
+
         DebugFlags.logD(TAG, "当前该商品的数量是：" + proSummary.getCount());
-        return proSummaryDao.insertOrReplace(proSummary);
+
+        Long resultCode = proSummaryDao.insertOrReplace(proSummary);
+        if (resultCode != -1L) {
+            sendBoradCast();
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -83,10 +83,15 @@ public class DBHelper {
         for (ProSummary item : list) {
             proSummary.setCount(item.getCount() - 1);//增加数量
         }
-        if (proSummary.getCount() > 0) {//当前购物车还有值
-            proSummaryDao.insertOrReplace(proSummary);
-        } else if (proSummary.getCount() == 0) {//减少到零，删除之
-            proSummaryDao.delete(proSummary);
+        try {
+            if (proSummary.getCount() > 0) {//当前购物车还有值
+                proSummaryDao.insertOrReplace(proSummary);
+            } else if (proSummary.getCount() == 0) {//减少到零，删除之
+                proSummaryDao.delete(proSummary);
+            }
+            sendBoradCast();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -117,13 +122,18 @@ public class DBHelper {
     public synchronized void saveShopLocal(List<ProSummary> dataShopCart) {
         if (dataShopCart == null)
             return;
-        proSummaryDao.insertOrReplaceInTx(dataShopCart);
+        try {
+            proSummaryDao.insertOrReplaceInTx(dataShopCart);
+            sendBoradCast();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public List<ProSummary> getShopCartList() {
         List<ProSummary> result = new ArrayList<ProSummary>();
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
-        for (ProSummary item :qb.list()){
+        for (ProSummary item : qb.list()) {
             item.setIsSelect(true);//默认宣布选中
             result.add(item);
         }
@@ -149,6 +159,7 @@ public class DBHelper {
     public void deleteShopById(String sid) {
         try {
             proSummaryDao.deleteByKey(sid);
+            sendBoradCast();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -161,7 +172,7 @@ public class DBHelper {
      */
     public void saveUserInfo(UserInfoModel userInfoModel) {
 
-            userInfoModelDao.insertOrReplace(userInfoModel);
+        userInfoModelDao.insertOrReplace(userInfoModel);
     }
 
     /**
@@ -184,5 +195,11 @@ public class DBHelper {
 
     public void clearUserInfo() {
         userInfoModelDao.deleteAll();
+    }
+
+    void sendBoradCast() {
+        Intent intent = new Intent();
+        intent.setAction(CountReciver.COUNT_CHANGE_NOTIFICATION_ACTION);
+        mContext.sendBroadcast(intent);
     }
 }

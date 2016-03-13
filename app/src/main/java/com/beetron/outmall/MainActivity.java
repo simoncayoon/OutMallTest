@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.beetron.outmall.ObserveUtil.CountReciver;
 import com.beetron.outmall.adapter.ProSummaryAdapter;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
@@ -37,7 +38,7 @@ import com.shizhefei.view.indicator.IndicatorViewPager;
 import com.shizhefei.view.viewpager.SViewPager;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ProSummaryAdapter.ShopCartCountListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ProSummaryAdapter.ShopCartCountListener, CountReciver.UpdateCount {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     public static final String ACTION_STR = "com.chulai.mai.datachange";
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity
     private SViewPager viewPager;
     private CusNaviView cusNaviView;
     private ShopCartChangReceiver receiver;
+    private CountReciver countReciver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,9 @@ public class MainActivity extends AppCompatActivity
 
         initView();
         checkUpdate();
+        countReciver = new CountReciver(this);
+        IntentFilter intentFilter = new IntentFilter(CountReciver.COUNT_CHANGE_NOTIFICATION_ACTION);
+        registerReceiver(countReciver, intentFilter);
     }
 
     private void initView() {
@@ -153,7 +158,7 @@ public class MainActivity extends AppCompatActivity
             ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
                     instantiateItem(mIndicatorViewPager.getViewPager(), 2);
             try {
-                shopCart.reqShopcart(true);
+                shopCart.reqShopcart();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -235,6 +240,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * 清楚本地缓存，更新UI
+     *
      * @throws Exception
      */
     private void clearLocalData() throws Exception {
@@ -244,7 +250,7 @@ public class MainActivity extends AppCompatActivity
 
         DBHelper.getInstance(getApplicationContext()).clearUserInfo();
 
-        notifyCountChange();
+        notifyCountUpdate();
 
         try {
             //更新首页菜单视图
@@ -256,49 +262,55 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void notifyCountChange() throws Exception {
 
-        DebugFlags.logD(TAG, "触发了数据更新！");
+    @Override
+    public void notifyCountUpdate() {
+        DebugFlags.logD(TAG, "广播收到的信息");
         /**
          * 此时有三处更新
          * 1、更新购物车tab的视图
          * 2、更新首页菜单栏
          * 3、更新产品列表状态
          */
+
         try {
-            TextView countView = (TextView) (mIndicatorViewPager.getIndicatorView().
-                    getItemView(2).findViewById(R.id.tv_badge_view_top_right));//获取到购物车tabbar的视图
-            try {
-                int localCount = DBHelper.getInstance(MainActivity.this).getShopCartCount();
-                if (localCount == 0) {
-                    countView.setVisibility(View.GONE);
-                } else {
-                    countView.setVisibility(View.VISIBLE);
-                    countView.setText(String.valueOf(localCount));
-                }
+            tabCountUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        proListUpdate();
 
-            try {
-                //更新首页菜单视图
-                HomeFragment homeFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
-                        instantiateItem(mIndicatorViewPager.getViewPager(), 0);
-                homeFragment.updateMenuItem();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    }
 
-            try {
-                ShopLimit shopLimit = (ShopLimit) mIndicatorViewPager.getAdapter().getPagerAdapter().
-                        instantiateItem(mIndicatorViewPager.getViewPager(), 1);
-                shopLimit.updateMenuItem();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    void tabCountUpdate() throws Exception {
+        TextView countView = (TextView) (mIndicatorViewPager.getIndicatorView().
+                getItemView(2).findViewById(R.id.tv_badge_view_top_right));//获取到购物车tabbar的视图
+        int localCount = DBHelper.getInstance(MainActivity.this).getShopCartCount();
+        if (localCount == 0) {
+            countView.setVisibility(View.GONE);
+        } else {
+            countView.setVisibility(View.VISIBLE);
+            countView.setText(String.valueOf(localCount));
+        }
+    }
 
+    /**
+     * 商品列表更新
+     */
+    void proListUpdate() {
+        //更新首页菜单视图
+        try {
+            HomeFragment homeFragment = (HomeFragment) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                    instantiateItem(mIndicatorViewPager.getViewPager(), 0);
+            homeFragment.updateMenuItem();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            ShopLimit shopLimit = (ShopLimit) mIndicatorViewPager.getAdapter().getPagerAdapter().
+                    instantiateItem(mIndicatorViewPager.getViewPager(), 1);
+            shopLimit.updateMenuItem();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -340,7 +352,7 @@ public class MainActivity extends AppCompatActivity
                     ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
                             instantiateItem(mIndicatorViewPager.getViewPager(), 2);
 
-                    shopCart.reqShopcart(true);
+                    shopCart.reqShopcart();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -351,14 +363,6 @@ public class MainActivity extends AppCompatActivity
             }
 
 
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
-            navigationView.getMenu().getItem(3).setVisible(true);//设置退出menu
         }
     }
 
@@ -453,6 +457,11 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(receiver);
+        try {
+            unregisterReceiver(countReciver);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public IndicatorViewPager getIndicatorView() {

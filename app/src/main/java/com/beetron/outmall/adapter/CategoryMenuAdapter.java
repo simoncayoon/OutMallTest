@@ -54,8 +54,9 @@ public class CategoryMenuAdapter extends BaseAdapter {
         ViewHolder viewHolder = null;
         if(convertView == null){
             viewHolder = new ViewHolder();
-            convertView = layoutInflater.inflate(R.layout.home_page_menu_item_layout, null);
-            viewHolder.menuTitle = (ViewWithBadge) convertView.findViewById(R.id.tv_home_page_menu);
+            convertView = layoutInflater.inflate(R.layout.category_menu_layout, null);
+            viewHolder.menuTitle = (TextView) convertView.findViewById(R.id.tv_badge_view_content);
+            viewHolder.badgeView = (TextView) convertView.findViewById(R.id.tv_badge_view_top_right);
             convertView.setTag(viewHolder);
         }
 
@@ -64,7 +65,11 @@ public class CategoryMenuAdapter extends BaseAdapter {
         viewHolder.menuTitle.setText(menuItem.getName());
         viewHolder.menuTitle.setSelected(menuItem.isSelected());
         try {
-//            viewHolder.menuTitle.setBadge(BadgeView.POSITION_TOP_LEFT, menuItem.getCount(), 6, 3);
+            if (menuItem.getCount() > 0) {
+                viewHolder.badgeView.setText(String.valueOf(menuItem.getCount()));
+            } else {
+                viewHolder.badgeView.setVisibility(View.GONE);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -72,6 +77,7 @@ public class CategoryMenuAdapter extends BaseAdapter {
     }
 
     class ViewHolder{
-        private ViewWithBadge menuTitle;
+        private TextView menuTitle;
+        private TextView badgeView;
     }
 }

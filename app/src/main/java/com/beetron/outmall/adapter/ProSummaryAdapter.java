@@ -49,10 +49,6 @@ public class ProSummaryAdapter extends BaseAdapter {
     private LayoutInflater inflater;
 
     private ShopCartCountListener callBack = new ShopCartCountListener() {
-        @Override
-        public void notifyCountChange() {
-
-        }
 
         @Override
         public void addShopCart(int positon, Boolean isLimit) throws Exception {
@@ -138,7 +134,6 @@ public class ProSummaryAdapter extends BaseAdapter {
     }
 
     public interface ShopCartCountListener {
-        public void notifyCountChange() throws Exception;
         public void addShopCart(int positon, Boolean isLimit) throws Exception;
     }
 

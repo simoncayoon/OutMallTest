@@ -180,13 +180,15 @@ public class HomeFragment extends BaseFragment {
                         ResultEntity<List<ProCategory>> resultEntity = gson.fromJson(jsonObject.toString(),
                                 new TypeToken<ResultEntity<List<ProCategory>>>() {
                                 }.getType());
-                        categories = resultEntity.getResult();
+                        List<ProCategory> respon = resultEntity.getResult();
                         //新增一个分类
                         ProCategory categoryAll = new ProCategory();
                         categoryAll.setIsSelected(true);
                         categoryAll.setId("");
                         categoryAll.setName(getResources().getString(R.string.all_product));
-                        categories.add(0, categoryAll);
+                        respon.add(0, categoryAll);
+                        categories.clear();
+                        categories.addAll(respon);
                         for (ProCategory item : categories) {
                             fidCache.add(item.getId());//保存当前分类ID列表，避免多次循环查找fid
                         }
@@ -656,10 +658,7 @@ public class HomeFragment extends BaseFragment {
                                     ProSummary clickItem = proList.get(position);
                                     JSONObject countJSON = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
                                     clickItem.setCount(countJSON.getInt("count"));
-                                    if (DBHelper.getInstance(getActivity().getApplicationContext()).addShopCart(clickItem) != -1L) {
-                                        //通知更新数据
-                                        ((MainActivity) getActivity()).notifyCountChange();
-                                    } else {
+                                    if (!DBHelper.getInstance(getActivity().getApplicationContext()).addShopCart(clickItem)) {
                                         DebugFlags.logD(TAG, "添加购物车数据库失败！");
                                     }
                                 } catch (Exception e) {

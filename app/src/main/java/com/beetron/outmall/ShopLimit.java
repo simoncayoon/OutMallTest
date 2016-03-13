@@ -59,7 +59,7 @@ import java.util.Map;
  * Date: 2016/2/3.
  * Time: 15:31.
  */
-public class ShopLimit extends BaseFragment{
+public class ShopLimit extends BaseFragment {
 
     public static final int PAGE_SIZE = 10;//分页查询每页数量
     private static final String TAG = ShopLimit.class.getSimpleName();
@@ -656,10 +656,7 @@ public class ShopLimit extends BaseFragment{
                                     ProSummary clickItem = proList.get(position);
                                     JSONObject countJSON = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
                                     clickItem.setCount(countJSON.getInt("count"));
-                                    if (DBHelper.getInstance(getActivity().getApplicationContext()).addShopCart(clickItem) != -1L) {
-                                        //通知更新数据
-                                        ((MainActivity) getActivity()).notifyCountChange();
-                                    } else {
+                                    if (!DBHelper.getInstance(getActivity().getApplicationContext()).addShopCart(clickItem)) {
                                         DebugFlags.logD(TAG, "添加购物车数据库失败！");
                                     }
                                 } catch (Exception e) {

@@ -92,13 +92,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
 
     private void initData() {
 
-        //通知更新
-        try {
-            ((MainActivity) getActivity()).notifyCountChange();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         try {
             updateAmount(FLAG_UPDATE_SELECT_ALL, true, FLAG_UPDATE_SELECT_ONE_KEY);//初始化总价，默认全部选择
         } catch (Exception e) {
@@ -110,10 +103,9 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
     /**
      * 获取服务端或者本地数据库购物车信息
      *
-     * @param reqRemote 是否网络访问
      * @throws Exception
      */
-    public void reqShopcart(Boolean reqRemote) throws Exception {
+    public void reqShopcart() throws Exception {
 
         if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
             if (isFirstReq) {
@@ -358,12 +350,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                                         }
                                     }
                                 }
-                                //通知更新
-                                try {
-                                    ((MainActivity) getActivity()).notifyCountChange();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
 
                             } else {
                                 Toast.makeText(getActivity(), jsonObject.getString(Constants.RESULT_ERROR_FIELD), Toast.LENGTH_SHORT).show();
@@ -520,13 +506,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                                 selectCache.clear();//清空当前选择的内容
                                 updateAmount(FLAG_UPDATE_SELECT_ALL, false, FLAG_UPDATE_SELECT_ONE_KEY);
 
-                                ((MainActivity) getActivity()).notifyCountChange();
-                                //通知更新
-                                try {
-                                    ((MainActivity) getActivity()).notifyCountChange();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
                                 Toast.makeText(getActivity(), getResources().getString(R.string.prompt_delete_succeed),
                                         Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -585,7 +564,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
     public void shopCartDataChange() {
         try {
             isFromBroadcast = true;
-            reqShopcart(false);
+            reqShopcart();
             isFirstReq = false;
             isFromBroadcast = false;
         } catch (Exception e) {
@@ -600,7 +579,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
             return;
         }
         try {
-            reqShopcart(true);
+            reqShopcart();
             isFirstReq = false;
         } catch (Exception e) {
             e.printStackTrace();
