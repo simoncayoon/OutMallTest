@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:textColor="@color/tab_text_selector"
+            android:textColor="@drawable/home_page_menu_text_selector"
             android:layout_margin="10dp"/>
 
         <TextView

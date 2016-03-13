@@ -180,13 +180,15 @@ public class ShopLimit extends BaseFragment {
                         ResultEntity<List<ProCategory>> resultEntity = gson.fromJson(jsonObject.toString(),
                                 new TypeToken<ResultEntity<List<ProCategory>>>() {
                                 }.getType());
-                        categories = resultEntity.getResult();
+                        List<ProCategory> respon = resultEntity.getResult();
                         //新增一个分类
                         ProCategory categoryAll = new ProCategory();
                         categoryAll.setIsSelected(true);
                         categoryAll.setId("");
                         categoryAll.setName(getResources().getString(R.string.all_product));
-                        categories.add(0, categoryAll);
+                        respon.add(0, categoryAll);
+                        categories.clear();
+                        categories.addAll(respon);
                         for (ProCategory item : categories) {
                             fidCache.add(item.getId());//保存当前分类ID列表，避免多次循环查找fid
                         }
@@ -440,18 +442,19 @@ public class ShopLimit extends BaseFragment {
         proAdapter.notifyDataSetChanged();
 
         Map<String, String> fids = DBHelper.getInstance(getApplicationContext()).getFidCache(true);
-        if (fids.size() == 0) {//目前没有商品
-            for (int index = 0; index < categories.size(); index++) {
-                categories.get(index).setCount(0);
-            }
-        } else {
-            for (Map.Entry<String, String> entry : fids.entrySet()) {
-                int index = fidCache.indexOf(entry.getKey());//找到存在购物车信息的那一项
-                int count = DBHelper.getInstance(getApplicationContext()).
-                        getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID, entry.getKey());
-                categories.get(index).setCount(count);
-            }
-        }
+
+//        if (fids.size() == 0) {//目前没有商品
+//            for (int index = 0; index < categories.size(); index++) {
+//                categories.get(index).setCount(0);
+//            }
+//        } else {
+//            for (Map.Entry<String, String> entry : fids.entrySet()) {
+//                int index = fidCache.indexOf(entry.getKey());//找到存在购物车信息的那一项
+//                int count = DBHelper.getInstance(getApplicationContext()).
+//                        getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID, entry.getKey());
+//                categories.get(index).setCount(count);
+//            }
+//        }
 
         menuAdapter.notifyDataSetChanged();
     }
@@ -484,11 +487,6 @@ public class ShopLimit extends BaseFragment {
                         try {
                             if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)) {
                                 setProContent(jsonObject, "");
-                                if (!isUpdate) {
-                                    Intent intent = new Intent(MainActivity.ACTION_STR);
-                                    getActivity().sendBroadcast(intent);
-                                    isUpdate = true;//状态更新为已更新
-                                }
                             }
                         } catch (JSONException e) {
                             try {
@@ -528,7 +526,7 @@ public class ShopLimit extends BaseFragment {
             List<ProSummary> dataRefresh = pageEntity.getList();
 
             for (int index = 0; index < dataRefresh.size(); index++) {
-                dataRefresh.get(index).setIsLimit(!Constants.PRO_IS_LIMIT);//添加数据标志，区分首页还是限时购
+                dataRefresh.get(index).setIsLimit(Constants.PRO_IS_LIMIT);//添加数据标志，区分首页还是限时购
             }
 
             if (filterIndicator.getCurrentItem() > 0) {
@@ -713,10 +711,4 @@ public class ShopLimit extends BaseFragment {
             return imgList.size();
         }
     };
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        menuAdapter.notifyDataSetChanged();
-    }
 }

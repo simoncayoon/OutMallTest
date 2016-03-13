@@ -33,6 +33,7 @@ public class DBHelper {
 
     private ProSummaryDao proSummaryDao;
     private UserInfoModelDao userInfoModelDao;
+    private Boolean initShopCart = true;
 
     private DBHelper() {
     }
@@ -52,9 +53,8 @@ public class DBHelper {
 
     /**
      * 逐个加入购物车，没有批量导入，所以修改商品的总数量
-     *
      * @param proSummary
-     * @return
+     * @return true 添加成功
      */
     public boolean addShopCart(ProSummary proSummary) {
 
@@ -87,7 +87,7 @@ public class DBHelper {
             if (proSummary.getCount() > 0) {//当前购物车还有值
                 proSummaryDao.insertOrReplace(proSummary);
             } else if (proSummary.getCount() == 0) {//减少到零，删除之
-                proSummaryDao.delete(proSummary);
+                proSummaryDao.deleteByKey(proSummary.getSid());
             }
             sendBoradCast();
         } catch (Exception e) {
@@ -104,7 +104,7 @@ public class DBHelper {
         return count;
     }
 
-    public int getShopCartCounById(String flag, String proId) {
+    public synchronized int getShopCartCounById(String flag, String proId) {
         QueryBuilder<ProSummary> qb = proSummaryDao.queryBuilder();
         if (flag.equals(FLAG_PROSUMMARY_BY_SID)) {
             qb.where(ProSummaryDao.Properties.Sid.eq(proId));
@@ -123,6 +123,10 @@ public class DBHelper {
         if (dataShopCart == null)
             return;
         try {
+            if (initShopCart) {
+                initShopCart = false;
+                proSummaryDao.deleteAll();
+            }
             proSummaryDao.insertOrReplaceInTx(dataShopCart);
             sendBoradCast();
         } catch (Exception e) {

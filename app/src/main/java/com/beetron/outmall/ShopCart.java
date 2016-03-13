@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +37,6 @@ import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
-import com.beetron.outmall.utils.ShopCartChangReceiver;
 import com.beetron.outmall.utils.TempDataManager;
 import com.beetron.outmall.wxapi.WXPayEntryActivity;
 import com.google.gson.Gson;
@@ -58,7 +56,7 @@ import java.util.Map;
  * Date: 2016/2/3.
  * Time: 15:32.
  */
-public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountChange, ShopCartChangReceiver.ShopCartChange {
+public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountChange {
 
     private static final String TAG = ShopCart.class.getSimpleName();
     private static final int FLAG_UPDATE_SELECT_ONE_KEY = -1;
@@ -108,10 +106,10 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
     public void reqShopcart() throws Exception {
 
         if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
-            if (isFirstReq) {
-                mProgressHUD = ProgressHUD.show(getActivity(), getResources().getString(R.string.prompt_progress_loading), true, false,
-                        null);
-            }
+//            if (isFirstReq) {
+//                mProgressHUD = ProgressHUD.show(getActivity(), getResources().getString(R.string.prompt_progress_loading), true, false,
+//                        null);
+//            }
             String url = NetInterface.HOST + NetInterface.METHON_GET_SHOPCART;
             PostEntity postEntity = new PostEntity();
             postEntity.setToken(Constants.TOKEN_VALUE);
@@ -326,7 +324,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                                 JSONObject countJSON = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
                                 int resultCount = countJSON.getInt("count");
 
-                                ProSummary proSummary = dataLocalList.get(position);
                                 //更新数据库信息
                                 if (flag == FLAG_ADD) {
                                     DBHelper.getInstance(getApplicationContext()).addShopCart(dataLocalList.get(position));
@@ -556,31 +553,25 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
         DebugFlags.logD(TAG, "生成的逗号字符串 ：" + sb.toString());
         return sb.toString();
     }
-
-    boolean isFromBroadcast = false;
-    boolean isFirstReq = true;
-
-    @Override
-    public void shopCartDataChange() {
-        try {
-            isFromBroadcast = true;
-            reqShopcart();
-            isFirstReq = false;
-            isFromBroadcast = false;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//
+//    @Override
+//    public void shopCartDataChange() {
+//        try {
+//            reqShopcart();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (isFromBroadcast) {
-            return;
-        }
+//        if (isFromBroadcast) {
+//            return;
+//        }
         try {
             reqShopcart();
-            isFirstReq = false;
+//            isFirstReq = false;
         } catch (Exception e) {
             e.printStackTrace();
         }

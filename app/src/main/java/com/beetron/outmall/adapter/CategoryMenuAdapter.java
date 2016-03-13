@@ -11,6 +11,7 @@ import com.beetron.outmall.customview.BadgeView;
 import com.beetron.outmall.customview.ViewWithBadge;
 import com.beetron.outmall.models.ProCategory;
 import com.beetron.outmall.R;
+import com.beetron.outmall.utils.DBHelper;
 
 import java.util.List;
 
@@ -65,8 +66,11 @@ public class CategoryMenuAdapter extends BaseAdapter {
         viewHolder.menuTitle.setText(menuItem.getName());
         viewHolder.menuTitle.setSelected(menuItem.isSelected());
         try {
-            if (menuItem.getCount() > 0) {
-                viewHolder.badgeView.setText(String.valueOf(menuItem.getCount()));
+            int count =  DBHelper.getInstance(context.getApplicationContext()).
+                    getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID, menuItem.getId());
+            if (count > 0) {
+                viewHolder.badgeView.setVisibility(View.VISIBLE);
+                viewHolder.badgeView.setText(String.valueOf(count));
             } else {
                 viewHolder.badgeView.setVisibility(View.GONE);
             }

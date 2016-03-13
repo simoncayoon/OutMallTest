@@ -442,18 +442,19 @@ public class HomeFragment extends BaseFragment {
         proAdapter.notifyDataSetChanged();
 
         Map<String, String> fids = DBHelper.getInstance(getApplicationContext()).getFidCache(true);
-        if (fids.size() == 0) {//目前没有商品
-            for (int index = 0; index < categories.size(); index++) {
-                categories.get(index).setCount(0);
-            }
-        } else {
-            for (Map.Entry<String, String> entry : fids.entrySet()) {
-                int index = fidCache.indexOf(entry.getKey());//找到存在购物车信息的那一项
-                int count = DBHelper.getInstance(getApplicationContext()).
-                        getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID, entry.getKey());
-                categories.get(index).setCount(count);
-            }
-        }
+
+//        if (fids.size() == 0) {//目前没有商品
+//            for (int index = 0; index < categories.size(); index++) {
+//                categories.get(index).setCount(0);
+//            }
+//        } else {
+//            for (Map.Entry<String, String> entry : fids.entrySet()) {
+//                int index = fidCache.indexOf(entry.getKey());//找到存在购物车信息的那一项
+//                int count = DBHelper.getInstance(getApplicationContext()).
+//                        getShopCartCounById(DBHelper.FLAG_PROSUMMARY_BY_FID, entry.getKey());
+//                categories.get(index).setCount(count);
+//            }
+//        }
 
         menuAdapter.notifyDataSetChanged();
     }
@@ -486,11 +487,6 @@ public class HomeFragment extends BaseFragment {
                         try {
                             if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)) {
                                 setProContent(jsonObject, "");
-                                if (!isUpdate) {
-                                    Intent intent = new Intent(MainActivity.ACTION_STR);
-                                    getActivity().sendBroadcast(intent);
-                                    isUpdate = true;//状态更新为已更新
-                                }
                             }
                         } catch (JSONException e) {
                             try {
@@ -715,10 +711,4 @@ public class HomeFragment extends BaseFragment {
             return imgList.size();
         }
     };
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        menuAdapter.notifyDataSetChanged();
-    }
 }

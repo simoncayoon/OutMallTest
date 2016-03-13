@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity
     private IndicatorViewPager mIndicatorViewPager;
     private SViewPager viewPager;
     private CusNaviView cusNaviView;
-    private ShopCartChangReceiver receiver;
     private CountReciver countReciver;
 
     @Override
@@ -429,14 +428,6 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case 2:
                     fragment = new ShopCart();
-                    try {
-
-                        receiver = new ShopCartChangReceiver((ShopCartChangReceiver.ShopCartChange) fragment);
-                        IntentFilter intentFilter = new IntentFilter(ACTION_STR);
-                        registerReceiver(receiver, intentFilter);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
                     break;
                 case 3:
                     fragment = new AboutMine();
@@ -456,7 +447,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(receiver);
         try {
             unregisterReceiver(countReciver);
         } catch (Exception e) {
