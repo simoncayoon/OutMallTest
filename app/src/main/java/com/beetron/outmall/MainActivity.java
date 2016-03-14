@@ -127,6 +127,12 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     cusNaviView.getRightBtn().setVisibility(View.GONE);
                 }
+
+                if (select == 3){
+                    cusNaviView.setVisibility(View.GONE);
+                } else {
+                    cusNaviView.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
