@@ -53,6 +53,7 @@ public class AboutMine extends BaseFragment implements View.OnClickListener {
     private RoundedImageView headImg;
     private TextView headName, tvSign;
     private LinearLayout llOrderTab;
+    private LinearLayout llIntegral;
     private ImageView ImageSign;
     private FixedIndicatorView scanTab;
     private TempDataManager tempDataManager;
@@ -130,6 +131,21 @@ public class AboutMine extends BaseFragment implements View.OnClickListener {
                 if (tempDataManager.isLogin()) {
                     Intent intent = new Intent(getActivity(), OrderMineScan.class);
                     intent.putExtra("select", 1);
+                    startActivity(intent);
+                } else {
+                    //跳转到登陆
+                    startActivityForResult(new Intent(getActivity(), LoginActivity.class), INTENT_FLAG_LOGIN_REQ);
+                }
+            }
+        });
+
+        llIntegral = (LinearLayout) findViewById(R.id.ll_to_integral_detail);
+        llIntegral.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DebugFlags.logD(TAG, "去订单详情！");
+                if (tempDataManager.isLogin()) {
+                    Intent intent = new Intent(getActivity(), IntegralActivity.class);
                     startActivity(intent);
                 } else {
                     //跳转到登陆

@@ -25,4 +25,5 @@
     <color name="tab_top2_text_1">#000</color>
     <color name="tab_top2_text_2">#fff</color>
     <color name="white">#FFFFFF</color>
+    <color name="sign_score_color">#ef4235</color>
 </resources>

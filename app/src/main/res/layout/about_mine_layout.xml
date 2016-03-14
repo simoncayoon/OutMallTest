@@ -94,6 +94,50 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/ll_to_integral_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:clickable="true"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/about_me_content_padding"
+        android:paddingRight="@dimen/about_me_content_padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@mipmap/ic_integration"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:text="@string/about_me_integral"
+                android:textColor="@color/order_fix_text_color"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="10dp"
+                android:drawableRight="@mipmap/address_ic_arrow"
+                android:gravity="center_vertical|right"
+                android:text="@string/about_me_order_scan_integral_detail"
+                android:textColor="@color/general_tab_text_color"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/general_boundary_color" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/ll_to_order_scan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

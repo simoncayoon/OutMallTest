@@ -177,4 +177,9 @@ public class NetInterface {
      * 升级接口
      */
     public static final String METHON_UPDATE_CHECK = "?m=home&c=app&a=update";
+
+    /**
+     * 积分详情
+     */
+    public static final String METHON_GET_SCORE_DETAIL = "?m=home&c=app&a=qiandao_detail";
 }

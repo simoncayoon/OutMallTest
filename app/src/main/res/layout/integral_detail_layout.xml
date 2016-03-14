@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.beetron.outmall.customview.CusNaviView
+        android:id="@+id/general_navi_id"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/general_navi_height">
+
+    </com.beetron.outmall.customview.CusNaviView>
+
+    <!--顶部总积分-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/score_top_height"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/score_amount"
+            android:textSize="@dimen/score_title_text_size"
+            android:textColor="@color/general_main_title_color"/>
+
+        <TextView
+            android:id="@+id/tv_score_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/score_content_text_size"
+            android:textColor="@color/general_main_title_color"
+            android:layout_marginTop="30dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/score_list_tile_height"
+            android:text="@string/score_today_title"
+            android:textColor="@color/general_tab_text_color"
+            android:textSize="18sp"
+            android:drawableLeft="@mipmap/ic_integration"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:drawablePadding="5dp"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/general_boundary_color"/>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/lv_score_sign_history"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:fadingEdge="none"
+        android:layout_weight="1"
+        android:cacheColorHint="@android:color/transparent">
+
+    </ListView>
+
+    <Button
+        android:id="@+id/btn_score_exchange"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="@string/score_exchange"
+        style="@style/BtnStyle"
+        android:layout_marginLeft="@dimen/order_fix_content_padding"
+        android:layout_marginRight="@dimen/order_fix_content_padding"
+        android:layout_marginBottom="20dp"/>
+
+</LinearLayout>

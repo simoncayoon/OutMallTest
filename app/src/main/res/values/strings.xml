@@ -152,5 +152,13 @@
     <string name="notification_downloading">正在下载...</string>
     <string name="gender_femal">女</string>
     <string name="prompt_no_gender_select">请选择性别！</string>
+    <string name="about_me_integral_detail">我的积分</string>
+    <string name="about_me_integral_scan">查看积分详情</string>
+    <string name="about_me_integral">我的积分</string>
+    <string name="about_me_order_scan_integral_detail">查看积分详情</string>
+    <string name="score_amount">总积分</string>
+    <string name="score_today_title">积分详情</string>
+    <string name="score_exchange">积分兑换</string>
+    <string name="sign_day">每日签到</string>
 
 </resources>
