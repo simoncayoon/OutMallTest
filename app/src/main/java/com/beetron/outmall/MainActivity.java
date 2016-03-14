@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     @Override
@@ -200,7 +201,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_slideshow) {
             intent.putExtra("title", "社区");
             intent.putExtra("url", "http://chulai-mai.com");
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_login_out) {
             showLoginOut(item);
             return true;
         }
@@ -346,7 +347,6 @@ public class MainActivity extends AppCompatActivity
         if (RESULT_OK == resultCode) {
             if (requestCode == RESULT_LOGIN) {
                 DebugFlags.logD(TAG, "点击购物车的Fragment 返回");
-
                 try {
                     ShopCart shopCart = (ShopCart) mIndicatorViewPager.getAdapter().getPagerAdapter().
                             instantiateItem(mIndicatorViewPager.getViewPager(), 2);
@@ -360,8 +360,6 @@ public class MainActivity extends AppCompatActivity
             if (requestCode == RESULT_ADD_SHOPCART) {
                 DebugFlags.logD(TAG, "点击添加商品购物车登陆返回");
             }
-
-
         }
     }
 
@@ -469,5 +467,15 @@ public class MainActivity extends AppCompatActivity
                 .build();
         DebugFlags.logD(TAG, "完整的更新URL时 ：" + NetInterface.HOST + NetInterface.METHON_UPDATE_CHECK);
         updateHelper.check();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
+            navigationView.getMenu().findItem(R.id.nav_login_out).setVisible(true);
+        } else {
+            navigationView.getMenu().findItem(R.id.nav_login_out).setVisible(false);
+        }
     }
 }
