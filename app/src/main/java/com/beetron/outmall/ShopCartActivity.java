@@ -24,7 +24,6 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.beetron.outmall.adapter.ShopCartAdapter;
-import com.beetron.outmall.adapter.ShopCartFragment;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.CusNaviView;
@@ -40,7 +39,6 @@ import com.beetron.outmall.utils.BooleanSerializer;
 import com.beetron.outmall.utils.DBHelper;
 import com.beetron.outmall.utils.DebugFlags;
 import com.beetron.outmall.utils.NetController;
-import com.beetron.outmall.utils.ShopCartChangReceiver;
 import com.beetron.outmall.utils.TempDataManager;
 import com.beetron.outmall.wxapi.WXPayEntryActivity;
 import com.google.gson.Gson;
@@ -60,7 +58,7 @@ import java.util.Map;
  * Date: 2016/2/3.
  * Time: 15:32.
  */
-public class ShopCartActivity extends Activity implements ShopCartAdapter.ProCountChange, ShopCartChangReceiver.ShopCartChange {
+public class ShopCartActivity extends Activity implements ShopCartAdapter.ProCountChange {
 
     private static final String TAG = ShopCart.class.getSimpleName();
     private static final int FLAG_UPDATE_SELECT_ONE_KEY = -1;
@@ -79,6 +77,7 @@ public class ShopCartActivity extends Activity implements ShopCartAdapter.ProCou
     private ShopCartAdapter shopCartAdapter;
     private Double currentAmount = 0.00;
     private ProgressHUD mProgressHUD;
+    private View viewEmpty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +88,8 @@ public class ShopCartActivity extends Activity implements ShopCartAdapter.ProCou
         dataLocalList = new ArrayList<ProSummary>();
         shopCartAdapter = new ShopCartAdapter(ShopCartActivity.this, dataLocalList);
         lvShopcart.setAdapter(shopCartAdapter);
+        lvShopcart.setEmptyView(viewEmpty);
     }
-
 
     private void initData() {
 
@@ -105,16 +104,13 @@ public class ShopCartActivity extends Activity implements ShopCartAdapter.ProCou
     /**
      * 获取服务端或者本地数据库购物车信息
      *
-     * @param reqRemote 是否网络访问
      * @throws Exception
      */
-    public void reqShopcart(Boolean reqRemote) throws Exception {
+    public void reqShopcart() throws Exception {
 
         if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
-            if (isFirstReq) {
-                mProgressHUD = ProgressHUD.show(ShopCartActivity.this, getResources().getString(R.string.prompt_progress_loading), true, false,
-                        null);
-            }
+            mProgressHUD = ProgressHUD.show(ShopCartActivity.this, getResources().getString(R.string.prompt_progress_loading), true, false,
+                    null);
             String url = NetInterface.HOST + NetInterface.METHON_GET_SHOPCART;
             PostEntity postEntity = new PostEntity();
             postEntity.setToken(Constants.TOKEN_VALUE);
@@ -251,6 +247,19 @@ public class ShopCartActivity extends Activity implements ShopCartAdapter.ProCou
                 startActivity(intent);
             }
         });
+
+        viewEmpty = findViewById(R.id.shop_cart_empty);
+        Button goShopping = (Button) viewEmpty.findViewById(R.id.btn_shopping_add);
+        goShopping.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    startActivity(new Intent(ShopCartActivity.this, MainActivity.class));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void initNavi() {
@@ -343,7 +352,6 @@ public class ShopCartActivity extends Activity implements ShopCartAdapter.ProCou
                                 JSONObject countJSON = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
                                 int resultCount = countJSON.getInt("count");
 
-                                ProSummary proSummary = dataLocalList.get(position);
                                 //更新数据库信息
                                 if (flag == FLAG_ADD) {
                                     DBHelper.getInstance(getApplicationContext()).addShopCart(dataLocalList.get(position));
@@ -357,6 +365,11 @@ public class ShopCartActivity extends Activity implements ShopCartAdapter.ProCou
                                         try {
                                             selectCache.remove(dataLocalList.get(position).getSid());
                                             dataLocalList.remove(position);
+                                            if (shopCartAdapter.getCount() > 0) {
+                                                viewEmpty.setVisibility(View.GONE);
+                                            } else {
+                                                viewEmpty.setVisibility(View.VISIBLE);
+                                            }
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }
@@ -435,6 +448,12 @@ public class ShopCartActivity extends Activity implements ShopCartAdapter.ProCou
         }
 
         shopCartAdapter.notifyDataSetChanged();
+
+        if (shopCartAdapter.getCount() > 0) {
+            viewEmpty.setVisibility(View.GONE);
+        } else {
+            viewEmpty.setVisibility(View.VISIBLE);
+        }
         SpannableString spannableString = new SpannableString("总价：￥" + currentAmount);
         spannableString.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.home_page_general_red)),
                 3, spannableString.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);//设置颜色
@@ -511,6 +530,7 @@ public class ShopCartActivity extends Activity implements ShopCartAdapter.ProCou
                                 dataLocalList.removeAll(cacheList);
                                 selectCache.clear();//清空当前选择的内容
                                 updateAmount(FLAG_UPDATE_SELECT_ALL, false, FLAG_UPDATE_SELECT_ONE_KEY);
+
                                 Toast.makeText(ShopCartActivity.this, getResources().getString(R.string.prompt_delete_succeed),
                                         Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -561,31 +581,35 @@ public class ShopCartActivity extends Activity implements ShopCartAdapter.ProCou
         DebugFlags.logD(TAG, "生成的逗号字符串 ：" + sb.toString());
         return sb.toString();
     }
-
-    boolean isFromBroadcast = false;
-    boolean isFirstReq = true;
+//
+//    @Override
+//    public void shopCartDataChange() {
+//        try {
+//            reqShopcart();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     @Override
-    public void shopCartDataChange() {
+    public void onResume() {
+        super.onResume();
+//        if (isFromBroadcast) {
+//            return;
+//        }
         try {
-            isFromBroadcast = true;
-            reqShopcart(false);
-            isFirstReq = false;
-            isFromBroadcast = false;
+            reqShopcart();
+//            isFirstReq = false;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (isFromBroadcast) {
-            return;
-        }
+    public void clearList() {
+        dataLocalList.clear();
+        selectCache.clear();
         try {
-            reqShopcart(true);
-            isFirstReq = false;
+            updateAmount(FLAG_UPDATE_SELECT_ALL, false, FLAG_UPDATE_SELECT_ONE_KEY);//初始化总价，默认全部选择
         } catch (Exception e) {
             e.printStackTrace();
         }
