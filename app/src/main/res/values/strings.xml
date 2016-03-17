@@ -160,5 +160,6 @@
     <string name="score_today_title">积分详情</string>
     <string name="score_exchange">积分兑换</string>
     <string name="sign_day">每日签到</string>
+    <string name="prompt_add_shop_cart_ing">加入购物车...</string>
 
 </resources>

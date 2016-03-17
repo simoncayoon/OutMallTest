@@ -74,6 +74,7 @@ public class ProductDetail extends FragmentActivity {
     private Button btnAddShopCart, btnBuyImmediately;
     private int inShopCart = 0;
     private IndicatorViewPager proWebView;
+    private ProSummary proSummary;
 
     // 动画时间
     private int AnimationDuration = 1000;
@@ -159,6 +160,25 @@ public class ProductDetail extends FragmentActivity {
                 return fragment;
             }
         });
+
+        //初始化有效实体（本地操作、购物车操作个体）
+        try {
+            proSummary = new ProSummary();
+            proSummary.setFid(getIntent().getStringExtra(KEY_PRODUCT_ID));
+            try {
+                proSummary.setImg(proDetail.getImg().get(0).getPic());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            proSummary.setJianshu(proDetail.getMiaoshu());
+            proSummary.setPrice1(proDetail.getPrice1());
+            proSummary.setPrice2(proDetail.getPrice2());
+            proSummary.setSid(proDetail.getSid());
+            proSummary.setTitle(proDetail.getTitle());
+            proSummary.setXl(proSummary.getXl());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void requestProDetail() throws Exception {
@@ -218,19 +238,6 @@ public class ProductDetail extends FragmentActivity {
             public void onClick(View v) {
                 //购买页面
                 if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
-                    ProSummary proSummary = new ProSummary();
-                    proSummary.setFid(getIntent().getStringExtra(KEY_PRODUCT_ID));
-                    try {
-                        proSummary.setImg(proDetail.getImg().get(0).getPic());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    proSummary.setJianshu(proDetail.getMiaoshu());
-                    proSummary.setPrice1(proDetail.getPrice1());
-                    proSummary.setPrice2(proDetail.getPrice2());
-                    proSummary.setSid(proDetail.getSid());
-                    proSummary.setTitle(proDetail.getTitle());
-                    proSummary.setXl(proSummary.getXl());
                     try {
                         addShopCart(proSummary);
                     } catch (Exception e) {
@@ -249,7 +256,13 @@ public class ProductDetail extends FragmentActivity {
             public void onClick(View v) {
                 //购买页面
                 if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
-                    startActivity(new Intent(ProductDetail.this, ShopCartActivity.class));
+
+                    try {
+                        buyImmediately(proSummary);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                 } else {
                     Intent intent = new Intent(ProductDetail.this, LoginActivity.class);
                     intent.putExtra(LoginActivity.FLAG_NAVI_ROOT, getResources().getString(R.string.framework_navi_shope_cart));
@@ -346,6 +359,60 @@ public class ProductDetail extends FragmentActivity {
             public void onErrorResponse(VolleyError volleyError) {
                 volleyError.printStackTrace();
 
+            }
+        });
+        NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);
+    }
+
+    void buyImmediately(final ProSummary proSummary) throws Exception {
+        final ProgressHUD mProgressHUD;
+        mProgressHUD = ProgressHUD.show(this, getResources().getString(R.string.prompt_add_shop_cart_ing), true, false,
+                null);
+        String url = NetInterface.HOST + NetInterface.METHON_ADD_SHOPCART_BY_ID;
+        PostEntity postEntity = new PostEntity();
+        postEntity.setToken(Constants.TOKEN_VALUE);
+        postEntity.setUid(TempDataManager.getInstance(getApplicationContext()).getCurrentUid());
+        postEntity.setIsLogin(TempDataManager.getInstance(getApplicationContext()).getLoginState());
+        postEntity.setGid(proSummary.getSid());
+        String postString = new Gson().toJson(postEntity, new TypeToken<PostEntity>() {
+        }.getType());
+        JSONObject postJson = new JSONObject(postString);
+        JsonObjectRequest getCategoryReq = new JsonObjectRequest(Request.Method.POST, url, postJson,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject jsonObject) {
+                        DebugFlags.logD(TAG, jsonObject.toString());
+                        try {
+                            if (jsonObject.getString(Constants.RESULT_STATUS_FIELD).equals(Constants.RESULT_SUCCEED_STATUS)) {//返回成功
+                                try {
+                                    JSONObject countJSON = jsonObject.getJSONObject(Constants.RESULT_CONTENT_FIELD);
+                                    DBHelper.getInstance(ProductDetail.this).addShopCart(proSummary);
+                                    startActivity(new Intent(ProductDetail.this, ShopCartActivity.class));
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Toast.makeText(ProductDetail.this, jsonObject.getString(Constants.RESULT_ERROR_FIELD).toString(), Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        try {
+                            mProgressHUD.dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                volleyError.printStackTrace();
+                try {
+                    mProgressHUD.dismiss();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         NetController.getInstance(getApplicationContext()).addToRequestQueue(getCategoryReq, TAG);

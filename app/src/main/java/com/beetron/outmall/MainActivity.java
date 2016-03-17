@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity
     private SViewPager viewPager;
     private CusNaviView cusNaviView;
     private CountReciver countReciver;
+    private MyAdapter indicAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,33 +109,44 @@ public class MainActivity extends AppCompatActivity
         viewPager = (SViewPager) findViewById(R.id.tabmain_viewPager);
         Indicator indicator = (Indicator) findViewById(R.id.tabmain_indicator);
         mIndicatorViewPager = new IndicatorViewPager(indicator, viewPager);
-        final MyAdapter indicAdapter = new MyAdapter(getSupportFragmentManager());
+        indicAdapter = new MyAdapter(getSupportFragmentManager());
         mIndicatorViewPager.setAdapter(indicAdapter);
         // 禁止viewpager的滑动事件
         viewPager.setCanScroll(false);
         // 设置viewpager保留界面不重新加载的页面数量
         viewPager.setOffscreenPageLimit(4);
         mIndicatorViewPager.setCurrentItem(0, false);
-        indicator.setOnItemSelectListener(new Indicator.OnItemSelectedListener() {
+//        indicator.setOnItemSelectListener(new Indicator.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(View selectItemView, int select, int preSelect) {
+//
+//            }
+//        });
+        mIndicatorViewPager.setOnIndicatorPageChangeListener(new IndicatorViewPager.OnIndicatorPageChangeListener() {
             @Override
-            public void onItemSelected(View selectItemView, int select, int preSelect) {
-                cusNaviView.setNaviTitle(indicAdapter.tabNames[select]);
-                mIndicatorViewPager.setCurrentItem(select, false);
-
-                if (select == 2) {//添加购物车删除按钮
-                    cusNaviView.getRightBtn().setVisibility(View.VISIBLE);
-                    checkIsLogin();
-                } else {
-                    cusNaviView.getRightBtn().setVisibility(View.GONE);
-                }
-
-                if (select == 3){
-                    cusNaviView.setVisibility(View.GONE);
-                } else {
-                    cusNaviView.setVisibility(View.VISIBLE);
-                }
+            public void onIndicatorPageChange(int preItem, int currentItem) {
+                tabChange(currentItem);
             }
         });
+    }
+
+    void tabChange(int select){
+        cusNaviView.setNaviTitle(indicAdapter.tabNames[select]);
+
+        if (select == 2) {//添加购物车删除按钮
+            cusNaviView.getRightBtn().setVisibility(View.VISIBLE);
+            checkIsLogin();
+        } else {
+            cusNaviView.getRightBtn().setVisibility(View.GONE);
+        }
+
+        if (select == 3){
+            if (cusNaviView.isShown()) {
+                cusNaviView.setVisibility(View.GONE);
+            }
+        } else {
+            cusNaviView.setVisibility(View.VISIBLE);
+        }
     }
 
     void checkIsLogin() {
@@ -198,9 +210,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
         if (id == R.id.nav_camera) {
-            // Handle the camera action
-            intent.putExtra("title", "商城");
-            intent.putExtra("url", "http://chulai-mai.com");
+            try {
+                drawer.closeDrawer(GravityCompat.START);
+                if (mIndicatorViewPager.getCurrentItem() != 0) {
+                    mIndicatorViewPager.setCurrentItem(0, true);//回到首页
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return true;
         } else if (id == R.id.nav_gallery) {
             intent.putExtra("title", "蚤市");
             intent.putExtra("url", "http://chulai-mai.com");
@@ -213,8 +231,11 @@ public class MainActivity extends AppCompatActivity
         }
 
         startActivity(intent);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        try {
+            drawer.closeDrawer(GravityCompat.START);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return true;
     }
 

@@ -343,6 +343,7 @@ public class UpdateHelper {
         @Override
         protected Boolean doInBackground(UpdateInfo... params) {
             HttpClient httpClient = new DefaultHttpClient();
+            DebugFlags.logD(TAG, "文件下载地址是：" + "http://" + params[0].getAppUrl());
             HttpGet httpGet = new HttpGet("http://" + params[0].getAppUrl());
             try {
                 HttpResponse response = httpClient.execute(httpGet);

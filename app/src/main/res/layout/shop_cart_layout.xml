@@ -11,6 +11,12 @@
         android:layout_height="0dip"
         android:layout_weight="1">
 
+        <include android:id="@+id/shop_cart_empty"
+            layout="@layout/shop_cart_emptr_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+
         <ListView
             android:id="@+id/shop_cart_detail_list"
             android:layout_width="match_parent"
@@ -22,12 +28,6 @@
             android:headerDividersEnabled="false"
             android:smoothScrollbar="true"
             ></ListView>
-
-        <include android:id="@+id/shop_cart_empty"
-            layout="@layout/shop_cart_emptr_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone"/>
 
     </FrameLayout>
 

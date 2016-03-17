@@ -137,7 +137,6 @@ public class WebViewActivity extends Activity {
 
                 if (newProgress == 100) {
                     mProgressHUD.hide();
-                    ;
                 }
             }
         });
