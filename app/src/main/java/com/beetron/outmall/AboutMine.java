@@ -21,6 +21,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.beetron.outmall.constant.Constants;
 import com.beetron.outmall.constant.NetInterface;
 import com.beetron.outmall.customview.ProgressHUD;
+import com.beetron.outmall.customview.RoundNetImgView;
 import com.beetron.outmall.customview.ViewWithBadge;
 import com.beetron.outmall.models.PostEntity;
 import com.beetron.outmall.models.UserInfoModel;
@@ -50,7 +51,7 @@ public class AboutMine extends BaseFragment implements View.OnClickListener {
     public static final int INTENT_FLAG_LOGIN_REQ = 0x11;
     private static final String TAG = AboutMine.class.getSimpleName();
     private RelativeLayout headView;
-    private RoundedImageView headImg;
+    private RoundNetImgView headImg;
     private TextView headName, tvSign;
     private LinearLayout llOrderTab;
     private LinearLayout llIntegral;
@@ -80,8 +81,8 @@ public class AboutMine extends BaseFragment implements View.OnClickListener {
                 Log.d("AboutMine", "已登录");
                 memberModel = DBHelper.getInstance(getActivity()).getUserInfo();
                 Log.d("AboutMine", "用户头像：" + memberModel.getHeadimg());
-
-                Glide.with(getActivity()).load(memberModel.getHeadimg()).placeholder(R.mipmap.default_avatar).into(headImg);
+                headImg.setImageUrl(memberModel.getHeadimg(), NetController.getInstance(getApplicationContext()).getImageLoader());
+//                Glide.with(getActivity()).load(memberModel.getHeadimg()).placeholder(R.mipmap.default_avatar).into(headImg);
 //                Uri uri=Uri.parse(memberModel.getHeadimg());
 //                headImg.setImageURI(uri);
                 if (memberModel == null || memberModel.getUname().equals("")) {
@@ -116,7 +117,7 @@ public class AboutMine extends BaseFragment implements View.OnClickListener {
                 }
             }
         });
-        headImg = (RoundedImageView) findViewById(R.id.iv_about_me_head_img);
+        headImg = (RoundNetImgView) findViewById(R.id.iv_about_me_head_img);
         headName = (TextView) findViewById(R.id.tv_about_me_title_name);
         ImageSign = (ImageView) findViewById(R.id.iv_sign);
         tvSign = (TextView) findViewById(R.id.tv_sign);

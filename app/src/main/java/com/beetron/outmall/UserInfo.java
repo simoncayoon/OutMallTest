@@ -24,6 +24,7 @@ import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.customview.IphoneDialogCreator;
 import com.beetron.outmall.customview.IphoneDialogItem;
 import com.beetron.outmall.customview.ProgressHUD;
+import com.beetron.outmall.customview.RoundNetImgView;
 import com.beetron.outmall.models.PostUserInfo;
 import com.beetron.outmall.models.UserInfoModel;
 import com.beetron.outmall.utils.CommonHelper;
@@ -61,7 +62,7 @@ public class UserInfo extends Activity implements View.OnClickListener {
     public static final String FLAG_NAVI_ROOT = "FLAG_NAVI_ROOT";
     public static final int FLAG_HEAD_REFRESH = 1;
     private DBHelper dbHelper;
-    private RoundedImageView headerImage;
+    private RoundNetImgView headerImage;
     private ProgressHUD mProgressHUD;
 
     private void initNavi() {
@@ -201,7 +202,7 @@ public class UserInfo extends Activity implements View.OnClickListener {
         tvCity = (TextView) findViewById(R.id.user_info_city);
         tvArea = (TextView) findViewById(R.id.user_info_area);
         tvStreet = (TextView) findViewById(R.id.user_info_street);
-        headerImage = (RoundedImageView) findViewById(R.id.user_info_protrait_img);
+        headerImage = (RoundNetImgView) findViewById(R.id.user_info_protrait_img);
         headerImage.setDrawingCacheEnabled(true);
 
         tvNickName.setText(userInfoSummary.getNickname());
@@ -220,7 +221,8 @@ public class UserInfo extends Activity implements View.OnClickListener {
         tvArea.setText(userInfoSummary.getArea());
         tvStreet.setText(userInfoSummary.getAddress());
 
-        Glide.with(this).load(userInfoSummary.getHeadimg()).placeholder(R.mipmap.default_avatar).into(headerImage);
+        headerImage.setImageUrl(userInfoSummary.getHeadimg(), NetController.getInstance(getApplicationContext()).getImageLoader());
+//        Glide.with(this).load(userInfoSummary.getHeadimg()).placeholder(R.mipmap.default_avatar).into(headerImage);
         llNickName.setOnClickListener(this);
         llEmail.setOnClickListener(this);
         llGender.setOnClickListener(this);
