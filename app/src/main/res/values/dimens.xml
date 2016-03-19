@@ -24,7 +24,7 @@
     <dimen name="pro_detail_title_size">16sp</dimen>
     <dimen name="pro_detail_margin_title">8dp</dimen>
     <dimen name="pro_detail_info_margin">15dp</dimen>
-    <dimen name="pro_detail_tab_height">39dp</dimen>
+    <dimen name="pro_detail_tab_height">45dp</dimen>
     <dimen name="pro_detail_summary_text_size">13sp</dimen>
     <dimen name="pro_detail_top_banner_height">180dp</dimen>
     <dimen name="general_navi_height">56dp</dimen>
@@ -64,4 +64,5 @@
     <dimen name="score_title_text_size">14sp</dimen>
     <dimen name="score_content_text_size">98sp</dimen>
     <dimen name="score_list_tile_height">45dp</dimen>
+    <dimen name="test_height">310dp</dimen>
 </resources>

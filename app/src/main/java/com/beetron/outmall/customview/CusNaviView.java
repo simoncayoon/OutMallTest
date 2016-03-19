@@ -88,6 +88,7 @@ public class CusNaviView extends RelativeLayout {
                     mContext, 20), DisplayMetrics.dip2px(
                     mContext, 20)));
             newButton.setTextColor(getResources().getColor(R.color.general_main_title_color));
+            newButton.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
             newButton.setCompoundDrawables(leftBack, null, null, null);
             newButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -99,6 +100,8 @@ public class CusNaviView extends RelativeLayout {
                     }
                 }
             });
+        }else if(flag.equals(PUT_RIGHT)){
+            newButton.setGravity(Gravity.RIGHT|Gravity.CENTER_VERTICAL);
         }
         newButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, NAVI_TEXT_SIZE);
 

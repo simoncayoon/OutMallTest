@@ -60,7 +60,7 @@ public class ViewWithBadge extends TextView {
                 e.printStackTrace();
                 DebugFlags.logD(TAG, "请填充数字！！");
             }
-            badgeView.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, getResources().getDisplayMetrics()));
+//            badgeView.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, textSize, getResources().getDisplayMetrics()));
             badgeView.setBadgePosition(position);//设置气泡位置
             badgeView.setBadgeMargin(margin);//
 
