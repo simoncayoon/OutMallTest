@@ -333,19 +333,6 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
                                     DBHelper.getInstance(getApplicationContext()).deleteProByOne(dataLocalList.get(position));
                                     dataLocalList.get(position).setCount(resultCount);
                                     updateAmount(FLAG_UPDATE_SELECT_ITEM_COUNT, false, position);
-                                    if (resultCount == 0) {
-                                        try {
-                                            selectCache.remove(dataLocalList.get(position).getSid());
-                                            dataLocalList.remove(position);
-                                            if (shopCartAdapter.getCount() > 0){
-                                                viewEmpty.setVisibility(View.GONE);
-                                            } else {
-                                                viewEmpty.setVisibility(View.VISIBLE);
-                                            }
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
                                 }
 
                             } else {
@@ -404,12 +391,18 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
             dataLocalList.get(position).setIsSelect(dataLocalList.get(position).getIsSelect() ? false : true);
         } else if (flag.equals(FLAG_UPDATE_SELECT_ITEM_COUNT)) {//点击了列表项内容
             ProSummary selectItem = dataLocalList.get(position);
+
             if (selectItem.getIsSelect()) {
                 if (status) {
                     currentAmount += selectItem.getPrice2();
                 } else {
                     currentAmount -= selectItem.getPrice2();
+
                 }
+            }
+            if (selectItem.getCount() == 0){//删除该项
+                selectCache.remove(dataLocalList.get(position).getSid());
+                dataLocalList.remove(position);
             }
         }
 

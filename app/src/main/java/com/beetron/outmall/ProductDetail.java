@@ -621,5 +621,4 @@ public class ProductDetail extends FragmentActivity {
             }
         }
     };
-
 }
