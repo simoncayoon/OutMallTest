@@ -234,7 +234,7 @@ public class ShopCartActivity extends Activity implements ShopCartAdapter.ProCou
 
                     List<ProSummary> commitProList = new ArrayList<ProSummary>();
                     for (Map.Entry<String, Integer> entry : selectCache.entrySet()) {
-                        DBHelper.getInstance(ShopCartActivity.this).deleteShopById(entry.getKey());
+//                        DBHelper.getInstance(ShopCartActivity.this).deleteShopById(entry.getKey());
                         ProSummary proSummary = dataLocalList.get(entry.getValue());//获取列表中对应位置的对象
                         commitProList.add(proSummary);
                     }

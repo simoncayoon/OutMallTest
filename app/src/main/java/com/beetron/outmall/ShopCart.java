@@ -232,7 +232,7 @@ public class ShopCart extends BaseFragment implements ShopCartFragment.ProCountC
 
                     List<ProSummary> commitProList = new ArrayList<ProSummary>();
                     for (Map.Entry<String, Integer> entry : selectCache.entrySet()) {
-                        DBHelper.getInstance(getActivity()).deleteShopById(entry.getKey());
+//                        DBHelper.getInstance(getActivity()).deleteShopById(entry.getKey());
                         ProSummary proSummary = dataLocalList.get(entry.getValue());//获取列表中对应位置的对象
                         commitProList.add(proSummary);
                     }

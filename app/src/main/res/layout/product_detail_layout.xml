@@ -18,83 +18,83 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <include
-            android:id="@+id/product_detail_top_banner"
-            layout="@layout/pro_detail_top_banner_layout"
-            android:layout_width="match_parent"
-            android:layout_height="180dp" />
-
         <LinearLayout
+            android:id="@+id/pro_detail_head_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <RelativeLayout
-                android:layout_width="0dip"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/pro_detail_info_margin"
-                android:layout_weight="1">
-
-                <TextView
-                    android:id="@+id/pro_detail_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:textColor="@color/general_main_title_color"
-                    android:textSize="@dimen/pro_detail_title_size" />
-
-                <TextView
-                    android:id="@+id/pro_detail_sale_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/pro_detail_title"
-                    android:layout_margin="@dimen/pro_detail_margin_title"
-                    android:layout_marginRight="8dp" />
-
-                <TextView
-                    android:id="@+id/pro_detail_primary_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/pro_detail_title"
-                    android:layout_margin="@dimen/pro_detail_margin_title"
-                    android:layout_marginRight="8dp"
-                    android:layout_toRightOf="@+id/pro_detail_sale_price"
-                    android:textColor="@color/general_tab_text_color"/>
-
-                <TextView
-                    android:id="@+id/pro_detail_sales_volume"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/pro_detail_title"
-                    android:layout_margin="@dimen/pro_detail_margin_title"
-                    android:layout_toRightOf="@+id/pro_detail_primary_price"/>
-
-            </RelativeLayout>
-
-            <View
-                android:layout_width="1px"
-                android:layout_height="18dp"
-                android:background="@color/general_boundary_color" />
-
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:button="@null"
-                android:drawableTop="@mipmap/ic_collection"
-                android:text="@string/product_collection"
-                android:textColor="@color/general_main_title_color"
-                android:textSize="15sp"
-                android:visibility="gone"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dip"
-            android:layout_weight="1"
             android:orientation="vertical">
+
+            <include
+                android:id="@+id/product_detail_top_banner"
+                layout="@layout/pro_detail_top_banner_layout"
+                android:layout_width="match_parent"
+                android:layout_height="180dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/pro_detail_info_margin"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/pro_detail_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxLines="1"
+                        android:textColor="@color/general_main_title_color"
+                        android:textSize="@dimen/pro_detail_title_size" />
+
+                    <TextView
+                        android:id="@+id/pro_detail_sale_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/pro_detail_title"
+                        android:layout_margin="@dimen/pro_detail_margin_title"
+                        android:layout_marginRight="8dp" />
+
+                    <TextView
+                        android:id="@+id/pro_detail_primary_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/pro_detail_title"
+                        android:layout_margin="@dimen/pro_detail_margin_title"
+                        android:layout_marginRight="8dp"
+                        android:layout_toRightOf="@+id/pro_detail_sale_price"
+                        android:textColor="@color/general_tab_text_color" />
+
+                    <TextView
+                        android:id="@+id/pro_detail_sales_volume"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/pro_detail_title"
+                        android:layout_margin="@dimen/pro_detail_margin_title"
+                        android:layout_toRightOf="@+id/pro_detail_primary_price" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="1px"
+                    android:layout_height="18dp"
+                    android:background="@color/general_boundary_color" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:button="@null"
+                    android:drawableTop="@mipmap/ic_collection"
+                    android:text="@string/product_collection"
+                    android:textColor="@color/general_main_title_color"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -104,20 +104,29 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:background="@color/general_boundary_color"
-                    />
+                    android:background="@color/general_boundary_color" />
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#f5f5f5"
-                    />
+                    android:background="#f5f5f5" />
             </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pro_detail_web_layout"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
 
             <com.shizhefei.view.indicator.ScrollIndicatorView
                 android:id="@+id/pro_detail_tab_indicator"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/pro_detail_tab_height"
-                android:background="@android:color/white"/>
+                android:background="@android:color/white" />
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/svp_pro_detal_web_content"

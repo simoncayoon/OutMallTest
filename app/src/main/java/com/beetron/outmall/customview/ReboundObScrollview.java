@@ -6,16 +6,16 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.TranslateAnimation;
-import android.widget.ScrollView;
+
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollView;
 
 /**
- * Created by Eteng with IntelliJ IDEA.
- * Author: DKY email: losemanshoe@gmail.com
- * Date: 15/11/9
- * Time: 上午10:42
+ * Created by DKY with IntelliJ IDEA.
+ * Author: DKY email: losemanshoe@gmail.com.
+ * Date: 2016/3/25.
+ * Time: 12:12.
  */
-public class ReboundScrollView extends ScrollView {
-
+public class ReboundObScrollview extends ObservableScrollView {
     private static final String TAG = "ElasticScrollView";
 
     //移动因子, 是一个百分比, 比如手指移动了100px, 那么View就只移动50px
@@ -44,11 +44,11 @@ public class ReboundScrollView extends ScrollView {
     //在手指滑动的过程中记录是否移动了布局
     private boolean isMoved = false;
 
-    public ReboundScrollView(Context context) {
+    public ReboundObScrollview(Context context) {
         super(context);
     }
 
-    public ReboundScrollView(Context context, AttributeSet attrs) {
+    public ReboundObScrollview(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -63,7 +63,7 @@ public class ReboundScrollView extends ScrollView {
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         super.onLayout(changed, l, t, r, b);
 
-        if(contentView == null) return;
+        if (contentView == null) return;
 
         //ScrollView中的唯一子控件的位置信息, 这个位置信息在整个控件的生命周期中保持不变
         originalRect.set(contentView.getLeft(), contentView.getTop(), contentView
@@ -100,7 +100,7 @@ public class ReboundScrollView extends ScrollView {
 
             case MotionEvent.ACTION_UP:
 
-                if(!isMoved) break;  //如果没有移动布局， 则跳过执行
+                if (!isMoved) break;  //如果没有移动布局， 则跳过执行
 
                 // 开启动画
                 TranslateAnimation anim = new TranslateAnimation(0, 0, contentView.getTop(),
@@ -122,7 +122,7 @@ public class ReboundScrollView extends ScrollView {
             case MotionEvent.ACTION_MOVE:
 
                 //在移动的过程中， 既没有滚动到可以上拉的程度， 也没有滚动到可以下拉的程度
-                if(!canPullDown && !canPullUp) {
+                if (!canPullDown && !canPullUp) {
                     startY = ev.getY();
                     canPullDown = isCanPullDown();
                     canPullUp = isCanPullUp();
@@ -137,13 +137,13 @@ public class ReboundScrollView extends ScrollView {
                 //是否应该移动布局
                 boolean shouldMove =
                         (canPullDown && deltaY > 0)    //可以下拉， 并且手指向下移动
-                                || (canPullUp && deltaY< 0)    //可以上拉， 并且手指向上移动
+                                || (canPullUp && deltaY < 0)    //可以上拉， 并且手指向上移动
                                 || (canPullUp && canPullDown); //既可以上拉也可以下拉（这种情况出现在ScrollView包裹的控件比ScrollView还小）
 
-                if(shouldMove){
+                if (shouldMove) {
 
                     //计算偏移量
-                    int offset = (int)(deltaY * MOVE_FACTOR);
+                    int offset = (int) (deltaY * MOVE_FACTOR);
 
                     //随着手指的移动而移动布局
                     contentView.layout(originalRect.left, originalRect.top + offset,
@@ -173,7 +173,6 @@ public class ReboundScrollView extends ScrollView {
      * 判断是否滚动到底部
      */
     private boolean isCanPullUp() {
-        return  contentView.getHeight() <= getHeight() + getScrollY();
+        return contentView.getHeight() <= getHeight() + getScrollY();
     }
-
 }
