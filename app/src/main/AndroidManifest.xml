@@ -78,7 +78,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".WebViewActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/webActivity"/>
         <activity
             android:name=".AddrConsole"
             android:screenOrientation="portrait" />

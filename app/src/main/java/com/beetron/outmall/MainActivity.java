@@ -219,12 +219,9 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
             return true;
-        } else if (id == R.id.nav_gallery) {
-            intent.putExtra("title", "蚤市");
-            intent.putExtra("url", "http://chulai-mai.com");
-        } else if (id == R.id.nav_slideshow) {
+        }  else if (id == R.id.nav_slideshow) {
             intent.putExtra("title", "社区");
-            intent.putExtra("url", "http://chulai-mai.com");
+            intent.putExtra("url", "http://shequ.yunzhijia.com/thirdapp/forum/network/571848f3e4b0d2075fe47ba6");
         } else if (id == R.id.nav_login_out) {
             showLoginOut(item);
             return true;

@@ -1,1 +1,1 @@
-include ':app', ':MyLibs:viewPagerIndicator_Library', ':MyLibs:lvRefreshLib'
+include ':app', ':MyLibs:viewPagerIndicator_Library', ':MyLibs:lvRefreshLib', 'MyLibs:library'
