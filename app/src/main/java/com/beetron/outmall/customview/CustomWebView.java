@@ -53,18 +53,6 @@ public class CustomWebView extends WebView{
 	}
 
 	@Override
-	public boolean canGoForward() {
-		DebugFlags.logD(TAG, "canGoForward");
-		return super.canGoForward();
-	}
-
-	@Override
-	public boolean canGoBack() {
-		DebugFlags.logD(TAG, "canGoBack");
-		return super.canGoBack();
-	}
-
-	@Override
 	protected  void onScrollChanged( int l,  int t,  int oldl,  int oldt) {
 		LayoutParams lp = (LayoutParams) progressbar.getLayoutParams();
 		lp.x = l;

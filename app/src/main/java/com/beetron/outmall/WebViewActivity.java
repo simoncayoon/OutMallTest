@@ -14,11 +14,13 @@ import android.widget.Toast;
 import com.beetron.outmall.customview.CusNaviView;
 import com.beetron.outmall.customview.CustomWebView;
 import com.beetron.outmall.customview.ProgressHUD;
+import com.beetron.outmall.utils.DebugFlags;
 
 /**
  * Created by luomaozhong on 16/3/2.
  */
 public class WebViewActivity extends Activity {
+    private static final String TAG = WebViewActivity.class.getSimpleName();
     private CustomWebView wv;
     private String tag = "WebViewActivity";
     private String title = "";
@@ -84,8 +86,14 @@ public class WebViewActivity extends Activity {
             }
 
             @Override
-            public boolean shouldOverrideKeyEvent(WebView view, KeyEvent event) {
-                return true;
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (view.canGoForward()){
+                    DebugFlags.logD(TAG, "导航栏显示关闭按钮");
+                } else if (view.canGoBack()){
+                    DebugFlags.logD(TAG, "刷新显示root页面，去掉关闭按钮");
+                }
+                DebugFlags.logD(TAG, "shouldOverrideUrlLoading " + url);
+                return super.shouldOverrideUrlLoading(view, url);
             }
 
             @Override
