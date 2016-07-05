@@ -21,6 +21,8 @@ import com.beetron.outmall.utils.DebugFlags;
  */
 public class WebViewActivity extends Activity {
     private static final String TAG = WebViewActivity.class.getSimpleName();
+    public static final java.lang.String WEB_TITLE = "WEB_TITLE";
+    public static final java.lang.String WEB_URL = "WEB_URL";
     private CustomWebView wv;
     private String tag = "WebViewActivity";
     private String title = "";
@@ -29,8 +31,8 @@ public class WebViewActivity extends Activity {
     private CusNaviView cusNaviView;
 
     private void initNavi() {
-        title = getIntent().getExtras().getString("title");
-        url = getIntent().getExtras().getString("url");
+        title = getIntent().getExtras().getString(WEB_TITLE);
+        url = getIntent().getExtras().getString(WEB_URL);
         cusNaviView = (CusNaviView) findViewById(R.id.general_navi_id);
         cusNaviView.setBtn(CusNaviView.PUT_BACK_ENABLE, CusNaviView.NAVI_WRAP_CONTENT, 56);
         cusNaviView.setBtn(CusNaviView.PUT_RIGHT, CusNaviView.NAVI_WRAP_CONTENT, 56);

@@ -219,12 +219,20 @@ public class MainActivity extends AppCompatActivity
                 e.printStackTrace();
             }
             return true;
-        }  else if (id == R.id.nav_slideshow) {
-            intent.putExtra("title", "社区");
-            intent.putExtra("url", "http://shequ.yunzhijia.com/thirdapp/forum/network/571848f3e4b0d2075fe47ba6");
-        } else if (id == R.id.nav_login_out) {
+        }else if (id == R.id.nav_login_out) {
             showLoginOut(item);
             return true;
+        } else if (id == R.id.nav_community){
+            if (TempDataManager.getInstance(getApplicationContext()).isLogin()) {
+                intent.putExtra(WebViewActivity.WEB_TITLE, item.getTitle());
+                intent.putExtra(WebViewActivity.WEB_URL, "http://www.baidu.com");
+            } else {
+                Intent toLoginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                toLoginIntent.putExtra(LoginActivity.FLAG_NAVI_ROOT, getResources().getString(R.string.framework_navi_home_page));
+                startActivity(toLoginIntent);
+                return true;
+            }
+
         }
 
         startActivity(intent);

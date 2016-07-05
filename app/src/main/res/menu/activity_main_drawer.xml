@@ -6,15 +6,17 @@
             android:id="@+id/nav_camera"
             android:icon="@mipmap/leftbar_ic_store"
             android:title="商城" />
+
         <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_community"
             android:icon="@mipmap/leftbar_ic_community"
             android:title="社区" />
+
         <item
             android:id="@+id/nav_login_out"
             android:icon="@drawable/ic_menu_manage"
             android:title="退出"
-            android:visible="false"/>
+            android:visible="false" />
     </group>
 
 </menu>
